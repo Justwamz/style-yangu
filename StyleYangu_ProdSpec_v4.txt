@@ -1,0 +1,723 @@
+﻿STYLE YANGU
+Product Specification Document
+Version 4.0   |   April 2026
+Classification: Confidential
+
+styleyangu.co.ke
+Kofi & Amara � Your Personal Stylists
+
+
+1. Executive Summary
+Style Yangu is a Kenyan-first fashion technology platform combining AI-powered personal styling, a seller showcase and commerce tool, and a tailor and artisan management system into one cohesive ecosystem. The name means "My Style" in Swahili, reflecting the platform's core promise: deeply personalised, honest fashion guidance rooted in local culture and identity.
+
+� Consumers who waste time selecting outfits and cannot visualise how clothes look on their specific body type, skin tone, and colouring.
+� Boutique sellers on Instagram and WhatsApp who cannot afford professional model shoots and manage their businesses through scattered messages and notebooks.
+� Tailors and artisan makers including cobblers, bag makers, and jewellery makers who receive vague briefs, chase deposits, and have no digital presence.
+� Enterprise retailers who need a structured channel to reach matched consumers without manual catalogue management.
+
+Style Yangu launches as a PWA built as a monorepo: landing page, consumer app, seller app, tailor app, admin dashboard, and reseller portal. Every consumer has a named personal stylist � Amara (female) or Kofi (male) at MVP.
+
+The platform operates a free-for-life consumer tier sustained by a local ad ecosystem. Sellers and artisans on paid plans can boost their items directly to matched free-tier consumers. This creates a self-funding community where consumer access costs nothing and seller ad spend covers the platform's cost of serving free users.
+
+2. Brand Identity
+2.1 Name and Meaning
+Name: Style Yangu
+Language: Swahili
+Translation: My Style
+Primary tagline: Just You.
+Secondary tagline: Your honest stylist. In your pocket.
+
+The name works across all four participant groups without explanation and extends naturally into Tanzania, Uganda, Rwanda, and the broader East African Swahili-speaking market.
+2.2 Personal Stylists: Kofi and Amara
+StylistGenderName originPersonality at MVPAmaraFemalePan-African; means "grace" or "eternal beauty"Warm, honest, direct. Tells you the truth like a trusted friend who always looks put together.KofiMalePan-African; widely recognised across East AfricaConfident, knowledgeable, no-fluff. Gives you reasons not just verdicts.
+During onboarding the user sees two illustrated avatar cards and taps to choose. That choice persists throughout their experience. Future versions allow full personality selection and custom naming.
+2.3 Domains and Handles
+� styleyangu.com � primary
+� styleyangu.com � international
+� styleyangu.app � install
+� @styleyangu � Instagram, TikTok, X, Facebook
+� Style Yangu � WhatsApp Business
+2.4 Subdomain Architecture
+SubdomainPurposestyleyangu.comMarketing landing pageapp.styleyangu.comConsumer PWAsell.styleyangu.comSeller PWAtailor.styleyangu.comTailor and Artisan PWAadmin.styleyangu.comAdmin dashboardresellers.styleyangu.comAffiliate and reseller portal[sellername].styleyangu.comIndividual seller storefronts (Boutique and Brand tiers)styleyangu.com /shop/[name]Seller storefront path (Hustler); alias redirect for higher tiers
+3. Platform Overview
+3.1 Four-Sided Ecosystem
+ParticipantWhat they bringWhat they getConsumersDaily engagement, style data, demand signal, ad impressionsHonest personalised styling, named stylist, outfit planning, tailor connection, shopping discovery � free for lifeBoutique SellersLocal inventory, organic marketing via shares, ad spendAI showcase, storefront, POS, inventory, client list, try-on, ad boost to matched consumersTailors and ArtisansCustom execution, local craft trust, size-specific capability, ad spendDigital presence, order management, deposit protection, escrow, ad boost to matched consumersEnterprise RetailersScale inventory, brand trust, broad range, negotiated ad spendAPI catalogue sync, matched segments, brand-safe publishing, retail analytics3.2 Core Value Propositions
+� Honest, not flattering: tells users what actually works for their body, skin tone, and colouring
+� Locally grounded: M-Pesa, Swahili, Kenyan face library, Nairobi backgrounds, KES pricing, henna awareness, size-inclusive shoe matching for all genders
+� Free for life: consumers never need to pay; the local ad ecosystem funds their access
+� Privacy-first: faces never captured or stored; client relationships use usernames not PII
+� Named personal stylist: Amara or Kofi makes the experience feel like a relationship not a tool
+� Full ecosystem loop: design kitenge outfit, find tailor, pay deposit, collect garment, share look � all within Style Yangu
+3.3 Revenue Streams
+StreamSourceStageConsumer premium subscriptionsKES 300-500/month for unlimited suggestions and saved outfit historyMVPSeller subscriptionsKES 900 to 10,000/month depending on tierMVPArtisan subscriptionsKES 800 to 2,000/month depending on tierMVPEscrow transaction fee5 to 8% on artisan booking escrow onlyPhase 2Ad boost base allocationIncluded in seller and artisan subscription pricingPhase 5 (at consumer threshold)Ad boost add-on packsKES 100 to 400/week purchased by sellers and artisansPhase 5 (at consumer threshold)Enterprise contractsNegotiated annually; KES 100,000 to 500,000/month including ad spendOngoingReferral programmeKES 50 per referred consumer who subscribes; affiliate residualsPhase 5Affiliate commissionsExternal shopping links at scalePhase 6
+4. Consumer Application
+4.1 Onboarding Flow
+1. Account creation: Google (primary CTA), Apple, or email/password
+2. Stylist selection: choose Amara or Kofi with illustrated avatar cards
+3. Full body selfie � two photos via camera: forward-facing and side profile
+4. Imagen 3 cartoon processing: face and exposed skin cartoonised; clothing untouched; original deleted immediately
+5. Skin tone capture via guided hand camera with henna detection and alternative locations
+6. Style preference selection with illustrated visual examples per category
+7. Guided wardrobe capture using 6 contextual camera prompts � no file uploads
+8. Weather location permission
+9. Budget preferences per category in KES
+10. Shoe size capture in UK and EU � applies to all genders
+11. Avatar preview: cartoon face on body-type avatar with chosen stylist introduced by name
+4.1.1 Camera-Only Policy for Wardrobe
+All wardrobe item additions throughout the app � whether during onboarding or on an ongoing basis � require the user to photograph the item using the device camera. File uploads from the photo library are not permitted for wardrobe additions. This policy exists for three reasons:
+
+� Integrity: the suggestion engine is designed around the user's actual wardrobe. Uploaded images from the internet corrupt the data and produce irrelevant suggestions.
+� Anti-gaming: the daily wardrobe-addition unlock mechanic (photographing 2 new items to earn 1 extra suggestion) requires real physical items. Camera-only prevents consumers from downloading outfit photos online to farm suggestion unlocks.
+� Quality: camera photos captured in the app go through the guided flat-lay overlay, lighting quality check, and compression pipeline. This produces consistent, well-tagged wardrobe data.
+
+  Onboarding wardrobe capture is the only exception to the no-upload rule: screenshots from Instagram store posts may be submitted during onboarding to add items the user has bought or plans to buy. These screenshots are processed by AI for colour, category, and style tagging but are flagged as "purchased/planned" rather than "owned and available", so the suggestion engine treats them appropriately.  
+4.1.2 Full Body Selfie for Body Shape
+PhotoInstructionAI readsForward-facing"Stand facing forward, arms slightly away from sides, full body in frame"Shoulder vs hip width, waist definition, height, weight distributionSide profile"Turn to your left and stay in the same spot"Depth of form, posture, overall proportion
+Distance indicator: green outline guide shows when full body is correctly in frame. App notes the user may need a phone stand or a second person for the side profile. Three outputs: body type classification, skin tone cross-reference, and avatar body proportions.
+4.1.3 Selfie to Cartoon Avatar via Imagen 3
+� Google Imagen 3 produces a Disney/Pixar style cartoon of face and exposed skin only � clothing completely untouched
+� Original selfie deleted from all systems within seconds of cartoon generation
+� Only the cartoon output is stored; cannot be used for facial recognition
+� User can retake or skip to a generic avatar
+
+  Privacy statement built into onboarding: "Your selfie is used only to generate your cartoon avatar and is immediately deleted after processing. We never store your actual photo at any point."  
+4.1.4 Skin Tone Capture and Henna Detection
+Back of hand between wrist and knuckles is the primary reference. AI runs henna detection before attempting skin tone reading.
+
+ScenarioApp ResponsePartial henna � clear patches visible"We can see henna on your hand. Can you zoom into a clear patch between the patterns?" with illustrated guideFull hand coverage"Your hand appears fully decorated. We need an alternative location." � two options offeredNo henna detectedProceeds directly to skin tone reading
+Alternative locationInstructionReliabilityTop of arm between wrist and elbowLay arm flat, photograph from above in natural lightNearly equivalent to wrist; vein reading preserved for undertone detectionTop of thigh just above the kneePhotograph in natural light, no flashGood for depth; slightly lower undertone confidence; flagged internally; confidence weight adjusted
+SignalWarm undertoneCool undertoneNeutral undertoneVein colour at wristGreenBlue or purpleBlue-greenOverall skin hueGolden, olive, yellowPink, red, bluishMix of both
+After reading: user sees detected skin depth, undertone, a sample palette, and a swatch selector to confirm or adjust. The swatch selector is always the ground truth.
+4.1.5 Style Preference and Wardrobe Capture
+Style preference selection uses illustrated visual examples for each category: smart casual, business casual, streetwear, traditional and cultural, evening and formal, athleisure.
+
+Guided wardrobe capture uses 6 contextual camera prompts during onboarding. The camera opens directly for each prompt with the flat-lay overlay guide:
+� "Something you would wear on a rainy day"
+� "Something you would wear on a hot sunny day"
+� "Something you would wear to the office"
+� "Something you would wear on a date"
+� "Something you would wear to a wedding as a guest"
+� "Something casual for a weekend"
+
+During onboarding only: screenshots from Instagram store posts accepted for items the user has purchased or plans to buy. These are tagged as "purchased/planned" not "owned and available" in the wardrobe system. All subsequent wardrobe additions after onboarding must be camera-photographed physical items.
+4.1.6 Shoe Size Capture
+UK and EU sizes captured for all users regardless of gender. Stored as a hard filter on shoe suggestions. Users whose shoe size falls outside the standard retail range stocked by most sellers are flagged internally for specialist seller and cobbler matching � this applies equally to all genders.
+4.2 Avatar System
+ComponentSourceFaceImagen 3 cartoon from selfie (or generic if skipped)Body proportionsExtracted from full body selfie photosSkin toneHand photo reading confirmed by user swatch selectionHairQuick selector during onboardingGender presentationSet during onboardingStylist companionAmara or Kofi avatar displayed alongside4.3 Outfit Suggestion Engine and Free Tier Mechanics
+The named stylist presents outfit suggestions in a fixed sequence. Clothing always comes first. Shoes and hats are optional follow-on suggestions requested by the user. The number of suggestions available per day depends on the consumer's subscription status.
+
+4.3.1 Daily Suggestion Allocation by Tier
+TierDaily suggestionsHow to unlock moreMaximum per dayFree tier (post-trial)1 per day delivered as a push nudge from the named stylistWatch ads OR photograph 2 new wardrobe items via camera3 per day (hard cap regardless of method)Premium (KES 300-500/mo)UnlimitedNo unlock neededUnlimited
+  The 1 free suggestion is framed as a push nudge from the named stylist, not a passive feature. The consumer receives a notification: "Amara has an outfit idea for you today." This makes the free suggestion feel like a gift from a trusted friend rather than a rationed product.  
+4.3.2 Unlock Mechanic: Ads
+After the consumer views their first free suggestion, the stylist offers more: "Want two more suggestions today? Here is how to unlock them."
+
+The ad unlock option appears alongside the wardrobe addition option. Ads are served as sponsored suggestion cards � natural-looking outfit suggestion cards labelled "Sponsored" from sellers and artisans who match the consumer's profile. Each sponsored card watched unlocks one additional organic suggestion.
+
+Ad Frequency Phases (adaptive by ad inventory)
+PhaseTriggerAds per additional suggestionConsumer experiencePhase 1: Pre-activationConsumer base below 1,000-2,000 threshold; ad boost product not yet liveNo ads availableWardrobe camera addition is the only unlock method. Coming soon treatment on ad option.Phase 2: LaunchAd boost activated; early seller inventory1 ad per additional suggestionWatch 1 sponsored card, earn 1 more suggestion. Maximum 2 ads watched to reach the 3-suggestion cap.Phase 3: GrowthAd inventory sufficient for varied targeting2 ads per additional suggestionWatch 2 sponsored cards, earn 1 more suggestion. Maximum 4 ads watched to reach the 3-suggestion cap.Phase capSet by admin based on consumer engagement dataMaximum 2 ads per suggestionCap is set to prevent the unlock from feeling like work. Exceeding 4 total ads per day is the ceiling regardless of inventory.
+Ad phase is controlled by an admin toggle tied to ad inventory level. The transition from Phase 1 to Phase 2 happens when the ad boost product is activated and sufficient seller ad inventory exists to serve varied content. Phase transitions are gradual and monitored for consumer engagement impact before increasing frequency requirements.
+4.3.3 Unlock Mechanic: Wardrobe Camera Addition
+The consumer can photograph 2 new clothing items using the camera (with the flat-lay overlay guide) to unlock 1 additional suggestion. This can be done twice per day to reach the 3-suggestion cap without watching any ads.
+
+� Camera must be used � no uploads from photo library permitted
+� Items photographed are added to the wardrobe catalogue and AI-tagged automatically
+� The unlock is awarded immediately after the second photo is captured and processed
+� Consumer can mix methods: 1 wardrobe addition pair and 1 ad to reach their cap
+� The camera flat-lay overlay and lighting quality indicator apply as standard
+
+  This mechanic reinforces the platform's core philosophy: Style Yangu is your personal stylist based on your actual clothes. Every wardrobe addition makes the suggestion engine more accurate and more personal. Rewarding additions with extra suggestions creates a virtuous loop that benefits the consumer, the AI, and the platform simultaneously.  
+4.3.4 Suggestion Sequence
+12. Clothing combination presented first � draws from wardrobe clothing items, weather, occasion, body type, skin tone, undertone, and style preferences
+13. After clothing: "Would [Stylist] suggest shoes to complete this look?" � only if user has at least one shoe in wardrobe
+14. After shoes (if requested): "Would [Stylist] suggest a hat?" � only if user has at least one hat in wardrobe
+
+  Token efficiency rule: shoe and hat prompts suppressed entirely when the relevant wardrobe category contains zero items. No API call made for empty categories. Shopping suggestions for shoes and hats can still run regardless of wardrobe content since they draw from seller inventory not the user's wardrobe.  
+4.3.5 Nudge Timing: Learned Behaviour
+The daily first-suggestion nudge is not sent at a fixed time. The app learns from usage patterns: a consumer who consistently opens the app at 7am gets nudged at 7am. A consumer who opens it at 9am gets nudged at 9am. This learned timing makes the nudge feel personal and well-timed rather than mechanical. The pattern is established after 5 to 7 days of consistent usage and updates continuously.
+4.4 Consumer Ad Experience
+Sponsored content is integrated into the suggestion flow as natural-looking cards. The consumer is already in an active fashion mindset when they see sponsored content, making it genuinely relevant rather than an interruption.
+
+4.4.1 Sponsored Card Format
+ElementDescriptionCard appearanceVisually identical to an organic suggestion card with one clear distinction: a small tasteful "Sponsored" label in the top cornerShowcase imageAI-generated showcase of the boosted item rendered on an avatar matching the consumer's body type and skin tone as closely as possible from the seller's existing showcase libraryItem detailsItem name, price in KES, seller storefront namePrimary CTA"Talk to Seller" � opens a pre-populated in-app message or WhatsApp with the exact item name, showcase image, and consumer's size if saved. Seller receives a warm specific enquiry with full context.Secondary actions"Follow" � follows the seller's storefront; future new items surface in consumer notifications. "Save to Wishlist" � saves the item for later; visible to seller as warm intent signal.AttributionEach "Talk to Seller" tap from a sponsored card logs automatically in the seller's client management system as "From Ad Boost � [Item Name]". Seller can track which ad spend generates conversations.4.4.2 Ad Targeting Logic
+Sponsored cards are matched to consumers using a priority stack. Relevance is the core of why this model works � an irrelevant sponsored card is worse than no sponsored card.
+
+PriorityTarget audienceWhyPriority 1 � Wishlist matchesConsumers who have previously wishlisted any item from this sellerHighest intent; consumer already considered buying. Retargeting warm leads within the platform at the seller's own request.Priority 2 � Profile matchesConsumers whose style preferences, body type, skin tone, size, and shoe size match the boosted item's characteristicsCore targeting layer; works at any consumer base size; most of the ad volume flows through here.Priority 3 � Category affinityConsumers who have interacted with similar items from other sellers in the same categoryExtends reach to warm-category consumers beyond direct profile matches.4.4.3 Frequency Caps
+� Maximum 1 sponsored card appearance per seller per consumer per day
+� Maximum 3 sponsored card appearances per seller per consumer per week
+� These caps apply regardless of how many boost slots the seller has purchased
+� Buying more slots increases reach across the total consumer base, not frequency with the same consumers
+� Ad inventory depth check runs before serving a sponsored card to ensure varied content
+4.5 Weather Warnings
+ConditionTriggerToneWindLoose short skirts, wide-leg trousers, oversized shirtsPlayful � Kofi: "That skirt has its own agenda today." Amara: "Bestie, this wind and that skirt are not friends."RainSuede shoes, white linen, open-toe shoes, flared hemsPractical and firmExtreme heatHeavy layering, dark colours, synthetic fabricsCaringColdBare legs, thin fabrics for outdoor occasionsConcernedHumidityNatural hair considerations, linen, silkKnowing and sympathetic
+Three warning levels: (1) icon and stylist text, (2) avatar animation � e.g. skirt blows up revealing shorts underneath; avatar goes from confident to surprised to laughing; 2 to 3 seconds; loops once, (3) hard block for severe mismatches with immediate wardrobe alternative suggestions. Warning animations shareable as standalone cards to WhatsApp and Instagram Stories.
+4.6 Rate My Outfit
+Imagen 3 cartoonises face and exposed skin only. Clothing left completely untouched for accurate assessment. Result: cartoon person in real clothes � privacy-safe, shareable, and visually distinctive. Original photo deleted immediately after processing.
+
+Rating categoryWhat it assessesColour harmonyPalette cohesion and compatibility with skin tone and undertoneFitAppropriate sizing for intended silhouette and body typeOccasion matchAppropriateness for stated contextWeather matchPracticality for current conditionsCohesionWhether the outfit tells one clear style story
+  Feedback rule: all feedback references clothing choices only, never the user's body. "This shirt has more room than the look needs" not "this shirt is too big for your frame."  
+
+Score below 6: immediate fix suggestions drawn from the user's actual wardrobe. Share card: cartoon avatar in real outfit, overall score, one positive line from stylist, weather and occasion context, Style Yangu watermark.
+4.7 Fabric Design Tool
+15. User photographs or screenshots fabric (kitenge, ankara, any print)
+16. Claude Sonnet extracts pattern, colour, and texture
+17. User selects garment type: sundress, maxi dress, skirt, jumpsuit, shirt dress, co-ord set, buibui, kitenge wrap dress, leso, or other
+18. Imagen 3 renders the silhouette in the fabric on the user's avatar
+19. App estimates fabric metres required
+20. User can send design as a digital brief directly to a nearby tailor or artisan
+
+Skin tone applied immediately: "This warm terracotta print works beautifully with your undertone. A wrap silhouette will complement your proportions."
+4.8 Consumer Invite and Community Sharing
+Every consumer gets a shareable invite link after completing onboarding. This is a community-building mechanism, not a monetisation tool. It works like StepUp's sharing mechanic: a genuine invitation to join, not a sales funnel.
+
+4.8.1 Invite Link Rules
+� Generated automatically after onboarding completion
+� Expires 14 days from generation
+� User can generate a new code at any time; immediately mutes the previous code even if unexpired
+� Muting is forward-only: signups under the old code before muting remain attributed and valid
+� Only works for new accounts; existing users receive no attribution effect
+� Attribution uses click timestamp not signup completion timestamp
+� Click before expiry + signup after expiry = still attributed
+� Click after expiry = no attribution; user lands on normal signup page; click does not increment referrer counter
+� Referral attribution window: 12 months from referred user's signup date
+
+4.8.2 Share Locations and Share Card
+Share button on: consumer home screen (persistent), after hitting a style streak milestone or high outfit rating (contextual), and in the gamification section. Share card shows cartoon avatar, streak count, stylist name, and "Join me on Style Yangu." Share targets: WhatsApp (primary), Instagram Stories, Copy link.
+
+4.8.3 Consumer-Visible Referral Counters
+CounterTypeDescriptionTotal clicksLifetime; never resetsUnique clicks on active codes; expired code clicks excludedTotal joinedLifetime; never resetsCompleted signups via this user's active codesAwaiting upgradeRolling; real-timeReferred users within 12-month window who have not yet subscribed; drops when they upgrade or window closesUpgraded this monthMonthly; resets 1st of monthReferred users who converted to any paid plan this calendar monthEarned this monthMonthly; resets 1st of monthKES amount owed this month (referral programme members only)Total earned / paid outLifetime; never resetsCumulative earnings and payouts (referral programme members only)4.9 Outfit Planning and Reminders
+ReminderTimingContentEvening planning9 PM"[Stylist] wants to help you plan tomorrow. It will be 22� and cloudy."Morning confirmation6-7 AMShows planned outfit or quick suggestion if none plannedRe-engagement 3 days3 days inactive"Show [Stylist] what you're wearing today"Re-engagement 7 days7 days inactive"[Stylist] misses your style. Rate today's look."Re-engagement 14 days14 days inactive"It's been a while. Your wardrobe is still here."Re-engagement 30 days30 days inactive"[Stylist] and all your wardrobe are waiting. Come back."Wardrobe nudgePeriodic"You haven't worn your navy blazer in a while � 3 ways to style it"Low wardrobe alertAs needed"You only have 2 bottom options logged. Want to photograph more?"Weekly style recapMonday AM"This week you wore 8 outfits. [Stylist]'s top pick was Wednesday."Referral code expiryDay 13 of 14-day window"Your referral code expires tomorrow. Share it before it expires."Ad unlock nudgeAfter first daily suggestion"Want 2 more ideas today? Watch a quick look from a seller near your style or photograph 2 new items."
+Frequency capped at 2 personalised item alerts per day. User controls notification frequency: immediate, daily digest, or weekly roundup. Nudge timing is learned from usage behaviour not fixed to a clock.
+4.10 New Item Notifications from Sellers
+When a seller publishes a new item, Style Yangu matches it overnight against consumer profiles: style preferences, occasion tags, colour palette vs skin tone, size availability, shoe size for all genders, and budget range. Matched consumers receive a personalised in-app notification attributed to their named stylist. Example: "Amara found something for you. A new emerald wrap dress from NairobiChic � KES 2,800, available in your size, and it works beautifully with your warm undertone."
+4.11 Gamification
+FeatureDescriptionStyle StreakConsecutive days of planning or rating; visible on home screenStyle PointsEarned for logging outfits, photographing wardrobe items, planning ahead, trying new combinationsWeekly Style ChallengeTheme-based; AI scoring; winner gets badge or free premium monthOutfit of the Day CardCartoon avatar in outfit; streak count; watermark; shareableWeekly Style ScoreAverage rating across the week; Monday morning improvement notificationLeaderboardsStreak ranking; friend groups; office and campus groupsBonus SuggestionsComplete wardrobe profile by photographing items via camera: +2. 7-day streak: +5. Referred friend subscribes to paid plan: +3 (not on signup).
+  Bonus suggestions from completing wardrobe profile require camera-photographed items, consistent with the camera-only wardrobe policy. Bonus suggestions from referrals are awarded on paid plan subscription, not on signup, consistent with the referral payment model.  
+
+5. Seller Application
+5.1 Three Rendering Modes
+ModeUsed forDescriptionFull body avatarClothing: dresses, tops, trousers, suits, skirts, jumpsuitsAI-generated Kenyan face on full body avatar; outfit rendered; AI selects lighting and background automaticallyFace and neck onlyHats, caps, headwraps, hijabs, fascinators, beaniesAI face and neck; hat rendered on top with appropriate hair context; no body requiredStudio product shotShoes, sandals, heels, boots, sneakers, loafersNo avatar; clean studio render; multiple angles; AI selects surface and lighting5.2 AI Face Library
+Pre-generated library of 200 to 500 distinct AI-generated faces. Creative brief: faces must feel like "someone you went to university with" � recognisably Kenyan, naturally imperfect, genuine expressions, alive eyes.
+
+AttributeOptionsEthnicity and regionEast African, West African, Southern African, North African, Pan-African blendGenderFemale or maleAge range18-25, 26-35, 36-45Style vibeEditorial, everyday relatable, corporate and polished, street style, traditional and culturalCountry defaultDetects country at signup; surfaces most relevant faces first; full library available to all paid sellers
+5.2.1 Free Trial Face Restrictions
+During the free trial, sellers access only 2 female faces and 2 male faces. These 4 faces cover a representative range of skin tones and style vibes. Paid tiers unlock the full library. Combined with the 5-generation hard cap and visible watermark, trial output is demonstrably inferior to paid without being useless for value demonstration.
+5.3 AI Background and Lighting Selection
+ContextBackgroundEvening wearWarm moody dramatic lightingCasual daywearBright natural lightOffice wearClean neutral professional backgroundKitenge and traditionalWarm cultural setting: wooden textures, natural lightStreetwearUrban Nairobi: Westlands, CBD, clean matatu stageUpscale occasionModern Kilimani or Lavington interiorGarden partyKaren or Runda garden settingBeach and resortDiani coastal setting5.4 Publish and Share Actions
+� Publish to my shop � adds item live to storefront immediately
+� Download for Instagram � correct dimensions for feed and Stories
+� Share to WhatsApp � compressed without significant quality loss
+� Schedule post � Boutique and Brand tiers; app auto-posts at selected date and time
+5.5 Multi-Account Gaming Prevention
+Control layerMechanismPhone number verificationOTP required before any AI generation unlocked. One phone number per account.Device fingerprintingMultiple accounts from same device within short window flagged for admin review before trial generations released.Business name checkNew accounts with name or storefront URL matching existing account flagged automatically.IP address monitoringMultiple signups from same IP in short window flagged for review.M-Pesa linkage on upgradeUpgrading to paid requires linking M-Pesa. One M-Pesa number cannot link to more than one active paid account.Trial output qualityVisible watermark + 2M/2F face restriction + 5-generation hard cap = running a real business on trial outputs is visibly inferior to paid.Hard generation cap5 total showcase generations per trial account. Once exhausted, upgrade required. No resets.5.6 Inventory Management
+Captured at shoot time when seller has the physical item in hand. Target: under 2 minutes per item.
+21. Upload garment photo
+22. Enter item name, category, price in KES, occasion tag
+23. Select available sizes and quantity per size
+24. Add colour or print variants with individual stock counts per variant
+25. App generates AI showcase; item goes live with accurate inventory immediately
+
+Size systems: clothing uses standard international (XS-XXXL) or Kenyan informal (Small-XXXL); seller chooses at setup. Shoes: UK, EU, and US; seller selects primary system. Sellers stocking shoe sizes outside the standard retail range are flagged for size-matched consumer recommendations across all genders.
+
+Live inventory: POS sale decrements stock automatically. Zero stock: storefront marks sold out. Low stock alert at 1 unit remaining. Colour variants: one fabric photo generates multiple renders simultaneously.
+5.7 Discounts
+Product-Level
+� Percentage or fixed KES amount
+� Optional expiry date with countdown timer
+� Discount badge auto-appears on storefront, showcase images, and consumer recommendation cards
+Point-of-Sale
+� Listed price auto-fills; seller overrides with negotiated final price
+� Both prices recorded internally for margin tracking
+� Customer receipt shows final price only
+5.8 Point of Sale
+� Record sale: item, price, customer (from client list by nickname), payment method
+� Payment methods: M-Pesa, cash, bank transfer (recorded; not processed by platform at MVP)
+� Mark as paid, partially paid, or owing
+� Generate WhatsApp receipt with one tap
+� Daily and weekly sales summary
+� Outstanding payments tracker
+� Inventory decrements automatically on sale
+
+Receipt: "Hi [Customer nickname], thank you for your purchase from [Seller Shop Name]. Item: [name]. Amount paid: KES [amount]. Payment: [method]. Date: [date]. Questions? Reply to this message. Powered by Style Yangu."
+5.9 Privacy-Safe Client List
+Sellers build a client list using Style Yangu usernames only. No PII stored or visible to sellers.
+
+Three Trigger Points
+26. After a POS sale: "Add this customer to your client list?" prompt
+27. When a consumer follows the seller's storefront
+28. When a consumer acts on a Try This On suggestion
+
+Seller assigns a freeform nickname: "Jane Ngara Estate", "Office Lady Blue Coat". Visible only to that seller. Linked internally to consumer's Style Yangu username. Consumer never sees the nickname and is not notified they have been added.
+
+FieldDescriptionSeller-assigned nicknameFreeform private memory aid; visible only to that sellerStyle Yangu usernameInternal system link; shown in smaller textLast purchase dateFrom POS historyTry-on engagementNumber sent; number acted onSend buttonOpens try-on item selector for that client
+  Seller terms: client data may only be used within Style Yangu. Client lists cannot be exported. The platform does not facilitate building external mailing lists from platform data.  
+5.10 Try This On
+Structured digital version of the informal WhatsApp recommendation behaviour common among Kenyan boutique sellers.
+
+Seller Flow
+29. Seller taps "Send to Client" on a specific item
+30. Client selector opens with phonebook-style list
+31. Seller selects one or multiple clients
+32. Optional personal note
+33. Tap send; counts against monthly package limit
+Consumer Flow
+34. In-app notification: "[Seller Storefront Name] has sent you something to try on"
+35. Consumer sees item rendered on their avatar with their skin tone and body type
+36. Item name, price, sizes, and seller's personal note shown below avatar
+37. Consumer chooses: "I love it, contact seller", "Not for me", or "Save to wishlist"
+
+TierMonthly send limitHustler10 sends/monthBoutique50 sends/monthBrand200 sends/monthEnterpriseUnlimited via API
+Consumer controls: opt-in toggle in settings (on by default); established relationship required � cold outreach not permitted; one-tap block per seller.
+5.11 Seller Storefront
+� Seller name, logo, bio, Instagram and WhatsApp links, location, specialisation tags
+� Product listings with AI showcase images, live inventory, sold out states, sizes
+� Lookbook tab: curated outfit combinations on AI avatars
+� Custom order tab: form routing to seller WhatsApp or in-app message
+� Highlight reel: top 6 showcase images pinned at storefront header
+� Analytics: visits, item views, traffic sources, saves per item, try-on conversion rate
+� SEO: each storefront is publicly indexed; seller-shared links carry "Powered by Style Yangu"
+5.12 Seller Tier Structure
+FeatureFree Trial 30dHustler KES 900Boutique KES 4,000Brand KES 10,000AI showcase generations5 total (hard cap)20/month60/monthUnlimitedFace library access2F + 2M onlyFull libraryFull libraryFull libraryOutput watermarkVisible � "Style Yangu Free Trial"VisibleReducedMinimalAvatar variations/garment125AllE-shop storefrontNo/shop/namename.styleyangu.co.keWhite-labelInventory itemsUp to 10Up to 50UnlimitedUnlimited + CSVPOS and receiptsYes (10 tx)FullFullFull + multi-staffClient list and try-onNoYes (10/mo)Yes (50/mo)Yes (200/mo)Discount badgesNoYesYesYesSchedule and auto-postNoNoInstagramFull schedulingAnalyticsNoViews + visitsFull dashboardAdvanced + exportConsumer matched notificationsNoYesYesYes + priorityAd boost base allocationNone2 slots/week6 slots/week15 slots/weekBoost analyticsNoneAggregate totalsBy day, item, segmentFull granular + funnelBulk uploadNoNoNoYes (20 at once)
+Post-trial free tier: 3 watermarked showcases/month; 2F + 2M face restriction remains; no storefront; no client list; no ad boost access. Lapse: storefront paused; data held 30 days; lapse notification and day-25 trial warning via Resend.
+
+6. Tailor and Artisan Application
+6.1 Participant Types
+TypeSpecialisationNotesTailorWedding wear, corporate, casual, traditional ceremony, generalCore participant typeCobblerCustom shoes, size-inclusive specialist for all genders, repairs, bespoke footwearTailor escrow model; first artisan maker category; matched to consumers by shoe size regardless of genderBag makerCustom bags, leather goods, kitenge bagsPhase 2 artisan expansionJewellery makerCustom jewellery, beadwork, traditional adornmentPhase 2 artisan expansion6.2 Profile and Portfolio
+� Business name, verified physical location (mandatory for appointment booking and escrow access)
+� Specialisation tags, price range indicator, turnaround time badge
+� Verified badge after platform review (Master Artisan tier)
+� Portfolio of completed work photos rendered on AI avatars
+� Rating and review display from past clients
+6.3 Order Management
+Consumer sends design brief from fabric design tool: avatar render of design, fabric description and photo, silhouette choice, occasion, measurements if entered, and special instructions.
+
+StatusTriggerCustomer notificationReceivedArtisan confirms in appWhatsApp and Resend email: "Your order has been received at [Name]. Expected: [date]."In progressArtisan taps updateOptionalReady for collectionArtisan taps readyWhatsApp and Resend email: "Your order is ready. Balance due: KES [amount]."Collected and confirmedConsumer confirms in appReceipt generated; escrow balance release triggeredAuto-released72 hours after ready with no disputeBalance releases automatically; Resend confirmation to artisan
+Completion photos mandatory before marking complete. Primary evidence layer for dispute resolution.
+6.4 Measurement Appointments
+� Available to Fundi and Master Artisan tiers
+� Artisan sets available time slots in their dashboard
+� Consumer selects date and time; confirmation sent via WhatsApp and Resend email
+� Location: artisan's listed physical business address only � no home visits facilitated
+� Artisan enters measurements into the order in the app after the appointment
+� Measurements saved to consumer profile for future orders with any artisan on the platform
+
+  Platform Safety Notice: Style Yangu facilitates connections at listed business locations only. Not responsible for arrangements made outside the platform or away from verified artisan locations. Users making off-platform arrangements do so at their own discretion and risk. Style Yangu expressly disclaims liability for any harm arising from such arrangements.  
+6.5 Artisan POS
+� Order card: customer username and nickname, item description or design brief link
+� Fabric source: customer-provided or artisan sourcing
+� Measurements: bust, waist, hips, length, shoulder (tailors); foot length, width, last width (cobblers)
+� Deposit paid and date; balance due on collection; promised completion date
+� Current status; notes field for special instructions
+� Pre-written WhatsApp notification templates; artisan taps send
+6.6 Artisan Tier Structure
+FeatureFreeFundi KES 800Master Artisan KES 2,000Profile listingBasic with locationFull with specialisation tagsFull + Verified badgeDesign brief receivingUp to 3/monthUnlimitedUnlimitedPortfolio items1Up to 10 on avatarsUnlimitedSearch placementBelow paidPriorityFeatured in fabric design flowAppointment bookingNoYesYesDirect booking via appNoNoYes (M-Pesa deposit)POSNoFullFullEscrow accessNoNoYesAd boost base allocationNone1 slot/week3 slots/weekBoost analyticsNoneAggregate totalsBy day and portfolio pieceAnalyticsNoProfile viewsFull: views + brief conversion rate
+7. Ad Boost Product
+7.1 Overview
+Ad Boost allows sellers and artisans on paid subscription tiers to place their items and services directly in front of matched free-tier consumers during the outfit suggestion flow. This is the mechanism that funds the free-for-life consumer tier.
+
+Ad Boost is built at MVP launch but activated only when the consumer base reaches 1,000 to 2,000 active users. Until activation, all sellers and artisans see a "Coming Soon" treatment with a waitlist signup option. The infrastructure, matching logic, frequency caps, analytics, and pack purchase flow are all built and tested before a single real ad is served.
+
+  Eligibility: Ad Boost is available to paid subscription tiers only. Free trial sellers and post-trial free sellers cannot purchase boost packs or access the ad dashboard. This prevents the ad product from becoming a subscription bypass.  
+7.2 Coming Soon Treatment and Waitlist
+Before activation, every paid seller and artisan sees an Ad Boost card in their dashboard showing:
+
+� "Ad Boost � Coming Soon. Reach consumers who match your style profile while they browse outfit suggestions."
+� Brief explanation of how it will work: item shown as a sponsored card in the suggestion flow, matched by consumer body type, skin tone, style, and size
+� Indicative pricing (KES 100 per week entry level, subject to final pricing)
+� Waitlist signup: "Join the waitlist to be first to know when we launch" � captures email and tier
+
+Waitlist rollout order on activation: Brand sellers first, then Boutique, then Hustler. Master Artisan before Fundi. This rewards the highest-value subscribers with early access and creates a reason to be on a higher tier before the product is live.
+
+The waitlist data also validates demand before activation. If 80% of Brand sellers join the waitlist and 20% of Hustler sellers do, that informs the activation timeline and pricing confidence.
+7.3 Base Allocation by Subscription Tier
+Every paid seller and artisan receives a base weekly boost slot allocation included in their subscription. One boost slot equals one item boosted for one week.
+
+TierBase slots per weekNotesHustler2 slots/weekEnough to test one or two items and see if ads workBoutique6 slots/weekEnough for a meaningful weekly campaign across several itemsBrand15 slots/weekEnough for rotating campaigns across multiple product categoriesEnterpriseNegotiatedPart of annual contract; not on weekly slot modelFundi1 slot/weekEnough to showcase one portfolio piece or serviceMaster Artisan3 slots/weekEnough for a small weekly campaign across services or portfolio pieces7.4 Add-On Boost Packs
+Purchasable weekly by any paid tier seller or artisan. Packs stack on top of base allocation. A Hustler seller buying a Campaign Pack gets 12 total slots that week.
+
+PackAdditional slotsPrice per weekStatusStarter Pack2 slotsKES 100Active at launchGrowth Pack5 slotsKES 220Active at launchCampaign Pack10 slotsKES 400Active at launchMax Pack20 slotsKES 700Built but permanently "Coming Soon" until data justifies activation
+� Maximum 1 pack of any type per seller per week at launch (excluding Max Pack which is not yet available)
+� Unused slots do not roll over; all slots reset Monday midnight Nairobi time
+� Pack purchases confirmed immediately via Resend email
+
+  The Max Pack is built as part of the initial ad infrastructure but will remain in "Coming Soon" status permanently until usage data justifies activation. There is no planned timeline for its activation. It will not be activated based on schedule but only when demand from sellers and consumer inventory depth both support it.  
+7.5 Boost Analytics by Tier
+TierAnalytics availableHustlerAggregate weekly totals: impressions, wishlist saves, follows from card, Talk to Seller tapsBoutiqueBreakdown by day, by individual item, by consumer segment (skin tone range, style preference category, size range)BrandFull granular analytics: demographic breakdown, conversion funnel (impression to wishlist to follow to Talk to Seller), item comparison, weekly trendEnterpriseNegotiated analytics package; typically Brand-level plus custom reporting
+All tiers see the Talk to Seller attribution in their seller app client management section: each "Talk to Seller" tap from a sponsored card logs as "From Ad Boost � [Item Name]" with timestamp. This closes the attribution loop and lets sellers track which ad spend generates actual conversations.
+7.6 Artisan Boost Card Format
+Artisan sponsored cards differ from seller sponsored cards because artisans sell a service or custom piece, not a retail item.
+
+ElementArtisan sponsored cardShowcase imageA portfolio photo of completed work (from the artisan's portfolio) rendered on an avatar matching the consumer's body type and skin toneDetails shownArtisan name, specialisation tag, location, typical turnaround timePrimary CTA"Book a Consultation" � opens a pre-populated message to the artisan with the consumer's relevant details (occasion, style preference, size if relevant)Secondary actions"Follow" artisan profile; "Save to Wishlist" for later considerationAttributionConsultation enquiry logs in artisan's POS as "From Ad Boost � [Specialisation]"7.7 Boost Pricing Cadence
+As the consumer base grows, the value of a boost slot grows with it. Pricing is expected to scale in stages:
+
+� Launch to 5,000 consumers: KES 100/week entry (Starter Pack pricing as baseline)
+� 5,000 to 20,000 consumers: pricing review; likely KES 150 to 200/week entry
+� 20,000+ consumers: pricing review; rates reflect demonstrated ROI for sellers
+
+Sellers who join early get the best rates. Early adopter pricing is preserved for the duration of their active subscription at the time of joining. New sellers pay the prevailing rate. This creates a meaningful early adopter advantage and incentivises sellers to join the waitlist and activate quickly.
+
+8. Enterprise Package
+8.1 Who This Is For
+Large retailers such as Mr Price, Woolworths, Naivas clothing section, and similar brands with existing catalogue systems, multiple locations, and dedicated digital teams. Enterprise is not self-service � negotiated annual contract only. No public pricing page.
+8.2 Key Differentiators from Brand Tier
+FeatureBrand tierEnterpriseInventoryManual upload and CSVAPI integration with existing systems; real-time sync across all locationsConsumer matchingIndividual item notificationsSegment-level targeted style drops to matched consumer cohortsPublishingSelf-serviceBrand safety approval workflow before anything publishesAnalyticsStandard dashboardRetail metrics: sell-through rate, segment conversion, save-to-purchase ratioAd spendWeekly slot modelNegotiated as part of annual contract; not on weekly slot or pack modelPricingKES 10,000/monthNegotiated annual contract KES 100,000 to 500,000/month; no public pricingOnboardingSelf-service"Contact us" only; dedicated onboarding and account management8.3 Boutique Seller Protection
+Enterprise inventory is hard-capped at 20 to 30% of any consumer's outfit suggestions and shopping recommendations. The majority always surfaces boutique and local sellers. Encoded as a hard rule in the recommendation algorithm. Boutique sellers are Style Yangu's founding community and majority subscription base.
+
+9. Payments and Escrow
+9.1 Payment Integrations
+IntegrationStatus at MVPUse caseSafaricom Daraja (M-Pesa)Architecture built; integrated Phase 2STK Push for payments, escrow deposits, artisan payouts, affiliate payouts, boost pack purchasesPaystackArchitecture built; integrated Phase 2Card payments, broader coverage, international cards for enterpriseResendIntegrated at MVPAll transactional email including ad boost notificationsCashMVP � recorded in POSPhysical transactions; not processed by platformBank transferMVP � recorded in POSRecorded manually; not processed by platform
+  Architecture note: M-Pesa and Paystack data models, UI flows, and escrow logic are fully built at MVP. Integrations activate at Phase 2. Boost pack purchases will also route through M-Pesa and Paystack when live. Until then, ad boost is in coming soon mode and no payment processing for packs is required.  
+9.2 Resend Email Integration
+Email typeTriggerRecipientWelcomeAccount creationConsumer, seller, or artisanStylist introductionOnboarding completionConsumer � introduces Amara or Kofi by nameSubscription confirmationPayment processedSeller, artisanSubscription renewal reminder7 days before renewalSeller, artisanSubscription lapsedPayment failure or cancellationSeller, artisan � "Your shop is paused"Trial expiry reminderDay 25 of 30-day trialSeller or artisanOrder confirmationConsumer books artisanConsumer and artisanOrder ready for collectionArtisan marks readyConsumerEscrow deposit receiptDeposit paidConsumerEscrow balance releasedBalance released to artisanArtisanDispute openedConsumer raises disputeBoth parties and adminDispute resolvedAdmin decision madeBoth partiesAd boost waitlist confirmationSeller or artisan joins waitlistSeller or artisan � "You are on the list. We will notify you when Ad Boost launches."Ad boost activation notificationAdmin activates ad boost platform-wideAll waitlisted sellers and artisans � in tier order: Brand first, Boutique second, Hustler thirdWeekly boost summaryMonday morning after any active boost activitySeller or artisan � last week's impressions, wishlist saves, follows, Talk to Seller taps; this week's available slotsBoost pack purchase confirmationPack purchasedSeller or artisan � "Your [Pack Name] is active this week. You have [X] slots available."Low slots alert80% of weekly slots usedSeller or artisan � "You have [X] boost slots remaining this week. Top up with a pack?"Referral code expiry warningDay 13 of 14-day code windowReferrerNew referral signupSomeone signs up via active codeReferrerReferral converted to paidReferred user subscribesReferrerMonthly referral summary1st of each monthAll users with active referralsAffiliate earnings reportMonthlyAffiliate or resellerAffiliate payout confirmationM-Pesa payout sentAffiliate or resellerPassword resetUser requestAny userAccount suspension noticeAdmin actionSuspended user9.3 Escrow Flow
+38. Consumer books artisan and pays deposit (30 to 40% of total) via M-Pesa STK Push
+39. Deposit held by platform; artisan notified with brief and deposit confirmation via WhatsApp and Resend email
+40. Artisan completes order and uploads completion photos � mandatory before any further action
+41. Artisan marks order ready; consumer notified via WhatsApp and Resend email
+42. Consumer collects and confirms satisfaction in app
+43. OR: 72-hour auto-release if consumer does not dispute after stated completion date
+44. Balance releases to artisan via M-Pesa; Resend confirmation email sent
+9.4 Scam Prevention Stack
+LayerMechanism1. Identity verificationPhone OTP, National ID, ID photo with AI face match, business location photo � all required before escrow access2. Graduated trust limitsNew artisans: max KES 2,000 per order first 30 days; lifts after 5 completed orders; full access after 20 completed3. Completion photosMandatory before marking complete; primary dispute evidence layer4. Auto-release window72 hours after ready notification; protects artisans from consumer ghosts5. Rating systemBoth parties rate after every order; visible on profiles6. Threshold alertsArtisans with 2+ disputes in 30 days flagged; consumers with 3+ disputes lose escrow privilege7. M-Pesa identity deterrentAll payouts tied to National ID-linked M-Pesa; fraud reported to Safaricom and relevant authorities8. Reserve fund1 to 2% of every escrow transaction held in reserve for legitimate refunds and ambiguous disputes9. New account monitoringLarge deposits on new artisan accounts flagged for manual admin review9.5 Transaction Fee
+Style Yangu charges 5 to 8% on tailor and artisan booking escrow transactions only. All seller revenue is subscription-only with no transaction fees. The escrow fee covers deposit holding, dispute resolution infrastructure, and consumer protection.
+
+10. Community Invite and Referral Programme
+10.1 Two Distinct Mechanisms
+MechanismPurposeEarningsCommunity invite linkGrow the Style Yangu community genuinely. Share the app with friends.None. Bonus outfit suggestions (+3) awarded only when referred friend subscribes to a paid plan � not on signup.Referral programmeEarn from referring paying subscribers and business accounts. Opt-in required.KES 50 per referred consumer who subscribes to paid. Affiliate: one-off + 15% residual 12 months for sellers, artisans, enterprise.10.2 Invite Link Rules
+� Generated automatically for every consumer after onboarding
+� 14-day expiry from generation date
+� User can generate a new code at any time; immediately mutes the previous code even if unexpired
+� Muting is forward-only: signups under the old code before muting remain attributed and valid
+� Attribution uses click timestamp not signup completion timestamp
+� Click before expiry + signup after expiry = still attributed
+� Click after expiry = no attribution; user lands on normal signup page; click does not increment referrer counter
+� Referral attribution window: 12 months from referred user's signup date
+� No paid subscription within 12 months = attribution record deleted; no future earnings
+10.3 Referral Programme Tiers
+TierAccessPayment triggerRewardReferralOpen to any Style Yangu account; self-serviceReferred user subscribes to any paid plan � NOT on signup aloneFree plan consumer: KES 0. Paid plan consumer who upgrades: KES 50 flat fee.AffiliateApplication required; minimum follower threshold; approval within 5 business daysFirst subscription payment received from referred accountOne-off: KES 500-1,000 for sellers and artisans (negotiated for enterprise) + 15% residual for 12 months from first subscription date
+  Payment trigger is always subscription, never signup alone. Free-plan signups generate KES 0 for the referrer. This closes the gaming loop: fake account creation requires a real subscription payment to generate any earnings.  
+10.4 Referral Counter Model
+CounterTypeResetsDescriptionTotal clicksLifetimeNeverUnique clicks on active codes; expired code clicks excludedTotal joinedLifetimeNeverCompleted signups via this user's codes while activeAwaiting upgradeRollingReal-timeReferred users within 12-month window who have not yet subscribed; decreases on upgrade or window closeUpgraded this monthMonthly1st of each month midnight Nairobi timeReferred users who converted to any paid plan in current calendar monthEarned this monthMonthly1st of each month midnight Nairobi timeKES owed for this month's qualifying upgradesTotal earned / paid outLifetimeNeverCumulative earnings and payouts10.5 Reseller Portal: resellers.styleyangu.co.ke
+� Dashboard: total referrals by type, awaiting upgrade count, pending and paid commissions, conversion rate
+� Current active referral link with expiry countdown and one-tap copy
+� "Generate new code" button with inline note: "Generating a new code will deactivate your current one"
+� QR code for offline sharing
+� Pre-made marketing assets
+� M-Pesa payout monthly; minimum KES 1,000 threshold
+� Full earnings history downloadable as PDF or CSV
+
+11. Privacy and Content Safety
+11.1 Guided Camera: Oval Face Overlay
+Style Yangu never captures the user's face for storage or identity processing. The canvas-based oval overlay prevents face capture at source.
+
+Implementation: camera preview rendered to a canvas element. Oval drawn over canvas at face height in real time. Gaussian blur applied to oval region via Canvas 2D API. When photo is captured, canvas frame with baked-in blur is saved. Original unblurred frame is never written to memory or storage.
+
+Exception � selfie for avatar: oval inverted to guide face into centre of frame. Selfie is captured, processed by Imagen 3, original deleted immediately. Only cartoon output stored.
+
+Camera contextOverlay guideFull body selfie (onboarding)Full body green outline; distance indicator; oval centred for avatar selfie captureRate My OutfitOval at face height; full body outline; step-back distance indicatorWardrobe flat lay (all additions)Rectangle with corner markers; "Lay item flat and fill the frame"; lighting quality indicatorHand photo � skin tone primaryHand-sized oval; lighting quality indicator; "Turn off flash for accurate colour reading"Hand photo � forearm alternativeForearm-length rectangle; "Lay arm flat in natural light, photograph from above"Fabric photoRectangle filling frame; pattern detection confirmation animationShoe photo (seller)Angled guide showing ideal three-quarter perspective
+Lighting quality indicator on all camera modes: green (good natural light), yellow (acceptable), red (too dark or flash detected).
+11.2 Content Moderation Pipeline
+StepToolAction1. Content checkGoogle Cloud Vision Safe Search + Claude HaikuReject if inappropriate; log violation; apply three-strike policy2. Face detectionGoogle Cloud Vision Face DetectionApplied for non-camera inputs such as onboarding Instagram screenshots3. Cartoon processingGoogle Imagen 3Selfies and Rate My Outfit: face and skin cartoonised; original deleted immediately4. CompressionServer-sideConsumer wardrobe: 300KB target; seller product: 500KB target5. StorageCloudflare R2Processed image written; original never stored11.3 Content Exclusions
+� Nudity: rejected; warning issued; three-strike policy enforced
+� Lingerie: excluded entirely until specific demand justifies addition with appropriate controls
+� Swimwear: excluded entirely at MVP
+� Violation strikes: first = warning; second = 7-day feature suspension; third = permanent ban
+
+Rejection message: "This photo does not meet Style Yangu's content guidelines. Please upload a photo showing your outfit in appropriate clothing." Appeals to support@styleyangu.co.ke within 14 days.
+
+12. Legal Framework (First Draft � Requires Counsel Review Before Launch)
+  This section contains first-draft terms and policies built into the platform for real-world testing scenarios. All content must be reviewed, validated, and approved by a qualified Kenyan lawyer before public launch. These are functional drafts, not final legal documents.  
+12.1 Privacy Policy � First Draft
+Data We Collect
+Data typePurposeRetentionAccount information (name, email, phone)Account creation and authenticationUntil account deletionStyle profile (body type, skin tone, preferences)Personalised recommendationsUntil account deletion or user updateWardrobe catalogue metadataOutfit suggestions and stylingUntil account deletionWardrobe photos (compressed, face-blurred)Visual wardrobe catalogueActive account + 30 days after 12-month inactivity warningHand photo for skin toneSkin tone and undertone analysis onlyDeleted immediately after analysis; result stored as profile data onlySelfie for avatarCartoon avatar generation onlyOriginal deleted immediately after Imagen 3 processing; cartoon output stored until account deletionFull body selfie for body typeBody type classification and avatar proportionsOriginal deleted immediately after processing; classification result stored in profileRate My Outfit photosOutfit rating and share card generationCartoon composite stored 30 days then auto-deleted; original never storedLocation dataWeather-based outfit suggestionsNot stored; used in real time onlyPurchase and POS recordsBusiness records for sellers and artisans3 yearsEscrow transaction recordsFinancial compliance7 yearsShoe sizeShoe suggestions and size-matched seller and cobbler recommendationsUntil account deletion or user updateDevice and usage dataApp performance and error monitoring90 daysAffiliate and commission recordsProgramme tracking and payout compliance7 yearsReferral attribution recordsTracking referrals for commission calculation12 months from referred user's signup date; auto-deleted after window closesReferral click dataCounter accuracy and attribution audit12 months from click date; auto-deleted with attribution recordAd impression recordsBoost analytics for sellers and artisans; frequency cap enforcement90 daysBoost campaign recordsSeller and artisan ad spend tracking; performance analytics1 yearAd boost waitlist dataNotification when ad boost activatesUntil user opts out or ad boost is activated and user is notified
+Data We Never Collect
+� Facial identity data: faces are never captured for identity processing or stored in any identifiable form
+� Biometric data beyond skin tone analysis (stored as a colour profile, not biometric data)
+� Full phone contact lists
+� Social media account content beyond what the user explicitly uploads within the app
+� Financial account details beyond what M-Pesa STK Push authorisation requires
+How We Use Your Data
+� To personalise outfit suggestions, shopping recommendations, and stylist communications from Amara or Kofi
+� To match sponsored content (Ad Boost) to consumers based on style profile, body type, skin tone, size, and wishlist activity
+� To operate the platform including storefronts, order management, and escrow services
+� To send transactional communications via Resend email and WhatsApp Business
+� To calculate and pay referral and affiliate commissions
+� To improve AI models using anonymised and aggregated data only
+� We do not sell personal data to third parties
+� We do not share personal data with external advertisers; all ad targeting is internal and based on Style Yangu profile data only
+Ad Targeting and Consumer Rights
+� Sponsored content shown to free-tier consumers is matched using their Style Yangu profile data (style preferences, body type, skin tone, size, wishlist). This data never leaves Style Yangu systems.
+� Consumers have the right to opt out of personalised ad targeting. Opting out means sponsored cards are shown based on general categories only, not individual profile matching.
+� Consumers can remove ads entirely by upgrading to the Premium tier.
+� Ad impression data is used only for frequency cap enforcement and seller analytics. It is not shared with sellers in identifiable form � sellers see aggregate counts, not individual consumer identities.
+Data Sharing
+Shared withWhat is sharedWhyGoogle Cloud VisionUploaded images (processed in transit; not stored beyond processing)Content moderation and face detectionGoogle Imagen 3Selfie images for cartoon processing (not stored beyond processing)Avatar and Rate My Outfit cartoon generationAnthropic Claude APIPhoto data and text prompts (not stored beyond processing)Outfit analysis, rating, suggestions, tagging, henna detectionSafaricom DarajaPhone number and transaction amountM-Pesa payment processingPaystackPayment details required for transaction processingCard payment processingResendEmail address and email contentTransactional email deliveryCloudflare R2Compressed and processed imagesImage storageRender PostgreSQLAll structured dataDatabase; authentication handled by Node/Express JWT middleware layerRenderApplication code and environmentHosting and compute
+Your Rights Under the Kenya Data Protection Act 2019
+� Right to access: request a copy of all personal data we hold about you
+� Right to correction: request correction of inaccurate personal data
+� Right to deletion: request deletion of your account and all associated personal data
+� Right to data portability: request your data in a machine-readable format
+� Right to object: object to processing of your data for specific purposes including ad targeting
+� To exercise any of these rights, contact: privacy@styleyangu.co.ke
+
+Style Yangu is committed to compliance with the Kenya Data Protection Act 2019 and the Computer Misuse and Cybercrimes Act 2018.
+12.2 Consumer Terms of Service � First Draft
+Use of the Platform
+� Style Yangu is provided for personal styling and fashion guidance purposes
+� You must be 13 years or older to create an account; users under 18 require parental consent
+� You are responsible for maintaining the security of your account credentials
+� One account per person; accounts are non-transferable
+Free Tier and Sponsored Content
+� The free tier of Style Yangu is supported by sponsored content (Ad Boost) from sellers and artisans on the platform
+� By using the free tier, you consent to seeing sponsored suggestion cards clearly labelled "Sponsored" as part of the outfit suggestion flow
+� Sponsored content is matched to your Style Yangu profile; your data is never shared with external advertisers
+� You can opt out of personalised ad matching in your settings; you will still see sponsored content but matched by general category only
+� You can remove sponsored content entirely by upgrading to a Premium subscription
+� The free tier provides 1 outfit suggestion per day; additional suggestions can be unlocked by viewing sponsored cards or photographing wardrobe items via camera
+Wardrobe Content Policy
+� All wardrobe item additions after onboarding must be photographed using the device camera; file uploads from photo libraries are not permitted
+� During onboarding only, screenshots from Instagram store posts may be submitted for purchased or planned items
+� You must not add items to your wardrobe that you do not own or plan to own; the suggestion engine is designed around your actual wardrobe
+Content You Upload
+� You retain ownership of photos and content you upload to Style Yangu
+� By uploading content you grant Style Yangu a non-exclusive licence to process and display that content within the platform for the purposes of providing the service
+� You must not upload content depicting nudity, lingerie, swimwear, or any content violating our content guidelines
+� You must not upload content depicting minors in any context
+� Repeated content violations will result in account suspension or permanent ban
+AI Styling Advice
+� Styling suggestions from Amara, Kofi, and Style Yangu are provided for guidance only
+� Style Yangu does not guarantee that any recommendation will meet your personal expectations
+� AI ratings and feedback reflect automated assessment and do not constitute professional fashion advice
+Payments and Subscriptions
+� Subscription fees are charged in advance on a monthly basis
+� Subscriptions auto-renew unless cancelled before the renewal date
+� Refunds are not provided for partial months of service
+� Style Yangu reserves the right to modify pricing with 30 days notice to subscribers
+Limitation of Liability
+� Style Yangu provides the platform on an "as is" basis and makes no warranties of uninterrupted availability
+� Style Yangu is not liable for any indirect, incidental, or consequential damages arising from use of the platform
+� Our maximum liability for any claim is limited to subscription fees paid in the 3 months preceding the claim
+12.3 Seller Terms of Service � First Draft
+� Sellers must accurately represent products including sizes, colours, and condition
+� Sellers must not list counterfeit, stolen, or prohibited goods
+� Sellers must fulfil orders or communicate delays in a timely manner
+� Sellers must not use Style Yangu client data to build external mailing lists or contact consumers outside the platform without their explicit consent
+� AI-generated showcase images are for use on the Style Yangu platform and storefront promotion only
+� Showcase images may not be used to misrepresent the actual product
+� The Try This On feature may only be used for genuine personalised recommendations; spam results in feature suspension
+� Storefronts are paused (not deleted) on subscription lapse; data held for 30 days
+� Free trial is limited to 5 total AI showcase generations; this cannot be extended or reset by creating additional accounts
+
+Ad Boost Terms
+� Ad Boost is available to paid subscription tiers only; it is not available during the free trial period
+� Boosted items must accurately represent the product available for purchase; misleading sponsored content will result in boost suspension and possible account action
+� Boost analytics (impressions, wishlist saves, follows, Talk to Seller taps) are estimates based on platform tracking data and are not guaranteed conversion figures
+� Boost slot allocations reset weekly on Monday midnight Nairobi time; unused slots do not roll over and are not refundable
+� Style Yangu reserves the right to adjust ad frequency requirements based on consumer inventory levels; sellers will be notified of significant changes
+� Style Yangu does not guarantee specific reach, impressions, or conversions from ad boost spend
+12.4 Artisan Terms of Service � First Draft
+� Artisans must only offer appointments at their listed and verified physical business location
+� Artisans must not facilitate or advertise home visit services through the Style Yangu platform
+� Style Yangu expressly disclaims liability for any harm arising from arrangements made outside the platform or away from verified artisan locations
+� Artisans must upload completion photos before marking any order as complete
+� Artisans must not submit fraudulent completion claims
+� All escrow payouts are made to the M-Pesa number linked to the artisan's registered National ID
+� Fraudulent activity will be reported to Safaricom, the Communications Authority of Kenya, and relevant law enforcement authorities
+� Style Yangu charges 5 to 8% on escrow transactions for deposit holding, dispute resolution, and consumer protection
+� Consumer measurements collected during appointments are stored within Style Yangu only and must not be recorded or used outside the platform
+� Artisan Ad Boost terms: same conditions as seller Ad Boost terms above; "Book a Consultation" CTAs must accurately represent the services offered
+12.5 Affiliate and Reseller Terms � First Draft
+� Affiliates and resellers must promote Style Yangu honestly and accurately
+� Self-referral is prohibited and results in immediate programme termination
+� Coordinated fraudulent referral activity results in termination and forfeiture of all pending commissions
+� Style Yangu reserves the right to modify commission rates with 30 days notice to active affiliates
+� Affiliates must disclose their affiliate relationship when promoting Style Yangu in accordance with applicable advertising standards
+� Commissions are forfeited if the referred account is found to be fraudulent or violates platform terms
+� Referral code expiry: each code is valid for 14 days from generation; generating a new code immediately deactivates the previous one
+� Attribution window: referral earnings apply only to paid plan upgrades within 12 months of the referred user's signup date
+� Payment trigger: referral earnings are credited only when the referred user subscribes to a paid plan; free-plan signups alone do not qualify
+12.6 Content and Safety Policy
+� Style Yangu prohibits nudity, lingerie, swimwear, and sexually explicit content
+� Style Yangu prohibits content depicting violence, hate speech, or discrimination
+� Style Yangu strictly prohibits any content involving minors in inappropriate contexts
+� Three-strike policy: first = warning; second = 7-day suspension; third = permanent ban
+� Style Yangu cooperates fully with law enforcement requests relating to prohibited content
+� Content decisions may be appealed by contacting support@styleyangu.co.ke within 14 days
+12.7 Platform Indemnity Clause
+By using Style Yangu, users agree to indemnify and hold harmless Style Yangu, its directors, employees, and agents from any claims, damages, or expenses arising from: (a) use of the platform in violation of these terms; (b) any arrangements or interactions made outside the platform or away from verified artisan locations; (c) inaccurate information provided during onboarding or in product listings; (d) disputes between consumers and sellers or artisans arising from transactions not processed through the platform's escrow system; (e) fraudulent referral or affiliate programme activity; (f) misleading sponsored content submitted through Ad Boost.
+
+13. Admin Dashboard
+13.1 User Management
+� View all consumers, sellers, artisans, enterprise accounts, and affiliates with full activity history
+� Verify or reject artisan applications; required before escrow access is granted
+� Suspend or ban accounts with reason logging and automated Resend notification
+� Three-strike enforcement with full violation history per account
+� User impersonation mode: view any app exactly as a specific user; read-only; combined with weather simulation for rapid issue reproduction
+13.2 Financial Oversight
+� All escrow transactions in real time
+� Reserve fund balance and full transaction history
+� Disputed transactions queue with evidence from both parties (all face-blurred)
+� Manual release or refund controls with full decision audit trail
+� Payout history per artisan with M-Pesa confirmation references
+� Subscription revenue by tier across all user groups
+� Affiliate commission ledger: pending, paid, and forfeited
+� Ad boost revenue: weekly pack purchases by tier, total weekly ad revenue, revenue trend
+13.3 Ad Boost Management
+Central command for the ad ecosystem. This section is built at MVP but populated with coming soon data until the activation threshold is reached.
+
+ControlDescriptionAd boost activation toggleOff (coming soon mode) / On (live). Flipping to On sends Resend activation emails to waitlisted sellers in tier order. Cannot be reversed without a full deactivation process.Consumer threshold displayLive counter showing current active consumer count vs activation threshold (1,000-2,000). Admin sets the exact threshold before launch.Waitlist managementFull list of waitlisted sellers and artisans by tier, signup date, and email. Export to CSV for manual outreach if needed.Ad inventory levelCurrent number of active boost slots across all sellers and artisans. This number drives the ad frequency phase decision. Admin sets phase transitions.Frequency phase controlPhase 1 (no ads) / Phase 2 (1 ad per suggestion) / Phase 3 (2 ads per suggestion). Manual toggle with confirmation dialog. Changes take effect immediately.Active boost campaignsAll currently active boosts: seller name, item, slots used, impressions so far this week, wishlist saves, follows, Talk to Seller taps.Frequency cap monitoringReal-time check that no seller is exceeding 1 appearance per consumer per day or 3 per week. Flag and alert if cap enforcement fails.Weekly ad revenue reportTotal KES from pack purchases this week, by pack type, by tier. Running monthly total.Consumer ad experience metricsImpressions served today, click-through rate on sponsored cards, unlock rate (% of free-tier consumers who watched an ad to unlock a suggestion), wardrobe-addition unlock rate.13.4 Lead Source Tracking
+Lead sourceDescriptionReferral creditActive referral linkSigned up within 14 days of clicking a valid referral codeYes � referrer gets attribution; earnings triggered on paid upgradeExpired referral linkClicked referral link after 14-day expiry; still signed upNo earnings. Original referrer username stored in admin for platform analytics only � not shown to referrer.Affiliate linkArrived via formal affiliate programme tracked linkAffiliate commission rules applyOrganic searchArrived via search engine with no referral codeNoneSocial mediaClicked Style Yangu social bio link or post (not a referral code)NoneDirect or PWA installTyped URL or installed PWA directlyNoneCampaign linkArrived via UTM-tagged marketing campaignNone; tracked separately by campaignUnknownNo source detectedNone13.5 Weather Simulation Tool
+ControlOptionsSimulation toggleOff (live weather) / On (simulated for test accounts)Target scopeSpecific test accounts or all test-flagged accountsTemperatureSlider: 0 to 45 degrees CelsiusConditionSunny, cloudy, light rain, heavy rain, thunderstorm, windy, humid, cold, foggyWind speedCalm to very windy with specific km/h valuesHumidityPercentage slider 0 to 100Time of dayMorning, afternoon, evening, nightDurationHow long simulation runs before reverting to live
+Presets: Nairobi rainy season (heavy rain, 18C, high humidity), Nairobi dry season (sunny, 28C, low humidity, moderate wind), Nairobi cold morning (14C, foggy, low wind), Mombasa coastal (sunny, 34C, high humidity, sea breeze), Nairobi cold evening (12C, light rain, windy). All sessions logged with timestamp, admin user, conditions, and duration.
+13.6 Platform Analytics
+� Daily, weekly, and monthly active users per app
+� New signups by user type and lead source (full taxonomy)
+� Free trial to paid conversion rate by tier
+� Gross merchandise value through the platform
+� Escrow volume, average order size, and dispute rate
+� Consumer engagement: streak lengths, outfits planned, ratings submitted, try-on interactions
+� Free tier engagement: daily suggestion unlock rate, ad watch rate vs wardrobe addition rate, cap hit rate
+� Notification open rates by type and by stylist name (Amara vs Kofi comparison)
+� AI cost per active user with real-time monitoring against revenue
+� Ad boost revenue: weekly and monthly totals, by tier, by pack type
+� Referral and affiliate programme performance
+� Seller gaming detection: flagged accounts, multi-account attempts, manual review queue
+
+14. Technical Architecture
+14.1 Monorepo Structure
+PathContentsapps/landingMarketing landing pageapps/consumerConsumer PWAapps/sellerSeller PWAapps/tailorTailor and Artisan PWAapps/adminAdmin dashboardapps/resellerAffiliate and reseller portalpackages/uiShared component library: avatar, badge system, camera overlays, sponsored card component, ad unlock flowpackages/typesShared TypeScript types: user, order, inventory, payment, notification, affiliate, artisan, referral, ad boost, boost packpackages/api-clientType-safe API client; auth handling; retry logicpackages/utilsCurrency, dates, image compression, M-Pesa validation, colour utilities, shoe size conversion, ad frequency calculationpackages/hooksuseWeather, useAuth, useNotifications, useAvatar, useInventory, useAffiliate, useStylist, useReferral, useAdBoostpackages/configShared configuration and environment variable managementservices/apiMain backend API (Node/Express on Render)services/aiClaude API, Imagen 3, prompt versioning, caching, henna detection, outfit suggestion sequencing, sponsored card matchingservices/paymentsM-Pesa Daraja, Paystack, escrow logic, payouts, reserve fund, affiliate commission calculation, boost pack billingservices/notificationsPWA push, WhatsApp Business API, Resend email, digest compilation, re-engagement sequences, referral notifications, ad unlock nudgesservices/storageCloudflare R2 integration, image pipeline, retention enforcement, ad impression record purgeservices/moderationGoogle Cloud Vision Safe Search, face detection, three-strike enforcement, seller gaming detectionservices/adsAd boost matching engine, frequency cap enforcement, slot allocation tracking, boost analytics aggregation, phase management14.2 Tech Stack
+LayerTechnologyRationaleMonorepo toolingTurborepo + npm workspacesFast builds; only changed apps rebuild on pushAll appsReact + Vite + TypeScriptFast builds; PWA support; full type safetyStylingTailwind CSS with shared design tokensConsistent across all six appsServer stateReact QueryCache management, background refetching, optimistic updatesDatabase and authRender PostgreSQL + JWTManaged PostgreSQL on Render; JWT auth + Google OAuth in Node/Express API layer; PostgreSQL row-level security; WebSockets/SSE for real-time featuresImage storageCloudflare R2Free egress � critical when serving thousands of showcase images dailyAI text and visionClaude Sonnet (complex) + Claude Haiku (high-volume simple)Outfit generation, skin tone, henna, rating, fabric, body type, ad matching; notification matching, tagging, moderationAI image generation and cartoonGoogle Imagen 3Model showcases, studio renders, hat renders, selfie cartoon, Rate My Outfit cartoon, fabric design, sponsored card avatarsContent moderationGoogle Cloud Vision Safe Search + Face DetectionTwo checks in one API callTransactional emailResendAll platform email flows including ad boost notificationsPayments � mobile moneySafaricom Daraja APIM-Pesa STK Push; Phase 2Payments � cardPaystackCard coverage; Phase 2CachingRedis (Render add-on)Reduce Claude API calls 40-60%; cache weather, outfit combos, skin tone, ad frequency countsDeploymentRenderMonorepo native; auto-deploy on GitHub pushCI/CDGitHub Actions + Turborepo cacheOnly changed apps rebuildPush notificationsPWA Push APIAndroid native; iOS from 16.4 with home screen installWhatsAppWhatsApp Business APITransactional: receipts, order updates, artisan communicationsWeatherOpenWeather API free tierLocation-based weather; cached per location every 3 hours14.3 AI Model Selection by Task
+TaskModelNotesOutfit suggestion (clothing)Claude SonnetComplex multi-variable reasoningShoe suggestion (only when prompted; wardrobe non-empty)Claude SonnetShoe size as hard filter; suppressed if wardrobe category emptyHat suggestion (only when prompted; wardrobe non-empty)Claude SonnetSuppressed if wardrobe category empty; no API call madeAd boost matchingClaude HaikuHigh-volume profile matching for sponsored card targeting; runs against ad inventory poolSkin tone and undertone analysisClaude SonnetNuanced colour reading from hand, forearm, or thigh photoHenna detectionClaude SonnetVisual detection with contextual judgment about coverage extentOutfit rating and feedbackClaude SonnetMulti-category assessment with honest narrative in named stylist voiceFabric pattern extractionClaude SonnetVisual understanding of print, colour, and textureBody type reading from selfieClaude SonnetProportional analysis from two photosNotification matchingClaude HaikuHigh-volume simple pattern matching; batch overnightWardrobe item auto-taggingClaude HaikuCategory, colour, and occasion classification from photoContent moderation second checkClaude HaikuBinary appropriate/inappropriate decisionSelfie cartoonisationGoogle Imagen 3Disney/Pixar style; face and skin only; clothing untouchedRate My Outfit cartoon layerGoogle Imagen 3Same: face and skin cartoon; clothing photorealisticClothing showcase generationGoogle Imagen 3Full body avatar with outfit; Kenyan face from library; AI-selected backgroundSponsored card avatar matchingGoogle Imagen 3Renders boosted item on avatar matching consumer's body type and skin tone from seller's existing showcase libraryHat face and neck renderGoogle Imagen 3Face and neck only; no body; AI-selected backgroundShoe studio renderGoogle Imagen 3Product photography aesthetic; multiple angles; AI-selected surface and lightingFabric design on avatarGoogle Imagen 3Pattern applied to chosen silhouette on user's avatar14.4 Storage Architecture
+Data typeStorageRetentionUser profile and preferencesRender PostgreSQLUntil account deletionWardrobe metadata (text, image links)Render PostgreSQLUntil account deletionWardrobe photos (compressed, face-blurred)Cloudflare R2Active account + 30 days after 12-month inactivity warningOutfit combination recipes (free tier)Render PostgreSQL (item IDs + context � no rendered image)Indefinite; visual regenerated on demandGenerated outfit visuals (free tier)Never stored � session onlyUser saves to phone or shares immediatelyGenerated outfit visuals (premium tier)Cloudflare R290 days; favourites indefiniteCartoon avatar from selfieCloudflare R2Until account deletion or avatar retakeSeller product photosCloudflare R2Active subscription + 30 days graceSeller AI showcase imagesCloudflare R2Active subscription + 30 days graceRate My Outfit cartoon compositeCloudflare R230 days then auto-deletedPOS and sales recordsRender PostgreSQL3 yearsEscrow transaction recordsRender PostgreSQL7 yearsArtisan order records and measurementsRender PostgreSQL3 yearsDispute evidence photosCloudflare R230 days post-resolution then deletedAffiliate commission recordsRender PostgreSQL7 yearsReferral attribution recordsRender PostgreSQL12 months from referred user signup date; auto-deletedReferral click dataRender PostgreSQL12 months from click date; auto-deleted with attribution recordAd impression recordsRender PostgreSQL90 days; used for frequency cap enforcement and boost analyticsBoost campaign recordsRender PostgreSQL1 year; used for seller analytics and billing reconciliationAd boost waitlist dataRender PostgreSQLUntil user opts out or activation notification is sent14.5 Caching Strategy
+� Skin tone analysis: run once; cached permanently; re-run only if user explicitly requests update
+� Weather data: cached per location; refreshed every 3 hours
+� Outfit suggestions: cached for same wardrobe state and weather conditions for 6 hours
+� Ad frequency counts: cached in Redis per seller-consumer pair; refreshed every hour; used for real-time cap enforcement
+� Ad inventory pool: cached list of available boost slots and their targeting criteria; refreshed every 15 minutes
+� Shoe and hat suggestion prompts: wardrobe category count checked from cache before any AI call; if zero items, suppress prompt and make no API call
+� Notification matching: batch overnight; uses Claude Haiku
+� Seller showcase images: stored permanently in R2 once generated; never regenerated� Sponsored card avatar renders: pre-rendered at boost slot activation using a consumer archetype grid (5 body types x ~8 skin tone ranges = ~40 archetypes). At activation, the ads service generates the boosted item on all 40 archetypes via Imagen 3 (~.80 per item) and caches renders in Cloudflare R2. All subsequent impressions serve the cached archetype render matching the consumer nearest-archetype; no live Imagen 3 call per impression. Cache key: sponsored_card/{item_id}/{archetype_id}. Renders reused across boost periods unless showcase image changes; on change, only affected archetypes are re-rendered.
+14.6 Ad Boost Service Architecture
+The ads service (services/ads) manages the complete ad lifecycle independently of the main API for performance isolation.
+
+ComponentResponsibilityInventory pool managerMaintains a real-time pool of available boost slots with their targeting criteria. Refreshes every 15 minutes. Feeds the matching engine.Matching engineGiven a consumer profile and a request for a sponsored card, selects the most relevant available boost slot using the priority stack (wishlist match > profile match > category affinity). Uses Claude Haiku for profile comparison.Frequency cap enforcerChecks Redis cache before serving any sponsored card. Rejects if seller has already appeared to this consumer today (1x cap) or 3x this week. Updates cache on every impression.Phase controllerReads the current ad frequency phase from admin config. Returns the number of sponsored cards required to unlock one organic suggestion. Responds to admin phase changes immediately.Slot trackerRecords every impression against the seller's weekly slot allocation. Triggers low slots alert at 80% usage. Resets all allocations Monday midnight Nairobi time.Analytics aggregatorCollects impression, wishlist save, follow, and Talk to Seller tap events. Aggregates by seller, item, time period, and consumer segment. Writes to boost campaign records in Render PostgreSQL.Archetype render managerAt boost slot activation, checks R2 for existing archetype renders per item. Generates missing renders via Imagen 3 in a background job (~40 renders per item). Blocks the boost slot from going live until the full archetype set is complete. On showcase image change, invalidates and re-renders affected archetypes only. Stores renders at key sponsored_card/{item_id}/{archetype_id} in Cloudflare R2.Coming soon gateWhen ad boost is in coming soon mode, this component intercepts all ad requests and returns a coming soon response. The rest of the infrastructure runs normally but no real ads are served.14.7 Render Deployment
+ServiceRender planNotesAll six PWA apps (static)Free static siteNo spin-down on static sitesMain API serviceStandard ($25/mo)Always-on; no cold start acceptableAI serviceStandard ($25/mo)Always-on for Claude and Imagen 3Payments serviceStandard ($25/mo)Critical; always-on requiredAds serviceStandard ($25/mo)Always-on; frequency cap enforcement must be real-timeNotifications serviceStarter ($7/mo)Async; brief cold start acceptableModeration serviceStarter ($7/mo)Can queue; brief delay acceptableRedis cache$10-30/mo add-on25MB starter; scale as volume grows
+15. Cost Estimates
+15.1 Per-Action AI Costs
+ActionModelEst. costKES approx.Skin tone analysisClaude Sonnet$0.008KES 1.00Henna detection checkClaude Sonnet$0.005KES 0.65Body type reading (2 photos)Claude Sonnet$0.012KES 1.55Wardrobe item taggingClaude Haiku$0.002KES 0.25Outfit suggestion (clothing)Claude Sonnet$0.004KES 0.50Shoe suggestion (if prompted; wardrobe non-empty)Claude Sonnet$0.003KES 0.39Hat suggestion (if prompted; wardrobe non-empty)Claude Sonnet$0.003KES 0.39Outfit rating and feedbackClaude Sonnet$0.006KES 0.75Ad boost matching (per sponsored card)Claude Haiku$0.001KES 0.13Notification match checkClaude Haiku$0.001KES 0.13Selfie cartoonisationGoogle Imagen 3$0.04KES 5.20Rate My Outfit cartoon layerGoogle Imagen 3$0.04KES 5.20Clothing showcase generationGoogle Imagen 3$0.04KES 5.20Sponsored card avatar render (archetype cache; charged at activation not per impression)Google Imagen 3$0.02 per archetype render (~$0.80 per item for full 40-archetype set at activation)KES 2.60 per render / KES 104 per item at activationHat face and neck renderGoogle Imagen 3$0.03KES 3.90Shoe studio renderGoogle Imagen 3$0.03KES 3.90Fabric design renderGoogle Imagen 3$0.04KES 5.2015.2 Monthly Infrastructure at Growth Stage (5,000 consumers, 300 sellers)
+ItemMonthly costClaude API (consumer and seller usage with caching)KES 250,000Google Imagen 3 (showcase, cartoon, fabric, sponsored card renders)KES 115,000Google Cloud Vision (moderation + face detection)KES 7,800Render compute (5 paid backend services including ads service)KES 13,325Cloudflare R2 storage (~82GB)KES 2,475Redis cache (enlarged for ad frequency tracking)KES 3,900Render PostgreSQL databaseKES 3,250WhatsApp Business API notificationsKES 15,000Resend email (including ad boost notifications)KES 3,000Domains, monitoring, error trackingKES 5,000Total infrastructure costKES 418,750
+Against projected growth-stage revenue of approximately KES 1,070,000/month from subscriptions alone, plus emerging ad boost revenue from pack purchases, this leaves a healthy operating margin.
+
+Ad Revenue Offset
+At growth stage with 300 paid sellers, assuming conservative ad boost adoption:
+� 50 sellers on Starter Pack at KES 100/week: KES 5,000/week = KES 20,000/month
+� 30 sellers on Growth Pack at KES 220/week: KES 6,600/week = KES 26,400/month
+� 10 sellers on Campaign Pack at KES 400/week: KES 4,000/week = KES 16,000/month
+� Total estimated ad pack revenue at growth stage: approximately KES 62,400/month
+
+Ad revenue directly offsets the consumer-side AI cost of serving free-tier suggestions. As ad adoption grows, it increasingly subsidises the free tier. At scale, ad revenue is expected to cover the majority of consumer-side AI spend, making the free tier fully self-sustaining.
+
+  Token savings from empty wardrobe category suppression: skipping shoe and hat suggestion API calls for users with empty categories saves approximately KES 0.78 per session for those users. At scale across thousands of daily sessions this is a meaningful saving.  
+
+16. Build Sequence
+Phase 1: Foundation
+� Monorepo scaffold with Turborepo: all six apps and shared packages including ads service
+� PostgreSQL schema for all four participant types including affiliate, reseller, referral, ad boost, and boost pack tables
+� Resend integration: all transactional email templates including ad boost flows
+� Landing page: establishes domain, starts SEO, value propositions for all participant types
+� Admin app: basic user management, artisan verification queue, lead source tracking, ad boost management section (coming soon state)
+� Consumer app: account creation, stylist selection (Amara or Kofi), basic onboarding flow
+� Ad boost infrastructure: sponsored card component, frequency cap logic, coming soon gate, waitlist capture � built but not active
+Phase 2: Core Consumer Experience
+� Full body selfie flow with body type detection and Imagen 3 cartoon processing (face and skin only)
+� Hand photo skin tone capture with henna detection and alternative location flows
+� Shoe size capture (gender-neutral) with size-specialist matching logic
+� Wardrobe guided capture � camera-only policy enforced from day one; flat-lay overlay with lighting quality indicator
+� Outfit suggestion engine with fixed sequence: clothing first, shoes on request (wardrobe non-empty), hats on request (wardrobe non-empty)
+� Token suppression logic: wardrobe category count check before any shoe or hat API call
+� Free tier suggestion mechanic: 1 daily suggestion as push nudge; unlock mechanic built (ad phase 1 = wardrobe addition only); 3 suggestion daily cap
+� Wardrobe addition unlock: camera-only flat-lay flow; 2 photos = 1 extra suggestion; anti-upload enforcement
+� Named stylist voice throughout: Amara or Kofi
+� Learned nudge timing: behaviour pattern learning after 5 to 7 days of usage
+� Weather-aware suggestions and warning system with avatar animation
+� Guided camera with oval overlay and lighting quality indicator across all capture contexts
+� Content moderation pipeline: Google Cloud Vision + Claude Haiku
+� Consumer invite link: generation, 14-day expiry, muting on regeneration, click timestamp attribution
+� Referral programme enrolment: counter model, monthly reset logic, Resend notification flows
+Phase 3: Seller and Artisan Core
+� Seller app: Imagen 3 showcase generation (clothing full body, hat face/neck, shoe studio modes)
+� Seller app: multi-account gaming prevention stack
+� Seller app: inventory management with shoot-and-stock flow; gender-neutral shoe sizing
+� Seller app: POS with WhatsApp receipts and Resend email receipts
+� Seller app: privacy-safe client list phonebook with username-only contacts and freeform nicknames
+� Seller app: Try This On feature with in-app only notifications
+� Seller app: discount management with badge system
+� Seller app: Ad Boost dashboard � coming soon treatment with waitlist signup for all paid tiers
+� Artisan app: profile, portfolio on avatars, order management, measurement appointments
+� Artisan app: POS adapted for custom order workflow including cobbler foot measurement fields
+� Artisan app: Ad Boost dashboard � coming soon treatment with waitlist signup
+Phase 4: Payments and Commerce
+� Payments architecture: M-Pesa Daraja STK Push and Paystack integrations fully live (including boost pack billing)
+� Escrow system: deposit holding, 72-hour auto-release, dispute queue, completion photo enforcement
+� Scam prevention: graduated trust limits, reserve fund, new account monitoring
+� Seller storefront: live subdomains, SEO optimised, powered-by footer, watermark system
+� Enterprise package: API inventory sync, brand safety workflow, segment-level matching, boutique protection hard cap
+� Rate My Outfit: Imagen 3 cartoon treatment, rating engine, share card generation
+� Fabric design tool: pattern extraction, silhouette rendering, artisan brief sending
+Phase 5: Engagement, Growth, and Ad Activation
+� Push notification system: all sequences including ad unlock nudge after first daily suggestion
+� Personalised new item notifications with overnight batch matching; shoe size gender-neutral hard filter
+� Gamification: streaks, style points, badges, weekly challenges, leaderboards, friend groups
+� Bonus suggestions: camera-photographed wardrobe completion (+2), paid plan referral (+3), 7-day streak (+5)
+� Outfit of the day share cards: cartoon avatar in outfit; weather context; streak count; watermark
+� Weekly style recap and improvement notifications
+� Affiliate and reseller programme: resellers.styleyangu.co.ke portal fully live
+� Admin: weather simulation tool, user impersonation mode, affiliate commission ledger, full ad boost management
+� Ad boost activation: when consumer threshold reached, admin flips activation toggle; Resend notifications go to waitlisted sellers in tier order; Phase 2 (1 ad per suggestion) begins
+� Ad matching engine: sponsored card matching against consumer profiles using priority stack
+� Frequency cap enforcement: Redis-backed real-time cap checking
+� Boost analytics: live for all seller and artisan tiers at appropriate detail levels
+� Pack purchase flow: Starter, Growth, and Campaign Packs available; Max Pack visible as coming soon
+Phase 6: Polish and Scale
+� Delivery integration placeholder activated (Sendy or Fargo partnership)
+� In-app consumer-to-seller purchase flow (optional at first with featured placement incentive)
+� Consumer premium gallery: outfit history, favourites, planning calendar
+� Advanced seller analytics: dead stock identification, restock recommendations, try-on conversion tracking
+� Artisan verified badge system fully live
+� Shopping affiliate links and external commission tracking
+� Automated 12-month referral record purge scheduled job
+� Ad phase review: assess consumer engagement data; consider transition from Phase 2 to Phase 3 (2 ads per suggestion) if inventory and engagement support it
+
+17. Key Product Decisions Log
+DecisionChoice madeReasoningApp typePWAFaster to build; no app store dependency; sufficient camera and push supportPersonal stylistNamed from day one: Amara (F) or Kofi (M)Emotional attachment; feels like a relationship; drives daily active use and reduces churnBody type inputTwo full body selfies replacing self-selection selectorSelf-selection unreliable; photos give AI accurate data; selector as fallbackCartoon treatment scopeFace and skin only; clothing always untouchedClothing must be photorealistic for accurate outfit assessment; applies to selfie and Rate My OutfitOriginal photo retentionDeleted immediately after Imagen 3 processingStrongest possible privacy story; no facial data ever exists at restHenna handlingDetection + two alternative locations: forearm (primary) and thigh (secondary)Culturally essential; forearm preserves vein reading; thigh noted as lower confidence internallyShoe size scopeGender-neutral; applies to all users; hard filter not soft preferenceShoe size is a practical constraint for everyone; removed all gendered language throughoutWardrobe additions: camera-onlyNo file uploads permitted for wardrobe additions after onboardingPreserves wardrobe integrity; prevents gaming of wardrobe-addition unlock mechanic; onboarding Instagram screenshots are the only exception and are tagged as purchased/planned not ownedOutfit suggestion sequenceClothing first; shoes on request; hats on request; prompts suppressed if wardrobe category emptyClothing is the foundation; empty category check prevents wasted tokens; shopping suggestions unaffectedFree tier suggestion model1 free suggestion per day as push nudge; unlock more via ads or camera wardrobe addition; cap at 3/dayCreates a free-for-life tier sustained by local ad ecosystem; nudge framing makes the free suggestion feel like a gift not a rationAd unlock methodWatch ads OR camera-photograph 2 wardrobe items to unlock 1 extra suggestionCamera-only for wardrobe addition prevents gaming; ads provide an alternative that funds the platformAd frequency: adaptive phasesPhase 1 (no ads; wardrobe only), Phase 2 (1 ad/suggestion), Phase 3 (2 ads/suggestion); driven by ad inventoryPrevents bad consumer experience from low inventory; scales naturally with seller ad adoptionAd activation threshold1,000 to 2,000 active consumers before ad boost goes liveEnsures ad inventory can be served to a meaningful audience; protects early consumer experienceAd boost eligibilityPaid subscription tiers only; free trial and post-trial free sellers excludedPrevents ad product from becoming a subscription bypass; maintains commercial relationship integrityMax PackBuilt but permanently "Coming Soon" until data justifies activationInfrastructure is ready; activation based on demand and inventory data not schedule; no planned timelineSponsored card formatNatural card with "Sponsored" label; AI showcase on matched avatar; Talk to Seller / Follow / Wishlist CTAsConsumer is in active fashion mindset; relevant sponsored content feels like a recommendation not an interruptionAd targeting priority stackWishlist matches first; profile matches second; category affinity thirdRelevance is critical; wishlist matches are highest intent; profile matching works at any scaleEnterprise ad spendNegotiated as part of annual contract; not on weekly slot or pack modelEnterprise scale and brand safety requirements cannot fit into the self-service slot modelEarly adopter ad pricingLocked at entry rate for duration of active subscription at time of joiningCreates meaningful incentive to join waitlist and activate early; rewards commitmentImage generationGoogle Imagen 3Better photorealism for fashion; Google ecosystem alignment with Cloud VisionEmail serviceResendDeveloper-friendly; reliable; branded templates; all flows including ad boostPaymentsDaraja + Paystack; architecture MVP; integrations Phase 2Architecture ready; manual recording covers MVP testingSeller revenueSubscription only; no transaction fees on sellersSimpler; predictable; builds trust before leverageFree trial limit5 total AI showcase generations; 2F + 2M faces; visible watermarkDemonstrates value without enabling full business operation on free tierClient list privacyStyle Yangu usernames only; freeform seller-assigned nicknames; no PIIKenya Data Protection Act 2019 compliance; consumer trustCommunity invite vs referralTwo separate mechanisms: community link (no earnings) and referral programme (opt-in, earnings)Mixing creates transactional psychology that undermines genuine community sharingReferral payment triggerPaid subscription, not signupPrevents gaming through fake account creationReferral code expiry14-day window; regeneration immediate and forward-only mutingCreates mild urgency; gives user controlReferral attributionClick timestamp; 12-month window; auto-deletion after windowClick is the referrer-controlled action; 12 months captures realistic conversion windowBoutique seller protectionHard cap: enterprise max 20-30% of consumer feedBoutique sellers are the founding community and majority subscription baseSwimwear and lingerieExcluded entirely at MVPLegal and brand risk; excluded until demand justifies appropriate infrastructureHome visits for artisansNot facilitated; platform safety notice and indemnity clausePersonal safety risk; litigation exposureLegal frameworkFirst-draft terms built into app for testing; lawyer review before public launchTesting reflects real-world scenarios; documents validated before public exposureStorage � free tier outfitsCombination recipe stored; rendered image session-onlyMajor cost saving; natural premium differentiator; drives sharing behaviourStylist personality at MVPSingle personality per stylist; full personality selection in future roadmapGetting personality right requires extensive prompt engineering and cultural testing
+18. Future Feature Roadmap
+FeatureBuild triggerNotesStylist personality selectionCore product stable; user base large enough to testFour personalities: Nairobi BFF, Honest Pro, Gentle Guide, Hype Friend with Limits. Requires extensive prompt engineering and Kenyan cultural authenticity testing. Must never compromise the honesty positioning.Custom stylist namingLaunched alongside personality selectionUser names their stylist: "Wanjiru", "Brian" etc. Optional; Amara and Kofi remain defaults.Max Pack ad boost activationAd inventory depth and seller demand both justify 20-slot weekly packsBuilt and permanently in "Coming Soon" until data makes the case. No planned activation timeline.Ad Phase 3 activationConsumer engagement data supports increasing to 2 ads per suggestion without churn impactAdmin toggles from Phase 2 to Phase 3. Monitor engagement closely for 2 weeks after transition.Community rating on Rate My OutfitConsumer base large enough for meaningful votesOpt-in only; avatar-based; Tinder-style swipe rating; aggregate community score alongside AI scoreBags and jewellery categoriesUser demand from consumer baseSchema pre-built; needs UI activation, rendering pipeline, camera overlaySwimwear categoryExplicit demand + moderation controls designed and reviewed by counselRequires dedicated moderation policy update and lawyer review before activationTailor and artisan map viewSufficient verified artisans in major citiesBrowse verified artisans on a map with profile previews and distance estimatesFabric shop partnershipsPlatform has consumer volume worth selling toAffiliate model for fabric recommendations; metres estimate already built into fabric design toolWest and Southern African face libraryNigeria or South Africa market entryArchitecture supports regional expansion from day one; library expands per marketSocial media API integrationMeta and others provide reliable stable API accessCurrent guided camera upload is more robust and privacy-safe; revisit only if reliable access becomes availableWedding group coordinationOrganic user demandGroup fabric design and colour coordination for wedding parties; colour theme shared across guest groupDelivery integrationSeller and artisan volume justifiesSendy or Fargo integration; placeholder UI already in seller and artisan apps; one flag toggle to activateIn-app consumer-to-seller purchaseConsumer volume creates sufficient platform leverageOptional at first with featured placement incentive; full commission model at maturityArtisan marketplace expansionBag maker and jewellery maker demandPhase 2 artisan types activated with appropriate brief flows and escrow configurationMulti-staff POS for sellersBrand tier subscribers request itAlready specified in Brand tier; build when tier has sufficient subscribersReferral attribution window extensionData shows significant late conversions between 12 and 18 monthsReview referral window based on actual conversion data; extend only if late conversions are meaningful
+Appendix A: Colour Theory Reference for AI Recommendations
+A.1 Undertone Identification from Reference Photo
+SignalWarmCoolNeutralVein colour at wrist or forearm edgeGreenBlue or purpleBlue-greenOverall skin hueGolden, olive, yellowPink, red, bluishMix of bothBest metal for jewelleryGoldSilverBoth work equally
+Note: vein reading is most reliable from the wrist edge or forearm alternative. The thigh alternative provides good depth reading but reduced undertone confidence. The system weights undertone confidence lower for thigh-based readings.
+A.2 Colour Recommendations by Undertone
+UndertoneWorks wellUse carefullyWarmEarth tones, mustard, burnt orange, chocolate brown, olive, rust, camel, warm reds, coral, terracottaVery cool blues alone, stark white without warm accents, neon colours without groundingCoolJewel tones, cobalt blue, emerald green, royal purple, navy, cool greys, true white, rose pink, burgundyOrange family, warm yellows, earthy browns, terracottaNeutralMost colour families; highly versatile; can bridge warm and coolExtreme saturated neons on their own without contrastA.3 East African Skin Tone Notes
+� Bold colours land with impact: bright white, cobalt, emerald, royal purple, coral photograph beautifully against deep warm tones
+� Rich earth tones feel natural and grounded: mustard, burnt orange, olive, rust, camel
+� Flag carefully: very pale pastels that disappear against deep tones; light beige or nude too close to skin tone; neon yellow without a grounding contrast element
+
+Appendix B: Integration Reference
+ServicePurposePhaseRender PostgreSQLManaged PostgreSQL database; JWT auth in Node/Express API layer; WebSockets/SSE for real-time featuresMVPCloudflare R2Image and file storage; free egress critical at scaleMVPGoogle Cloud VisionSafe Search content moderation + Face DetectionMVPGoogle Imagen 3Cartoon processing, showcase generation, hat renders, shoe renders, fabric design, sponsored card avatar rendersMVPAnthropic Claude APIOutfit AI, rating, skin tone, henna, body type, tagging, notification matching, ad boost matchingMVPResendAll transactional email flows including ad boost and referral notificationsMVPOpenWeather APILocation-based weather data; cached per location every 3 hoursMVPWhatsApp Business APITransactional notifications, receipts, artisan order updatesMVPSafaricom Daraja APIM-Pesa STK Push for payments; B2C for payouts; boost pack billingPhase 2PaystackCard payments and broader payment coverage; boost pack billingPhase 2RenderHosting and compute for all six apps and backend services including ads serviceMVPTurborepoMonorepo build orchestration; incremental buildsMVPRedis (Render add-on)Caching layer; ad frequency cap tracking; 40-60% Claude API call reduction targetMVP
+Appendix C: Referral and Attribution Logic Reference
+C.1 Code Lifecycle
+EventSystem actionUser completes onboardingReferral code generated automatically; 14-day expiry set from generation timestampUser generates new codePrevious code status set to MUTED immediately; new code generated with fresh 14-day expiry; all attributions under old code that occurred before mute timestamp remain validCode reaches 14-day expiry without being mutedCode status set to EXPIRED automatically; no further attribution possibleDay 13 of code windowResend email sent to referrer: "Your referral code expires tomorrow"Click on active codeClick event recorded with: referral code ID, click timestamp, referrer user ID, user agent, hashed IPClick on muted or expired codeUser redirected to normal signup page; no attribution event created; click does not increment referrer counterSignup completedSystem checks for valid click event within 14-day window (active at time of click); if found: attribution record created linking new user to referrerAttribution window checkNightly job: checks attribution records older than 12 months from signup date; marks EXPIRED; referrer no longer eligibleReferred user subscribes to paid plan within 12-month windowCommission credited to referrer; Resend email sent; counter incrementedC.2 Counter Logic
+CounterIncremented whenDecremented whenResetsTotal clicksActive code clicked by new userNeverNeverTotal joinedNew user completes signup with valid click attributionNeverNeverAwaiting upgradeNew user completes signup with attributionReferred user subscribes OR attribution record expires after 12 monthsNever (rolling)Upgraded this monthReferred user subscribes to paid plan in current calendar monthNever decremented1st of each month midnight Nairobi timeEarned this monthCommission calculated for upgrade in current calendar monthNever decremented1st of each month midnight Nairobi time (unpaid balance carries to outstanding, not lost)C.3 Edge Cases and Resolution
+Edge caseResolutionUser clicks active link then code is muted before signup completesClick timestamp before mute = attribution valid. Mute is forward-only.User clicks active link before expiry; signup completes after expiryClick timestamp before expiry = attribution valid. Attribution based on click, not signup completion.Existing Style Yangu user clicks a referral linkRedirect to app home; no attribution event; referrer counter not incremented.User signs up via expired codeNormal signup proceeds; no attribution; tagged as lead source "Expired referral link" in admin; original referrer username stored in admin only.Referred user upgrades after 12-month window closesNo commission; attribution record already deleted; upgrade appears as organic conversion in platform analytics.Multiple clicks from same IP before signupOnly the first click per unique user session creates an attribution event; subsequent clicks deduplicated.Referrer's account is banned before referred user upgradesCommission forfeited; attribution record marked FORFEITED; referred user's subscription unaffected.
+Appendix D: Ad Boost System Reference
+D.1 Ad Boost Slot Allocation Summary
+TierBase slots/weekStarter Pack (+2)Growth Pack (+5)Campaign Pack (+10)Max Pack (+20)Hustler2KES 100KES 220KES 400Coming SoonBoutique6KES 100KES 220KES 400Coming SoonBrand15KES 100KES 220KES 400Coming SoonEnterpriseNegotiatedN/AN/AN/AN/AFundi1KES 100KES 220KES 400Coming SoonMaster Artisan3KES 100KES 220KES 400Coming Soon
+  Max Pack is built as part of the initial ad infrastructure but will remain in "Coming Soon" status permanently until usage data from Starter, Growth, and Campaign Packs justifies activation. There is no planned activation timeline.  
+D.2 Ad Frequency Phase Reference
+PhaseTrigger conditionAds required to unlock 1 extra suggestionMax ads per day to reach 3-suggestion capPhase 1: Pre-activationConsumer base below threshold OR ad boost not yet activated0 (wardrobe addition only)0Phase 2: LaunchAd boost activated; early seller inventory12Phase 3: GrowthAd inventory sufficient for varied targeting per admin assessment24Phase capSet by admin based on consumer engagement dataMaximum 2 ads per suggestionMaximum 4 ads per dayD.3 Sponsored Card Targeting Priority Stack
+PriorityTargetMechanismPriority 1 � Wishlist matchesConsumers who have wishlisted any item from this specific sellerDatabase lookup against consumer wishlist records; most targeted and highest intentPriority 2 � Profile matchesConsumers whose style preferences, body type, skin tone, size, and shoe size match the boosted itemClaude Haiku profile comparison against ad targeting criteria from boost setupPriority 3 � Category affinityConsumers who have interacted with similar items from other sellers in the same categoryCategory interaction history lookup; extends reach to warm category consumers
+Style Yangu Product Specification v4.0   |   April 2026
+Confidential   |   styleyangu.co.ke   |   Legal framework to be reviewed by counsel before public launch
+Style Yangu   |   Product Specification v4.0   |   Confidential
+
+Page 1 of 2
+

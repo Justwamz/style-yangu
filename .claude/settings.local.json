@@ -1,0 +1,25 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(New-Item -ItemType Directory -Force \"C:\\\\Users\\\\kenneth.wamunyu\\\\Desktop\\\\Wawesh\\\\Style yangu\\\\packages\\\\types\\\\src\")",
+      "Bash(Out-Null)",
+      "Bash(New-Item -ItemType Directory -Force \"C:\\\\Users\\\\kenneth.wamunyu\\\\Desktop\\\\Wawesh\\\\Style yangu\\\\packages\\\\ui\\\\src\")",
+      "Bash(New-Item -ItemType Directory -Force \"C:\\\\Users\\\\kenneth.wamunyu\\\\Desktop\\\\Wawesh\\\\Style yangu\\\\packages\\\\api-client\\\\src\")",
+      "Bash(New-Item -ItemType Directory -Force \"C:\\\\Users\\\\kenneth.wamunyu\\\\Desktop\\\\Wawesh\\\\Style yangu\\\\packages\\\\utils\\\\src\")",
+      "Bash(New-Item -ItemType Directory -Force \"C:\\\\Users\\\\kenneth.wamunyu\\\\Desktop\\\\Wawesh\\\\Style yangu\\\\packages\\\\hooks\\\\src\")",
+      "Bash(New-Item -ItemType Directory -Force \"C:\\\\Users\\\\kenneth.wamunyu\\\\Desktop\\\\Wawesh\\\\Style yangu\\\\packages\\\\config\\\\src\")",
+      "Bash(New-Item -ItemType Directory -Force \"C:\\\\Users\\\\kenneth.wamunyu\\\\Desktop\\\\Wawesh\\\\Style yangu\\\\services\\\\api\\\\src\\\\db\")",
+      "Bash(New-Item -ItemType Directory -Force \"C:\\\\Users\\\\kenneth.wamunyu\\\\Desktop\\\\Wawesh\\\\Style yangu\\\\services\\\\api\\\\src\\\\middleware\")",
+      "Bash(New-Item -ItemType Directory -Force \"C:\\\\Users\\\\kenneth.wamunyu\\\\Desktop\\\\Wawesh\\\\Style yangu\\\\services\\\\ai\\\\src\")",
+      "Bash(New-Item -ItemType Directory -Force \"C:\\\\Users\\\\kenneth.wamunyu\\\\Desktop\\\\Wawesh\\\\Style yangu\\\\services\\\\payments\\\\src\")",
+      "Bash(New-Item -ItemType Directory -Force \"C:\\\\Users\\\\kenneth.wamunyu\\\\Desktop\\\\Wawesh\\\\Style yangu\\\\services\\\\notifications\\\\src\")",
+      "Bash(New-Item -ItemType Directory -Force \"C:\\\\Users\\\\kenneth.wamunyu\\\\Desktop\\\\Wawesh\\\\Style yangu\\\\services\\\\storage\\\\src\")",
+      "Bash(New-Item -ItemType Directory -Force \"C:\\\\Users\\\\kenneth.wamunyu\\\\Desktop\\\\Wawesh\\\\Style yangu\\\\services\\\\moderation\\\\src\")",
+      "Bash(New-Item -ItemType Directory -Force \"C:\\\\Users\\\\kenneth.wamunyu\\\\Desktop\\\\Wawesh\\\\Style yangu\\\\services\\\\ads\\\\src\")",
+      "Bash(Write-Output \"All directories created\")",
+      "Bash(git init *)",
+      "Bash(git add *)",
+      "Bash(git commit -m 'chore: scaffold monorepo — 6 apps, 6 packages, 7 services *)"
+    ]
+  }
+}
