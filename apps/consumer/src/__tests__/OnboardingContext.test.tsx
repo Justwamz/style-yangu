@@ -1,6 +1,5 @@
 import { describe, it, expect, beforeEach } from 'vitest'
 import { render, act, screen, renderHook } from '@testing-library/react'
-import React from 'react'
 import {
   onboardingReducer,
   initialState,
