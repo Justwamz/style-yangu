@@ -1,4 +1,4 @@
-type OverlayShape = 'oval_face' | 'full_body' | 'flat_lay_rect' | 'hand_oval' | 'forearm_rect' | 'fabric_rect'
+export type OverlayShape = 'oval_face' | 'full_body' | 'flat_lay_rect' | 'hand_oval' | 'forearm_rect' | 'fabric_rect'
 
 interface CameraOverlayProps {
   shape: OverlayShape
