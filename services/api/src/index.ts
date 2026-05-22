@@ -10,7 +10,7 @@ const PORT = process.env.PORT ?? 3001
 
 app.use(helmet())
 app.use(cors({ origin: process.env.CORS_ORIGIN ?? '*' }))
-app.use(express.json({ limit: '10mb' }))
+app.use(express.json({ limit: '200kb' }))
 
 app.use(authRouter)
 app.use(onboardingRouter)
