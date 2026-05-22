@@ -39,10 +39,15 @@ export default function Step07Wardrobe() {
     canvas.height = video.videoHeight
     canvas.getContext('2d')!.drawImage(video, 0, 0)
     const dataUrl = canvas.toDataURL('image/jpeg')
-    await compressImageToBlob(dataUrl, 300)
+    const blob = await compressImageToBlob(dataUrl, 300)
+    const compressedDataUrl = await new Promise<string>((resolve) => {
+      const reader = new FileReader()
+      reader.onload = () => resolve(reader.result as string)
+      reader.readAsDataURL(blob)
+    })
     const item: WardrobeItem = {
       id: crypto.randomUUID(),
-      photoDataUrl: dataUrl,
+      photoDataUrl: compressedDataUrl,
       prompt: PROMPTS[promptIndex],
       tag,
     }
