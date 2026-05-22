@@ -8,7 +8,7 @@ export type ArtisanType = 'tailor' | 'cobbler' | 'bag_maker' | 'jewellery_maker'
 
 export type BodyType = 'hourglass' | 'pear' | 'apple' | 'rectangle' | 'inverted_triangle'
 export type Undertone = 'warm' | 'cool' | 'neutral'
-export type SkinDepth = 'light' | 'light_medium' | 'medium' | 'medium_deep' | 'deep' | 'rich'
+export type SkinDepth = 'light' | 'light_medium' | 'medium' | 'medium_deep' | 'deep'
 
 export type StylePreference =
   | 'smart_casual'

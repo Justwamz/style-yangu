@@ -5,13 +5,20 @@ import type { SkinDepth, Undertone } from '@style-yangu/types'
 
 type SubScreen = 'camera' | 'henna_check' | 'confirm'
 
+const DEPTH_COLOURS: Record<SkinDepth, string> = {
+  light:        '#F5D9C8',
+  light_medium: '#E8C4A4',
+  medium:       '#C8955A',
+  medium_deep:  '#9B6640',
+  deep:         '#6B3F23',
+}
+
 const DEPTH_OPTIONS: { value: SkinDepth; label: string; bg: string }[] = [
-  { value: 'light',        label: 'Light',        bg: '#F5DEB3' },
-  { value: 'light_medium', label: 'Light Medium',  bg: '#D2A679' },
-  { value: 'medium',       label: 'Medium',        bg: '#B07D45' },
-  { value: 'medium_deep',  label: 'Medium Deep',   bg: '#8B5A2B' },
-  { value: 'deep',         label: 'Deep',          bg: '#5C3317' },
-  { value: 'rich',         label: 'Rich',          bg: '#3B1F0A' },
+  { value: 'light',        label: 'Light',        bg: DEPTH_COLOURS.light },
+  { value: 'light_medium', label: 'Light Medium',  bg: DEPTH_COLOURS.light_medium },
+  { value: 'medium',       label: 'Medium',        bg: DEPTH_COLOURS.medium },
+  { value: 'medium_deep',  label: 'Medium Deep',   bg: DEPTH_COLOURS.medium_deep },
+  { value: 'deep',         label: 'Deep',          bg: DEPTH_COLOURS.deep },
 ]
 
 const UNDERTONE_OPTIONS: { value: Undertone; label: string; accent: string }[] = [
@@ -27,6 +34,7 @@ export default function Step05SkinTone() {
   const [streamError, setStreamError] = useState(false)
   const [selectedDepth, setSelectedDepth] = useState<SkinDepth>('medium')
   const [selectedUndertone, setSelectedUndertone] = useState<Undertone>('warm')
+  const [lightQuality, setLightQuality] = useState<'good' | 'acceptable' | 'poor'>('acceptable')
 
   const stylistName = state.stylist === 'kofi' ? 'Kofi' : 'Amara'
 
@@ -38,6 +46,8 @@ export default function Step05SkinTone() {
       .then(s => {
         stream = s
         if (videoRef.current) videoRef.current.srcObject = s
+        // Stub: simulate lighting becoming good after 1s
+        setTimeout(() => setLightQuality('good'), 1000)
       })
       .catch(() => setStreamError(true))
     return () => { stream?.getTracks().forEach(t => t.stop()) }
@@ -71,7 +81,7 @@ export default function Step05SkinTone() {
       <div className="flex flex-col items-center justify-center gap-6 py-16">
         <div className="w-12 h-12 border-4 border-[#8B4513] border-t-transparent rounded-full animate-spin" />
         <p className="text-[#1A0A00] text-center font-medium">
-          {stylistName} is reading your skin tone…
+          Checking for henna…
         </p>
         <p className="text-xs text-center text-[#1A0A00]/60 max-w-xs leading-relaxed">
           Your photo is analysed on-device and never stored or uploaded.
@@ -103,6 +113,17 @@ export default function Step05SkinTone() {
             <p className="font-semibold text-[#1A0A00]">{depthChoice.label}</p>
             <p className="text-sm text-[#1A0A00]/60 capitalize">{selectedUndertone} undertone</p>
           </div>
+        </div>
+
+        {/* Sample colour palette strip */}
+        <div className="flex gap-2 mb-2">
+          {DEPTH_OPTIONS.map(d => (
+            <div
+              key={d.value}
+              className="flex-1 h-4 rounded-full"
+              style={{ backgroundColor: DEPTH_COLOURS[d.value] }}
+            />
+          ))}
         </div>
 
         {/* Depth selector */}
@@ -186,13 +207,13 @@ export default function Step05SkinTone() {
       <div>
         <h2 className="text-xl font-bold text-[#1A0A00]">Show us the back of your hand</h2>
         <p className="text-sm text-[#1A0A00]/70 mt-1">
-          Hold your hand steady in good natural light for the best result.
+          Place the back of your hand between your wrist and knuckles in the frame.
         </p>
       </div>
 
       <div className="relative rounded-2xl overflow-hidden bg-black aspect-[9/16]">
         <video ref={videoRef} autoPlay playsInline muted className="w-full h-full object-cover" />
-        <CameraOverlay shape="hand_oval" lightingQuality="good" />
+        <CameraOverlay shape="hand_oval" lightingQuality={lightQuality} />
       </div>
 
       <button
