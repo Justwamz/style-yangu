@@ -7,7 +7,44 @@ const STYLIST_PERSONALITY: Record<string, string> = {
   kofi:  'Confident, knowledgeable, no-fluff. Gives you reasons not just verdicts.',
 }
 
-const STYLIST_EMOJI: Record<string, string> = { amara: '✨', kofi: '🎯' }
+function BodySilhouette({ bodyType }: { bodyType?: string }) {
+  // Hourglass: wider shoulders/hips, nipped waist
+  // Other types: slightly different proportions
+  const isHourglass = bodyType === 'hourglass'
+  return (
+    <svg width="160" height="224" viewBox="0 0 160 224" fill="none" aria-hidden="true">
+      {/* Head */}
+      <circle cx="80" cy="40" r="30" fill="#C4834A" />
+      {/* Body — hourglass vs. default proportions */}
+      {isHourglass ? (
+        <path d="M40 80 Q80 110 120 80 L110 150 Q80 135 50 150 Z" fill="#8B4513" />
+      ) : (
+        <rect x="45" y="80" width="70" height="80" rx="8" fill="#8B4513" />
+      )}
+      {/* Legs */}
+      <rect x="50" y="155" width="25" height="60" rx="6" fill="#C4834A" />
+      <rect x="85" y="155" width="25" height="60" rx="6" fill="#C4834A" />
+    </svg>
+  )
+}
+
+function AmaraCompanion() {
+  return (
+    <svg width="48" height="56" viewBox="0 0 48 56" fill="none" aria-hidden="true">
+      <circle cx="24" cy="18" r="14" fill="#C4834A" />
+      <ellipse cx="24" cy="46" rx="16" ry="12" fill="#8B4513" />
+    </svg>
+  )
+}
+
+function KofiCompanion() {
+  return (
+    <svg width="48" height="56" viewBox="0 0 48 56" fill="none" aria-hidden="true">
+      <circle cx="24" cy="18" r="14" fill="#7B5B3A" />
+      <ellipse cx="24" cy="46" rx="16" ry="12" fill="#5C3A1E" />
+    </svg>
+  )
+}
 
 export default function Step11AvatarPreview() {
   const { state } = useOnboarding()
@@ -45,7 +82,7 @@ export default function Step11AvatarPreview() {
             aria-label="avatar"
             className="w-40 h-56 rounded-2xl border-2 border-[#E8DDD5] bg-[#F5EDE5] flex items-center justify-center"
           >
-            <span className="text-6xl" aria-hidden="true">🧍</span>
+            <BodySilhouette bodyType={state.bodyType} />
           </div>
         )}
         {state.skinProfile && (
@@ -59,7 +96,7 @@ export default function Step11AvatarPreview() {
 
       {/* Stylist companion */}
       <div className="flex items-center gap-4 bg-[#F5EDE5] rounded-2xl p-4 w-full">
-        <span className="text-4xl" aria-hidden="true">{STYLIST_EMOJI[stylist] ?? '✨'}</span>
+        {stylist === 'kofi' ? <KofiCompanion /> : <AmaraCompanion />}
         <div>
           <p className="font-bold text-[#1A0A00]">{stylistName}</p>
           <p className="text-xs text-[#1A0A00]/70 leading-relaxed">

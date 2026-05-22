@@ -3,6 +3,7 @@ import { screen, waitFor } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
 import { renderWithProviders } from '../test-utils'
 import Step11AvatarPreview from '../../onboarding/steps/Step11AvatarPreview'
+import * as apiClientModule from '@style-yangu/api-client'
 
 const mockNavigate = vi.fn()
 vi.mock('react-router-dom', async (importOriginal) => {
@@ -35,19 +36,15 @@ describe('Step11AvatarPreview', () => {
   })
 
   it('on CTA tap: POSTs /onboarding/complete, clears localStorage, navigates /home', async () => {
-    vi.stubGlobal('fetch', vi.fn().mockResolvedValue({
-      ok: true, json: () => Promise.resolve({ ok: true }),
-    }))
+    const postSpy = vi.spyOn(apiClientModule.apiClient, 'post').mockResolvedValue({ ok: true })
     localStorage.setItem('sy_onboarding', JSON.stringify(testState))
     renderWithProviders(<Step11AvatarPreview />, { initialState: testState })
     await userEvent.click(screen.getByRole('button', { name: /meet amara/i }))
     await waitFor(() => {
-      expect(fetch).toHaveBeenCalledWith(
-        expect.stringContaining('/onboarding/complete'),
-        expect.objectContaining({ method: 'POST' }),
-      )
+      expect(postSpy).toHaveBeenCalledWith('/onboarding/complete', expect.any(Object))
       expect(localStorage.getItem('sy_onboarding')).toBeNull()
       expect(mockNavigate).toHaveBeenCalledWith('/home')
     })
+    postSpy.mockRestore()
   })
 })
