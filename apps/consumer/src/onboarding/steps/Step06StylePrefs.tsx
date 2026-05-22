@@ -2,13 +2,13 @@ import { useState } from 'react'
 import type { StylePreference } from '@style-yangu/types'
 import { useOnboarding } from '../OnboardingContext'
 
-const STYLE_TILES: { id: StylePreference; label: string }[] = [
-  { id: 'smart_casual', label: 'Smart Casual' },
-  { id: 'business_casual', label: 'Business Casual' },
-  { id: 'streetwear', label: 'Streetwear' },
-  { id: 'traditional_cultural', label: 'Traditional & Cultural' },
-  { id: 'evening_formal', label: 'Evening & Formal' },
-  { id: 'athleisure', label: 'Athleisure' },
+const STYLE_TILES: { id: StylePreference; label: string; icon: string }[] = [
+  { id: 'smart_casual', label: 'Smart Casual', icon: '👔' },
+  { id: 'business_casual', label: 'Business Casual', icon: '💼' },
+  { id: 'streetwear', label: 'Streetwear', icon: '🧢' },
+  { id: 'traditional_cultural', label: 'Traditional & Cultural', icon: '🌍' },
+  { id: 'evening_formal', label: 'Evening & Formal', icon: '✨' },
+  { id: 'athleisure', label: 'Athleisure', icon: '🏃' },
 ]
 
 export default function Step06StylePrefs() {
@@ -29,7 +29,7 @@ export default function Step06StylePrefs() {
       <p className="text-sm text-center text-gray-500">Pick all that resonate with you.</p>
 
       <div className="grid grid-cols-2 gap-3">
-        {STYLE_TILES.map(({ id, label }) => {
+        {STYLE_TILES.map(({ id, label, icon }) => {
           const isSelected = selected.includes(id)
           return (
             <button
@@ -37,13 +37,14 @@ export default function Step06StylePrefs() {
               type="button"
               onClick={() => toggle(id)}
               className={[
-                'rounded-lg border-2 p-4 text-center text-sm font-medium transition-colors',
+                'flex flex-col items-center gap-1 rounded-lg border-2 p-4 text-center text-sm font-medium transition-colors',
                 isSelected
                   ? 'border-[#8B4513] bg-[#8B4513]/10 text-[#8B4513]'
                   : 'border-gray-200 bg-white text-gray-700 hover:border-gray-400',
               ].join(' ')}
               aria-pressed={isSelected}
             >
+              <span className="text-3xl" aria-hidden="true">{icon}</span>
               {label}
             </button>
           )
