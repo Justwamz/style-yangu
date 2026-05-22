@@ -66,12 +66,14 @@ interface OnboardingContextValue {
 
 const OnboardingContext = createContext<OnboardingContextValue | null>(null)
 
-const STORAGE_KEY = 'sy_onboarding'
+export const ONBOARDING_STORAGE_KEY = 'sy_onboarding'
 
 function loadState(): OnboardingState {
   try {
-    const raw = localStorage.getItem(STORAGE_KEY)
-    return raw ? (JSON.parse(raw) as OnboardingState) : initialState
+    const raw = localStorage.getItem(ONBOARDING_STORAGE_KEY)
+    if (!raw) return initialState
+    const parsed = JSON.parse(raw)
+    return typeof parsed?.step === 'number' ? { ...initialState, ...parsed } : initialState
   } catch {
     return initialState
   }
@@ -79,6 +81,7 @@ function loadState(): OnboardingState {
 
 interface OnboardingProviderProps {
   children: React.ReactNode
+  /** @internal test-only — do not use in production components */
   testInitialState?: Partial<OnboardingState>
 }
 
@@ -90,7 +93,7 @@ export function OnboardingProvider({ children, testInitialState }: OnboardingPro
 
   useEffect(() => {
     try {
-      localStorage.setItem(STORAGE_KEY, JSON.stringify(state))
+      localStorage.setItem(ONBOARDING_STORAGE_KEY, JSON.stringify(state))
     } catch {
       // localStorage unavailable — context lives in memory only
     }

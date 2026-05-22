@@ -1,5 +1,5 @@
 import { describe, it, expect, beforeEach } from 'vitest'
-import { render, act, screen } from '@testing-library/react'
+import { render, act, screen, renderHook } from '@testing-library/react'
 import React from 'react'
 import {
   onboardingReducer,
@@ -107,5 +107,9 @@ describe('OnboardingProvider', () => {
     localStorage.setItem('sy_onboarding', JSON.stringify({ step: 5 }))
     render(<OnboardingProvider><TestConsumer /></OnboardingProvider>)
     expect(screen.getByTestId('step').textContent).toBe('5')
+  })
+
+  it('useOnboarding throws when used outside provider', () => {
+    expect(() => renderHook(() => useOnboarding())).toThrow('useOnboarding must be used within OnboardingProvider')
   })
 })
