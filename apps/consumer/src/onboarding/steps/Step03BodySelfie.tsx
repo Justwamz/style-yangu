@@ -19,6 +19,8 @@ export default function Step03BodySelfie() {
     let stream: MediaStream | null = null
     if (sub === 'processing') return
 
+    setDistanceOk(false)
+
     navigator.mediaDevices
       .getUserMedia({ video: { facingMode: 'user' } })
       .then(s => {
@@ -51,7 +53,7 @@ export default function Step03BodySelfie() {
 
   if (sub === 'processing') {
     return (
-      <div className="flex flex-col items-center justify-center gap-6 py-16">
+      <div className="fixed inset-0 bg-[#FDFAF7] flex flex-col items-center justify-center gap-6 px-6 z-50">
         <div className="w-12 h-12 border-4 border-[#8B4513] border-t-transparent rounded-full animate-spin" />
         <p className="text-[#1A0A00] text-center font-medium">
           {stylistName} is getting to know your shape…
