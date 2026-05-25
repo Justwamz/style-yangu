@@ -81,4 +81,10 @@ export async function runMigrations(): Promise<void> {
       UNIQUE(user_id, item_id)
     )
   `)
+  await db.query(`CREATE INDEX IF NOT EXISTS idx_wardrobe_items_user_id ON wardrobe_items(user_id)`)
+  await db.query(`CREATE INDEX IF NOT EXISTS idx_daily_suggestions_user_id ON daily_suggestions(user_id)`)
+  await db.query(`CREATE INDEX IF NOT EXISTS idx_referral_codes_user_id ON referral_codes(user_id)`)
+  await db.query(`CREATE INDEX IF NOT EXISTS idx_referral_attributions_referrer ON referral_attributions(referrer_id)`)
+  await db.query(`CREATE INDEX IF NOT EXISTS idx_referral_attributions_referred ON referral_attributions(referred_id)`)
+  await db.query(`CREATE INDEX IF NOT EXISTS idx_wishlists_user_id ON wishlists(user_id)`)
 }
