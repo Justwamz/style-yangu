@@ -144,3 +144,97 @@ export interface SponsoredCard {
   cta: SponsoredCardCTA
   isArtisanCard: boolean
 }
+
+// ── Consumer Home Screen ───────────────────────────────────────────────────
+
+export type TimeOfDay = 'morning' | 'afternoon' | 'evening' | 'night'
+export type UnlockMethod = 'ad' | 'wardrobe'
+export type UnlockMode = 'idle' | 'wardrobe-unlock' | 'done'
+export type AdPhaseNumber = 1 | 2
+
+export interface UserProfile {
+  avatarUrl: string | null
+  stylistName: Stylist
+  skinTone: SkinProfile | null
+  bodyType: BodyType | null
+  shoeSize: { uk: number | null; eu: number | null }
+  stylePrefs: StylePreference[]
+  budget: Record<string, number>
+  location: { lat: number | null; lon: number | null }
+  tier: 'free' | 'premium'
+}
+
+export interface Suggestion {
+  id: string
+  outfit: string
+  occasionTag: string
+  stylistComment: string
+  clothingTags: string[]
+}
+
+export interface DailySuggestionResponse {
+  suggestions: Suggestion[]
+  unlockCount: number
+  adsWatched: number
+  wardrobePairsUsed: number
+  phase: AdPhaseNumber
+}
+
+export interface UnlockResponse {
+  unlockCount: number
+  remaining: number
+  newSuggestion: Suggestion | null
+}
+
+export interface WeatherData {
+  temp: number
+  condition: string
+  windSpeed: number
+  humidity: number
+  timeOfDay: TimeOfDay
+  simulated: boolean
+}
+
+export interface WardrobeItem {
+  id: string
+  photoUrl: string
+  category: string
+  occasionTags: string[]
+  source?: 'onboarding' | 'added'
+}
+
+export interface WardrobeResponse {
+  items: WardrobeItem[]
+  total: number
+}
+
+export interface DiscoverItem {
+  id: string
+  name: string
+  priceKES: number
+  sellerName: string
+  photoUrl: string
+  sponsored: boolean
+  matchReason: string
+}
+
+export interface ReferralCounters {
+  totalClicks: number
+  totalJoined: number
+  awaitingUpgrade: number
+  upgradedThisMonth: number
+}
+
+export interface ReferralData {
+  code: string
+  expiresAt: string
+  shareUrl: string
+  counters: ReferralCounters
+}
+
+export interface StreakData {
+  streakDays: number
+  stylePoints: number
+  weeklyScore: number
+  leaderboardRank: number
+}
