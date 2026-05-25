@@ -53,8 +53,6 @@ export function SuggestionProvider({ children }: { children: React.ReactNode }) 
       wardrobeItemIds: itemIds,
     })
     if (data.newSuggestion) setSuggestions(prev => [...prev, data.newSuggestion!])
-    dispatchUnlock({ type: 'WARDROBE_ITEM_CAPTURED' })
-    dispatchUnlock({ type: 'WARDROBE_ITEM_CAPTURED' })
   }, [])
 
   return (
