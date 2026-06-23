@@ -1,3 +1,128 @@
+import { useState } from 'react'
+import { useNavigate } from 'react-router-dom'
+import { sellerApi, useSellerContext } from '../context/SellerContext'
+import TierBadge from '../components/TierBadge'
+import AdBoostCard from '../components/AdBoostCard'
+
 export default function ProfileTab() {
-  return <div className="p-4"><h2 className="text-lg font-bold">Profile</h2></div>
+  const navigate = useNavigate()
+  const { profile, refresh } = useSellerContext()
+
+  const [bio, setBio] = useState(profile?.bio ?? '')
+  const [instagram, setInstagram] = useState(profile?.instagramHandle ?? '')
+  const [whatsapp, setWhatsapp] = useState(profile?.whatsappNumber ?? '')
+  const [location, setLocation] = useState(profile?.location ?? '')
+
+  if (!profile) return null
+
+  const isUnlimited = profile.tier === 'brand' || profile.tier === 'enterprise'
+  const storefrontSlug = profile.businessName.toLowerCase().replace(/\s+/g, '-')
+
+  async function saveProfile() {
+    await sellerApi.patch('/seller/profile', { bio, instagramHandle: instagram, whatsappNumber: whatsapp, location })
+    refresh()
+  }
+
+  function handleSignOut() {
+    localStorage.removeItem('sy_seller_token')
+    navigate('/auth', { replace: true })
+  }
+
+  return (
+    <div className="p-4 space-y-6 pb-24">
+      {/* Business header */}
+      <div className="flex items-center gap-4">
+        <div className="w-16 h-16 rounded-full bg-amber-100 flex items-center justify-center text-2xl">
+          {profile.avatarUrl ? (
+            <img src={profile.avatarUrl} alt={profile.businessName} className="w-full h-full rounded-full object-cover" />
+          ) : (
+            <span>🏪</span>
+          )}
+        </div>
+        <div>
+          <h2 className="text-xl font-bold">{profile.businessName}</h2>
+          <TierBadge tier={profile.tier} />
+        </div>
+      </div>
+
+      {/* Edit details */}
+      <div className="space-y-3">
+        <h3 className="text-sm font-semibold text-gray-700 uppercase tracking-wide">Business details</h3>
+        {[
+          { label: 'Bio', value: bio, setter: setBio, placeholder: 'Tell customers about your business' },
+          { label: 'Instagram', value: instagram, setter: setInstagram, placeholder: '@handle' },
+          { label: 'WhatsApp', value: whatsapp, setter: setWhatsapp, placeholder: '+254...' },
+          { label: 'Location', value: location, setter: setLocation, placeholder: 'City, Neighbourhood' },
+        ].map(({ label, value, setter, placeholder }) => (
+          <div key={label}>
+            <label className="text-xs text-gray-500 block mb-0.5">{label}</label>
+            <input
+              value={value}
+              onChange={e => setter(e.target.value)}
+              onBlur={saveProfile}
+              placeholder={placeholder}
+              className="w-full border border-gray-200 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-1 focus:ring-amber-700"
+            />
+          </div>
+        ))}
+      </div>
+
+      {/* Generation meter */}
+      <div className="space-y-1">
+        <h3 className="text-sm font-semibold text-gray-700 uppercase tracking-wide">AI Showcase</h3>
+        {isUnlimited ? (
+          <p className="text-sm text-amber-900 font-medium">Unlimited showcase generations</p>
+        ) : (
+          <>
+            <p className="text-sm text-gray-600">
+              {profile.generationsUsed} of {profile.generationsLimit} showcase generations used this month
+            </p>
+            <div className="w-full bg-gray-200 rounded-full h-2">
+              <div
+                className="bg-amber-700 h-2 rounded-full transition-all"
+                style={{ width: `${Math.min(100, (profile.generationsUsed / profile.generationsLimit) * 100)}%` }}
+              />
+            </div>
+          </>
+        )}
+      </div>
+
+      {/* Subscription */}
+      <div className="space-y-2">
+        <h3 className="text-sm font-semibold text-gray-700 uppercase tracking-wide">Subscription</h3>
+        <div className="border border-gray-200 rounded-xl p-3 flex justify-between items-center">
+          <div>
+            <p className="text-sm font-medium capitalize">{profile.tier.replace('_', ' ')}</p>
+          </div>
+          <button className="text-xs border border-amber-700 text-amber-800 px-3 py-1 rounded-full">
+            Upgrade
+          </button>
+        </div>
+      </div>
+
+      {/* Storefront */}
+      <div className="space-y-2">
+        <h3 className="text-sm font-semibold text-gray-700 uppercase tracking-wide">Storefront</h3>
+        <a
+          href={`https://styleyangu.com/shop/${storefrontSlug}`}
+          target="_blank"
+          rel="noreferrer"
+          className="block border border-gray-200 rounded-xl p-3 text-sm text-amber-800 font-medium"
+        >
+          View my storefront →
+        </a>
+      </div>
+
+      {/* Ad Boost */}
+      <AdBoostCard tier={profile.tier} />
+
+      {/* Sign out */}
+      <button
+        onClick={handleSignOut}
+        className="w-full border border-red-200 text-red-600 rounded-xl py-3 font-semibold"
+      >
+        Sign out
+      </button>
+    </div>
+  )
 }
