@@ -1,10 +1,10 @@
-import { Router } from 'express'
+import { Router, type IRouter } from 'express'
 import { z } from 'zod'
 import { requireAuth } from '../middleware/auth'
 import type { AuthRequest } from '../middleware/auth'
 import { db } from '../db'
 
-const router = Router()
+const router: IRouter = Router()
 
 const OnboardingProfileSchema = z.object({
   step: z.number().int().min(1).max(11),

@@ -1,11 +1,11 @@
-import { Router } from 'express'
+import { Router, type IRouter } from 'express'
 import bcrypt from 'bcryptjs'
 import jwt from 'jsonwebtoken'
 import { z } from 'zod'
 import { db } from '../db'
 import { JWT_SECRET } from '../config'
 
-const router = Router()
+const router: IRouter = Router()
 
 const RegisterSchema = z.object({
   email: z.string().email(),

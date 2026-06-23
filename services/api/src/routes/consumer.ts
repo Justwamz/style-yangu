@@ -1,9 +1,9 @@
-import { Router } from 'express'
+import { Router, type IRouter } from 'express'
 import { requireAuth } from '../middleware/auth'
 import type { AuthRequest } from '../middleware/auth'
 import { db } from '../db'
 
-const router = Router()
+const router: IRouter = Router()
 
 // ── Stub suggestion data ────────────────────────────────────────────────────
 
