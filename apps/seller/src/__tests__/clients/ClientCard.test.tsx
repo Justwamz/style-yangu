@@ -6,7 +6,7 @@ import type { SellerClient } from '@style-yangu/types'
 const CLIENT: SellerClient = {
   id: 'c1', sellerId: 's1', nickname: 'Aisha',
   consumerUsername: '@aisha_ke', lastPurchaseDate: '2025-06-10T00:00:00Z',
-  tryOnSent: 3, tryOnActed: 1,
+  whatsappNumber: null, tryOnSent: 3, tryOnActed: 1,
 }
 
 describe('ClientCard', () => {
