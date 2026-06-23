@@ -4,12 +4,13 @@ import { QueryClient, QueryClientProvider } from '@tanstack/react-query'
 import { MemoryRouter, Route, Routes } from 'react-router-dom'
 import { vi, describe, it, expect, beforeEach } from 'vitest'
 import POSNewPage from '../../pages/POSNewPage'
-import { sellerApi } from '../../context/SellerContext'
+import { sellerApi, useSellerContext } from '../../context/SellerContext'
 
 vi.mock('../../context/SellerContext', async (importOriginal) => {
   const real = await importOriginal<typeof import('../../context/SellerContext')>()
   return {
     ...real,
+    useSellerContext: vi.fn(),
     sellerApi: { get: vi.fn(), post: vi.fn(), patch: vi.fn(), put: vi.fn(), delete: vi.fn() },
   }
 })
@@ -18,7 +19,7 @@ const INVENTORY = [
   { id: 'i1', name: 'Blue Dress', priceKES: 3500, category: 'dress', isLive: true, isSoldOut: false },
 ]
 const CLIENTS = [
-  { id: 'c1', sellerId: 's1', nickname: 'Aisha', consumerUsername: '@aisha', lastPurchaseDate: null, tryOnSent: 0, tryOnActed: 0 },
+  { id: 'c1', sellerId: 's1', nickname: 'Aisha', consumerUsername: '@aisha', lastPurchaseDate: null, whatsappNumber: null, tryOnSent: 0, tryOnActed: 0 },
 ]
 
 function wrap() {
@@ -38,6 +39,11 @@ function wrap() {
 describe('POSNewPage', () => {
   beforeEach(() => {
     vi.restoreAllMocks()
+    vi.mocked(useSellerContext).mockReturnValue({
+      profile: { businessName: 'Test Store', tier: 'hustler' } as any,
+      loading: false,
+      refresh: vi.fn(),
+    })
     vi.spyOn(sellerApi, 'get').mockImplementation((path: string) => {
       if (path.includes('inventory')) return Promise.resolve(INVENTORY)
       if (path.includes('clients')) return Promise.resolve(CLIENTS)

@@ -1,7 +1,7 @@
 import { useReducer, useState } from 'react'
 import { useNavigate } from 'react-router-dom'
-import { useQuery } from '@tanstack/react-query'
-import { sellerApi } from '../context/SellerContext'
+import { useQuery, useQueryClient } from '@tanstack/react-query'
+import { sellerApi, useSellerContext } from '../context/SellerContext'
 import type { InventoryItem, SellerClient } from '@style-yangu/types'
 
 type PaymentMethod = 'mpesa' | 'cash' | 'bank_transfer' | 'card'
@@ -68,6 +68,8 @@ function buildWhatsAppReceipt(
 
 export default function POSNewPage() {
   const navigate = useNavigate()
+  const queryClient = useQueryClient()
+  const { profile } = useSellerContext()
   const [state, dispatch] = useReducer(reducer, INITIAL)
   const [itemSearch, setItemSearch] = useState('')
 
@@ -94,6 +96,7 @@ export default function POSNewPage() {
       paymentStatus: state.paymentStatus,
       clientId,
     })
+    queryClient.invalidateQueries({ queryKey: ['pos'] })
     navigate('/pos')
   }
 
@@ -208,7 +211,7 @@ export default function POSNewPage() {
   }
 
   // Step 3: Client (optional)
-  const selectedClient = clients.find(c => c.id === state.selectedClientId) as (SellerClient & { whatsappNumber?: string }) | undefined
+  const selectedClient = clients.find(c => c.id === state.selectedClientId)
   return (
     <div className="p-4 space-y-3">
       <p className="text-xs text-gray-500">Step 4 of 4 — Attach client (optional)</p>
@@ -246,10 +249,10 @@ export default function POSNewPage() {
           onClick={() => {
             const today = new Date().toLocaleDateString('en-KE')
             const text = buildWhatsAppReceipt(
-              selectedClient.nickname, 'Your Store',
+              selectedClient.nickname, profile?.businessName ?? 'Style Yangu Seller',
               state.customItemName, state.finalPriceKES, state.paymentMethod, today
             )
-            window.open(`https://wa.me/${selectedClient.whatsappNumber}?text=${text}`, '_blank')
+            window.open(`https://wa.me/${selectedClient?.whatsappNumber ?? ''}?text=${text}`, '_blank')
           }}
           className="w-full border border-green-600 text-green-700 rounded-lg py-2 text-sm"
         >

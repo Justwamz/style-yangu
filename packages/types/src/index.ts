@@ -293,6 +293,7 @@ export interface SellerClient {
   nickname: string
   consumerUsername: string
   lastPurchaseDate: string | null
+  whatsappNumber: string | null
   tryOnSent: number
   tryOnActed: number
 }
