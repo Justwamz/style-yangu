@@ -2,7 +2,8 @@
 set -euo pipefail
 
 # Render build script — called as: bash scripts/render-build.sh <api|consumer|seller>
-# Uses pnpm v9 to avoid the pnpm v10 24-hour supply-chain release-age policy.
+# Uses pnpm v9 (no supply-chain release-age policy) with --frozen-lockfile for
+# deterministic installs (exact versions from the committed lockfile).
 
 SERVICE="${1:-}"
 
@@ -14,19 +15,21 @@ fi
 echo "==> Installing pnpm v9..."
 npm install -g pnpm@9
 
+echo "==> pnpm $(pnpm --version) / node $(node --version)"
+
 echo "==> Installing workspace dependencies..."
-pnpm install --no-frozen-lockfile
+pnpm install --frozen-lockfile
 
 echo "==> Building service: $SERVICE"
 case "$SERVICE" in
   api)
-    pnpm --filter @style-yangu/api-service... build
+    pnpm --filter @style-yangu/api-service... build 2>&1
     ;;
   consumer)
-    pnpm --filter @style-yangu/consumer... build
+    pnpm --filter @style-yangu/consumer... build 2>&1
     ;;
   seller)
-    pnpm --filter @style-yangu/seller... build
+    pnpm --filter @style-yangu/seller... build 2>&1
     ;;
   *)
     echo "Unknown service '$SERVICE'. Use: api | consumer | seller"
