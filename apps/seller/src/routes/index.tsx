@@ -6,6 +6,7 @@ import AppShell from '../components/AppShell'
 import ProtectedRoute from './ProtectedRoute'
 import DashboardTab from '../pages/DashboardTab'
 import InventoryTab from '../pages/InventoryTab'
+import InventoryNewPage from '../pages/InventoryNewPage'
 import POSTab from '../pages/POSTab'
 import ClientsTab from '../pages/ClientsTab'
 import ProfileTab from '../pages/ProfileTab'
@@ -21,6 +22,7 @@ export default function AppRoutes() {
           <Route index element={<Navigate to="/dashboard" replace />} />
           <Route path="/dashboard" element={<DashboardTab />} />
           <Route path="/inventory" element={<InventoryTab />} />
+          <Route path="/inventory/new" element={<InventoryNewPage />} />
           <Route path="/pos" element={<POSTab />} />
           <Route path="/clients" element={<ClientsTab />} />
           <Route path="/profile" element={<ProfileTab />} />

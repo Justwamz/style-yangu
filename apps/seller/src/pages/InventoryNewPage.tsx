@@ -206,6 +206,27 @@ export default function InventoryNewPage() {
             ))}
           </div>
         </div>
+        <label className="block">
+          <span className="text-sm font-medium">Discount %</span>
+          <input
+            type="number"
+            placeholder="Discount %"
+            aria-label="Discount %"
+            value={state.discountPercent}
+            onChange={e => dispatch({ type: 'SET_FIELD', field: 'discountPercent', value: e.target.value })}
+            className="w-full border border-gray-300 rounded-lg px-3 py-2 mt-1"
+          />
+        </label>
+        <label className="block">
+          <span className="text-sm font-medium">Discount Expires</span>
+          <input
+            type="date"
+            aria-label="Discount Expires"
+            value={state.discountExpiresAt}
+            onChange={e => dispatch({ type: 'SET_FIELD', field: 'discountExpiresAt', value: e.target.value })}
+            className="w-full border border-gray-300 rounded-lg px-3 py-2 mt-1"
+          />
+        </label>
         <button
           onClick={() => dispatch({ type: 'NEXT_STEP' })}
           disabled={!state.name || !state.category || !state.priceKES}
@@ -256,6 +277,7 @@ export default function InventoryNewPage() {
         </div>
         <button
           onClick={handleSaveItem}
+          disabled={state.sizes.length === 0}
           className="w-full bg-amber-800 text-white rounded-lg py-3 font-semibold disabled:opacity-50"
         >
           Next

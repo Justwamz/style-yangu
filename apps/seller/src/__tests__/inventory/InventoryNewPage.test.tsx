@@ -75,14 +75,6 @@ describe('InventoryNewPage', () => {
     vi.spyOn(sellerApi, 'post').mockResolvedValue({ id: 'new-item-1' })
 
     wrap()
-    // Navigate to showcase step via mocked steps
-    // Simulate being on step 3 by checking for the cap message
-    // We'll test this at the component level — the Generate button should be disabled
-    // when generationsUsed >= generationsLimit
-    // For this test we just confirm the warning text appears on showcase step
-    // (full navigation tested separately)
-    // Re-render directly at showcase step by passing initialStep prop
-    // Since the component manages its own state, we verify via user interaction:
     const file = new File(['img'], 'photo.jpg', { type: 'image/jpeg' })
     const input = screen.getByLabelText(/choose photo/i)
     await userEvent.upload(input, file)
@@ -93,6 +85,7 @@ describe('InventoryNewPage', () => {
     await userEvent.type(screen.getByPlaceholderText(/price/i), '1500')
     await userEvent.click(screen.getByRole('button', { name: /next/i }))
     await waitFor(() => screen.getByText(/step 3/i))
+    await userEvent.click(screen.getByRole('button', { name: /^M$/ }))
     await userEvent.click(screen.getByRole('button', { name: /next/i }))
     await waitFor(() => screen.getByText(/step 4/i))
     expect(screen.getByText(/0 generations remaining/i)).toBeInTheDocument()
