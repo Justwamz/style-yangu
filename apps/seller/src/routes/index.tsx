@@ -11,6 +11,7 @@ import InventoryDetailPage from '../pages/InventoryDetailPage'
 import POSTab from '../pages/POSTab'
 import POSNewPage from '../pages/POSNewPage'
 import ClientsTab from '../pages/ClientsTab'
+import ClientDetailPage from '../pages/ClientDetailPage'
 import ProfileTab from '../pages/ProfileTab'
 
 export default function AppRoutes() {
@@ -29,6 +30,7 @@ export default function AppRoutes() {
           <Route path="/pos" element={<POSTab />} />
           <Route path="/pos/new" element={<POSNewPage />} />
           <Route path="/clients" element={<ClientsTab />} />
+          <Route path="/clients/:id" element={<ClientDetailPage />} />
           <Route path="/profile" element={<ProfileTab />} />
         </Route>
       </Route>
