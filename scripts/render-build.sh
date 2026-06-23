@@ -2,7 +2,8 @@
 set -euo pipefail
 
 # Render build script — called as: bash scripts/render-build.sh <api|consumer|seller>
-# Calls tsc/vite directly (not via pnpm recursive) so all error output is visible in logs.
+# Uses pnpm v9 (no supply-chain release-age policy) with --frozen-lockfile.
+# Calls binaries from each package's own node_modules/.bin (pnpm doesn't hoist devDeps to root).
 
 SERVICE="${1:-}"
 
@@ -19,28 +20,26 @@ echo "==> pnpm $(pnpm --version) / node $(node --version)"
 echo "==> Installing workspace dependencies..."
 pnpm install --frozen-lockfile
 
-ROOT="$(pwd)"
-
 echo "==> Building service: $SERVICE"
 case "$SERVICE" in
   api)
-    cd "$ROOT/services/api"
+    cd services/api
     echo "--- tsc ---"
-    "$ROOT/node_modules/.bin/tsc"
+    ./node_modules/.bin/tsc
     ;;
   consumer)
-    cd "$ROOT/apps/consumer"
+    cd apps/consumer
     echo "--- tsc -b ---"
-    "$ROOT/node_modules/.bin/tsc" -b
+    ./node_modules/.bin/tsc -b
     echo "--- vite build ---"
-    "$ROOT/node_modules/.bin/vite" build
+    ./node_modules/.bin/vite build
     ;;
   seller)
-    cd "$ROOT/apps/seller"
+    cd apps/seller
     echo "--- tsc -b ---"
-    "$ROOT/node_modules/.bin/tsc" -b
+    ./node_modules/.bin/tsc -b
     echo "--- vite build ---"
-    "$ROOT/node_modules/.bin/vite" build
+    ./node_modules/.bin/vite build
     ;;
   *)
     echo "Unknown service '$SERVICE'. Use: api | consumer | seller"
