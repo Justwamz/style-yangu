@@ -41,13 +41,14 @@ describe('useTierGate', () => {
     expect(result.current.allowed).toBe(false)
   })
 
-  it('returns allowed when profile is null (loading state)', () => {
+  it('returns allowed:false when profile is null (loading state)', () => {
     vi.mocked(useSellerContext).mockReturnValue({
       profile: null,
       loading: true,
       refresh: vi.fn(),
     })
     const { result } = renderHook(() => useTierGate('clients_tab'))
-    expect(result.current.allowed).toBe(true)
+    expect(result.current.allowed).toBe(false)
+    expect(result.current.reason).toBe('Loading...')
   })
 })

@@ -24,6 +24,7 @@ export function useGenerateShowcase() {
       await sellerApi.post(`/seller/inventory/${itemId}/showcase`, { mode, faceId })
       await new Promise(resolve => setTimeout(resolve, 2500))
       const label = encodeURIComponent(itemName.slice(0, 20))
+      // STUB: replace with API response resultUrl once showcase job endpoint is live
       return `https://placehold.co/400x600/${COLOR_BY_MODE[mode]}?text=${label}`
     } finally {
       setGenerating(false)

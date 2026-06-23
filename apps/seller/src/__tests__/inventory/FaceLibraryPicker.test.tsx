@@ -16,9 +16,10 @@ vi.mock('../../context/SellerContext', async (importOriginal) => {
 const FACES = [
   { id: 'f1', gender: 'female', thumbnailUrl: 'https://placehold.co/80x80', styleVibe: 'editorial', skinDepth: 'medium' },
   { id: 'f2', gender: 'female', thumbnailUrl: 'https://placehold.co/80x80', styleVibe: 'everyday', skinDepth: 'deep' },
+  { id: 'f3', gender: 'female', thumbnailUrl: 'https://placehold.co/80x80', styleVibe: 'traditional', skinDepth: 'medium' },
+  { id: 'f4', gender: 'female', thumbnailUrl: 'https://placehold.co/80x80', styleVibe: 'streetwear', skinDepth: 'light' },
   { id: 'm1', gender: 'male', thumbnailUrl: 'https://placehold.co/80x80', styleVibe: 'streetwear', skinDepth: 'light' },
   { id: 'm2', gender: 'male', thumbnailUrl: 'https://placehold.co/80x80', styleVibe: 'corporate', skinDepth: 'medium_deep' },
-  { id: 'f3', gender: 'female', thumbnailUrl: 'https://placehold.co/80x80', styleVibe: 'traditional', skinDepth: 'medium' },
 ]
 
 function wrap(ui: React.ReactElement) {
@@ -29,17 +30,17 @@ function wrap(ui: React.ReactElement) {
 describe('FaceLibraryPicker', () => {
   beforeEach(() => vi.restoreAllMocks())
 
-  it('renders 4 face cards for free_trial, 5th is locked', async () => {
+  it('locks faces beyond first 2 female and first 2 male for free_trial', async () => {
     vi.spyOn(sellerApi, 'get').mockResolvedValue(FACES)
     wrap(<FaceLibraryPicker selectedId={null} onSelect={vi.fn()} tier="free_trial" />)
-    await waitFor(() => expect(screen.getAllByRole('img')).toHaveLength(5))
-    expect(screen.getByText(/upgrade/i)).toBeInTheDocument()
+    await waitFor(() => expect(screen.getAllByRole('img')).toHaveLength(6))
+    expect(screen.getAllByText(/upgrade/i)).toHaveLength(2)
   })
 
-  it('renders all 5 cards for hustler (no locked overlay)', async () => {
+  it('renders all 6 cards for hustler (no locked overlay)', async () => {
     vi.spyOn(sellerApi, 'get').mockResolvedValue(FACES)
     wrap(<FaceLibraryPicker selectedId={null} onSelect={vi.fn()} tier="hustler" />)
-    await waitFor(() => expect(screen.getAllByRole('img')).toHaveLength(5))
+    await waitFor(() => expect(screen.getAllByRole('img')).toHaveLength(6))
     expect(screen.queryByText(/upgrade/i)).not.toBeInTheDocument()
   })
 

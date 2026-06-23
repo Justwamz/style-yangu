@@ -8,20 +8,24 @@ interface Props {
   tier: SellerTier
 }
 
-const TRIAL_LIMIT = 4
-
 export default function FaceLibraryPicker({ selectedId, onSelect, tier }: Props) {
   const { data: faces = [] } = useQuery<FaceCard[]>({
     queryKey: ['faces'],
     queryFn: () => sellerApi.get('/seller/faces'),
   })
 
-  const isTrialTier = tier === 'free_trial'
+  const allowedIds = new Set<string>()
+  if (tier === 'free_trial') {
+    const females = faces.filter(f => f.gender === 'female').slice(0, 2)
+    const males = faces.filter(f => f.gender === 'male').slice(0, 2)
+    ;[...females, ...males].forEach(f => allowedIds.add(f.id))
+  }
+  const isLocked = (face: FaceCard) => tier === 'free_trial' && !allowedIds.has(face.id)
 
   return (
     <div className="grid grid-cols-4 gap-2">
-      {faces.map((face, idx) => {
-        const locked = isTrialTier && idx >= TRIAL_LIMIT
+      {faces.map((face) => {
+        const locked = isLocked(face)
         const selected = face.id === selectedId
 
         return (

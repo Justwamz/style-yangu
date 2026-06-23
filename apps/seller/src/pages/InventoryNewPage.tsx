@@ -1,4 +1,4 @@
-import { useReducer } from 'react'
+import { useReducer, useEffect } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { sellerApi, useSellerContext } from '../context/SellerContext'
 import FaceLibraryPicker from '../components/FaceLibraryPicker'
@@ -15,6 +15,13 @@ const SHOE_SIZES = ['36', '37', '38', '39', '40', '41', '42', '43', '44', '45', 
 
 const CLOTHING_CATS: ItemCategory[] = ['top', 'bottom', 'dress', 'suit', 'outerwear', 'jumpsuit']
 const SHOE_CATS: ItemCategory[] = ['shoe']
+
+function getSizeOptions(cat: ItemCategory | ''): string[] {
+  if (CLOTHING_CATS.includes(cat as ItemCategory)) return CLOTHING_SIZES
+  if (SHOE_CATS.includes(cat as ItemCategory)) return SHOE_SIZES
+  if (!cat) return []
+  return ['One size']
+}
 
 interface State {
   step: number
@@ -38,6 +45,7 @@ type Action =
   | { type: 'TOGGLE_TAG'; tag: OccasionTag }
   | { type: 'TOGGLE_SIZE'; size: string }
   | { type: 'SET_QTY'; size: string; qty: number }
+  | { type: 'SET_SIZES'; payload: { size: string; quantity: number }[] }
   | { type: 'NEXT_STEP' }
   | { type: 'SET_ITEM_ID'; id: string }
   | { type: 'SET_SHOWCASE'; url: string }
@@ -67,6 +75,8 @@ function reducer(state: State, action: Action): State {
         ...state,
         sizes: state.sizes.map(s => s.size === action.size ? { ...s, quantity: action.qty } : s),
       }
+    case 'SET_SIZES':
+      return { ...state, sizes: action.payload }
     case 'NEXT_STEP':
       return { ...state, step: state.step + 1 }
     case 'SET_ITEM_ID':
@@ -89,6 +99,15 @@ export default function InventoryNewPage() {
   const { profile, refresh } = useSellerContext()
   const [state, dispatch] = useReducer(reducer, INITIAL)
   const { generate, generating } = useGenerateShowcase()
+
+  useEffect(() => {
+    const opts = getSizeOptions(state.category as ItemCategory)
+    if (opts.length === 1 && opts[0] === 'One size') {
+      dispatch({ type: 'SET_SIZES', payload: [{ size: 'One size', quantity: 1 }] })
+    } else if (state.sizes.length === 1 && state.sizes[0].size === 'One size') {
+      dispatch({ type: 'SET_SIZES', payload: [] })
+    }
+  }, [state.category])
 
   const capReached =
     profile !== null &&

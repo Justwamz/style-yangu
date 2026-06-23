@@ -154,7 +154,7 @@ export default function POSNewPage() {
         />
         <button
           onClick={() => dispatch({ type: 'NEXT_STEP' })}
-          disabled={!state.finalPriceKES}
+          disabled={state.finalPriceKES === undefined || state.finalPriceKES === null}
           className="w-full bg-amber-800 text-white rounded-lg py-3 font-semibold disabled:opacity-50"
         >
           Next

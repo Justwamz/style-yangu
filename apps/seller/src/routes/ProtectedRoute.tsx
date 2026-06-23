@@ -7,6 +7,7 @@ export default function ProtectedRoute() {
 
   if (!token) return <Navigate to="/auth" replace />
   if (loading) return null
+  if (!loading && !profile) return <Navigate to="/auth" replace />
   if (profile && !profile.onboardingDone) return <Navigate to="/onboarding" replace />
 
   return <Outlet />

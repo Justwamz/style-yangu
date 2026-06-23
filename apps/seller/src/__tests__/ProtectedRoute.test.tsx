@@ -46,4 +46,9 @@ describe('ProtectedRoute', () => {
     renderGuard('jwt', { onboardingDone: true })
     expect(screen.getByText('protected')).toBeInTheDocument()
   })
+
+  it('redirects to /auth when token exists but profile is null after loading', () => {
+    renderGuard('tok', null)
+    expect(screen.getByText('auth')).toBeInTheDocument()
+  })
 })

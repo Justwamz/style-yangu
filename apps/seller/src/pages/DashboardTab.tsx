@@ -76,6 +76,14 @@ export default function DashboardTab() {
         >
           Record sale
         </button>
+        <a
+          href={`https://styleyangu.com/shop/${profile?.businessName?.toLowerCase().replace(/\s+/g, '-') ?? ''}`}
+          target="_blank"
+          rel="noreferrer"
+          className="flex-1 border border-amber-700 text-amber-800 rounded-xl py-2 text-sm font-semibold text-center"
+        >
+          View Storefront
+        </a>
       </div>
 
       {/* Weekly aggregates (hustler) */}

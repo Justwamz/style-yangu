@@ -26,7 +26,7 @@ const FEATURE_MIN_TIER: Record<TierFeature, SellerTier> = {
 
 export function useTierGate(feature: TierFeature): { allowed: boolean; reason: string } {
   const { profile } = useSellerContext()
-  if (!profile) return { allowed: true, reason: '' }
+  if (!profile) return { allowed: false, reason: 'Loading...' }
 
   const userLevel = TIER_ORDER[profile.tier]
   const requiredLevel = TIER_ORDER[FEATURE_MIN_TIER[feature]]

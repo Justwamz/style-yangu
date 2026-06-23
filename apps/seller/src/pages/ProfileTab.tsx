@@ -1,4 +1,4 @@
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { sellerApi, useSellerContext } from '../context/SellerContext'
 import TierBadge from '../components/TierBadge'
@@ -12,6 +12,15 @@ export default function ProfileTab() {
   const [instagram, setInstagram] = useState(profile?.instagramHandle ?? '')
   const [whatsapp, setWhatsapp] = useState(profile?.whatsappNumber ?? '')
   const [location, setLocation] = useState(profile?.location ?? '')
+
+  useEffect(() => {
+    if (profile) {
+      setBio(profile.bio ?? '')
+      setInstagram(profile.instagramHandle ?? '')
+      setWhatsapp(profile.whatsappNumber ?? '')
+      setLocation(profile.location ?? '')
+    }
+  }, [profile])
 
   if (!profile) return null
 
