@@ -1,0 +1,52 @@
+services:
+  # ── API (Node/Express) ─────────────────────────────────────────────────────
+  - type: web
+    name: style-yangu-api
+    env: node
+    region: frankfurt
+    plan: free
+    buildCommand: npm install -g pnpm && pnpm install --frozen-lockfile && pnpm --filter @style-yangu/api-service build
+    startCommand: node services/api/dist/index.js
+    envVars:
+      - key: NODE_ENV
+        value: production
+      - key: PORT
+        value: 10000
+      - key: DATABASE_URL
+        sync: false
+      - key: JWT_SECRET
+        generateValue: true
+      - key: CORS_ORIGIN
+        sync: false
+
+  # ── Consumer PWA (Static Site) ─────────────────────────────────────────────
+  - type: web
+    name: style-yangu-consumer
+    env: static
+    region: frankfurt
+    plan: free
+    buildCommand: npm install -g pnpm && pnpm install --frozen-lockfile && pnpm --filter @style-yangu/consumer build
+    staticPublishPath: apps/consumer/dist
+    envVars:
+      - key: VITE_API_URL
+        sync: false
+    routes:
+      - type: rewrite
+        source: /*
+        destination: /index.html
+
+  # ── Seller PWA (Static Site) ───────────────────────────────────────────────
+  - type: web
+    name: style-yangu-seller
+    env: static
+    region: frankfurt
+    plan: free
+    buildCommand: npm install -g pnpm && pnpm install --frozen-lockfile && pnpm --filter @style-yangu/seller build
+    staticPublishPath: apps/seller/dist
+    envVars:
+      - key: VITE_API_URL
+        sync: false
+    routes:
+      - type: rewrite
+        source: /*
+        destination: /index.html
