@@ -238,3 +238,80 @@ export interface StreakData {
   weeklyScore: number
   leaderboardRank: number
 }
+
+// ── Seller ────────────────────────────────────────────────────────────────────
+export type SellerType = 'seller' | 'cobbler' | 'tailor' | 'bag_maker' | 'jewellery_maker'
+
+export interface SellerProfile {
+  id: string
+  businessName: string
+  sellerType: SellerType
+  tier: SellerTier
+  generationsUsed: number
+  generationsLimit: number
+  phone: string
+  avatarUrl: string | null
+  instagramHandle: string | null
+  whatsappNumber: string | null
+  location: string | null
+  bio: string | null
+  onboardingDone: boolean
+  createdAt: string
+}
+
+export interface ShowcaseJob {
+  id: string
+  itemId: string
+  mode: 'full_body' | 'face_neck' | 'studio'
+  faceId: string | null
+  status: 'pending' | 'processing' | 'done' | 'failed'
+  resultUrl: string | null
+  watermarked: boolean
+  createdAt: string
+}
+
+export interface POSTransaction {
+  id: string
+  sellerId: string
+  itemId: string | null
+  itemName: string
+  listedPriceKES: number
+  finalPriceKES: number
+  paymentMethod: PaymentMethod
+  paymentStatus: PaymentStatus
+  clientNickname: string | null
+  clientUsername: string | null
+  whatsappNumber: string | null
+  createdAt: string
+}
+
+export interface SellerClient {
+  id: string
+  sellerId: string
+  nickname: string
+  consumerUsername: string
+  lastPurchaseDate: string | null
+  tryOnSent: number
+  tryOnActed: number
+}
+
+export interface TryOnSend {
+  clientId: string
+  itemId: string
+  note: string | null
+}
+
+export interface FaceCard {
+  id: string
+  gender: 'female' | 'male'
+  thumbnailUrl: string
+  styleVibe: 'editorial' | 'everyday' | 'corporate' | 'streetwear' | 'traditional'
+  skinDepth: SkinDepth
+}
+
+export interface POSSummary {
+  todayRevenueKES: number
+  todayItemsSold: number
+  outstandingCount: number
+  outstandingKES: number
+}
