@@ -17,8 +17,10 @@ npm install -g pnpm@9
 
 echo "==> pnpm $(pnpm --version) / node $(node --version)"
 
-echo "==> Installing workspace dependencies..."
-pnpm install --frozen-lockfile
+echo "==> Installing workspace dependencies (including devDeps)..."
+# Unset NODE_ENV so pnpm installs devDependencies — Render sets NODE_ENV=production
+# for node web services which causes pnpm to skip devDeps (e.g. typescript, vite).
+NODE_ENV= pnpm install --frozen-lockfile
 
 echo "==> Building service: $SERVICE"
 case "$SERVICE" in
