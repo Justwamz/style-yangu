@@ -430,6 +430,9 @@ importers:
 
   packages/ui:
     dependencies:
+      '@style-yangu/types':
+        specifier: workspace:*
+        version: link:../types
       react:
         specifier: ^18.3.0
         version: 18.3.1
