@@ -32,7 +32,7 @@ describe('FaceLibraryPicker', () => {
   it('renders 4 face cards for free_trial, 5th is locked', async () => {
     vi.spyOn(sellerApi, 'get').mockResolvedValue(FACES)
     wrap(<FaceLibraryPicker selectedId={null} onSelect={vi.fn()} tier="free_trial" />)
-    await waitFor(() => expect(screen.getAllByRole('img')).toHaveLength(4))
+    await waitFor(() => expect(screen.getAllByRole('img')).toHaveLength(5))
     expect(screen.getByText(/upgrade/i)).toBeInTheDocument()
   })
 

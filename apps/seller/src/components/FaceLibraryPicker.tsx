@@ -24,24 +24,21 @@ export default function FaceLibraryPicker({ selectedId, onSelect, tier }: Props)
         const locked = isTrialTier && idx >= TRIAL_LIMIT
         const selected = face.id === selectedId
 
-        if (locked) {
-          return (
-            <div key={face.id} className="relative aspect-square bg-gray-200 rounded-lg flex items-center justify-center">
-              <span className="text-gray-600 text-xs font-semibold text-center px-1">Upgrade</span>
-            </div>
-          )
-        }
-
         return (
           <div key={face.id} className="relative">
             <img
               src={face.thumbnailUrl}
               alt={`${face.gender} ${face.styleVibe}`}
-              onClick={() => onSelect(face.id)}
+              onClick={() => !locked && onSelect(face.id)}
               className={`w-full aspect-square object-cover rounded-lg cursor-pointer border-2 ${
                 selected ? 'border-amber-700' : 'border-transparent'
-              }`}
+              } ${locked ? 'opacity-40' : ''}`}
             />
+            {locked && (
+              <div className="absolute inset-0 flex items-center justify-center bg-black/30 rounded-lg">
+                <span className="text-white text-xs font-semibold text-center px-1">Upgrade</span>
+              </div>
+            )}
           </div>
         )
       })}
