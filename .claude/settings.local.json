@@ -19,7 +19,30 @@
       "Bash(Write-Output \"All directories created\")",
       "Bash(git init *)",
       "Bash(git add *)",
-      "Bash(git commit -m 'chore: scaffold monorepo — 6 apps, 6 packages, 7 services *)"
+      "Bash(git commit -m 'chore: scaffold monorepo — 6 apps, 6 packages, 7 services *)",
+      "Bash(npm install *)",
+      "Bash(npx vite *)",
+      "Bash(curl -s http://localhost:5173)",
+      "PowerShell(New-Item -ItemType Directory -Force -Path \"c:\\\\Users\\\\kenneth.wamunyu\\\\Desktop\\\\Wawesh\\\\Style yangu\\\\docs\\\\superpowers\\\\specs\")",
+      "Bash(git commit -m 'docs: consumer onboarding design spec *)",
+      "Bash(git commit -m ' *)",
+      "Bash(npx tsc *)",
+      "Bash(Remove-Item \"C:\\\\Users\\\\kenneth.wamunyu\\\\Desktop\\\\Wawesh\\\\Style yangu\\\\apps\\\\consumer\\\\src\\\\__tests__\\\\alias.test.ts\")",
+      "Bash(git commit *)",
+      "Bash(npx --prefix apps/consumer vitest run apps/consumer/src/__tests__/OnboardingContext.test.tsx)",
+      "Bash(git ls-tree *)",
+      "Bash(node -e ' *)",
+      "Bash(npm run *)",
+      "Bash(Find-Content -Pattern \"JWT_SECRET|process.env.JWT_SECRET\" -Path \"services/api/src\")",
+      "Bash(New-Item -ItemType Directory -Force \"c:\\\\Users\\\\kenneth.wamunyu\\\\Desktop\\\\Wawesh\\\\Style yangu\\\\apps\\\\consumer\\\\src\\\\__tests__\\\\steps\")",
+      "PowerShell(New-Item -ItemType Directory -Force \"c:\\\\Users\\\\kenneth.wamunyu\\\\Desktop\\\\Wawesh\\\\Style yangu\\\\apps\\\\consumer\\\\src\\\\__tests__\\\\steps\")",
+      "Bash(mkdir -p \"c:/Users/kenneth.wamunyu/Desktop/Wawesh/Style yangu/docs/superpowers/specs\")",
+      "Bash(Get-Item -Path \"c:\\\\Users\\\\kenneth.wamunyu\\\\Desktop\\\\Wawesh\\\\Style yangu\\\\apps\\\\consumer\\\\src\" -ErrorAction SilentlyContinue)",
+      "Bash(Select-Object -ExpandProperty FullName)",
+      "PowerShell(New-Item -ItemType Directory -Path \"c:\\\\Users\\\\kenneth.wamunyu\\\\Desktop\\\\Wawesh\\\\Style yangu\\\\apps\\\\consumer\\\\src\\\\hooks\" -Force)"
+    ],
+    "additionalDirectories": [
+      "c:\\Users\\kenneth.wamunyu\\Desktop\\Wawesh\\Style yangu\\docs\\superpowers\\specs"
     ]
   }
 }

@@ -7,8 +7,8 @@
   "types": "./src/index.ts",
   "exports": { ".": "./src/index.ts" },
   "dependencies": {
-    "@style-yangu/api-client": "*",
-    "@style-yangu/types": "*",
+    "@style-yangu/api-client": "workspace:*",
+    "@style-yangu/types": "workspace:*",
     "@tanstack/react-query": "^5.45.0"
   },
   "peerDependencies": { "react": "^18.3.0" },

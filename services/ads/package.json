@@ -10,8 +10,8 @@
   },
   "dependencies": {
     "@anthropic-ai/sdk": "^0.26.0",
-    "@style-yangu/config": "*",
-    "@style-yangu/types": "*",
+    "@style-yangu/config": "workspace:*",
+    "@style-yangu/types": "workspace:*",
     "express": "^4.19.0",
     "helmet": "^7.1.0",
     "ioredis": "^5.4.1",

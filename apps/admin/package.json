@@ -11,12 +11,12 @@
     "preview": "vite preview"
   },
   "dependencies": {
-    "@style-yangu/api-client": "*",
-    "@style-yangu/config": "*",
-    "@style-yangu/hooks": "*",
-    "@style-yangu/types": "*",
-    "@style-yangu/ui": "*",
-    "@style-yangu/utils": "*",
+    "@style-yangu/api-client": "workspace:*",
+    "@style-yangu/config": "workspace:*",
+    "@style-yangu/hooks": "workspace:*",
+    "@style-yangu/types": "workspace:*",
+    "@style-yangu/ui": "workspace:*",
+    "@style-yangu/utils": "workspace:*",
     "@tanstack/react-query": "^5.45.0",
     "react": "^18.3.0",
     "react-dom": "^18.3.0",
