@@ -1,4 +1,6 @@
-import { createBrowserRouter, Navigate } from 'react-router-dom'
+import { createBrowserRouter, Navigate, type RouterProviderProps } from 'react-router-dom'
+
+type AppRouter = RouterProviderProps['router']
 import { lazy, Suspense } from 'react'
 
 const Onboarding = lazy(() => import('../onboarding'))
@@ -16,7 +18,7 @@ function AuthGuard() {
   return token ? <Navigate to="/home" replace /> : <Navigate to="/onboarding" replace />
 }
 
-const router = createBrowserRouter([
+const router: AppRouter = createBrowserRouter([
   { path: '/', element: <AuthGuard /> },
   {
     path: '/onboarding',
