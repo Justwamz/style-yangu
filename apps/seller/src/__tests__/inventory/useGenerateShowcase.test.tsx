@@ -1,6 +1,6 @@
 import { renderHook, act } from '@testing-library/react'
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query'
-import { vi, describe, it, expect, beforeEach } from 'vitest'
+import { vi, describe, it, expect, beforeEach, afterEach } from 'vitest'
 import { useGenerateShowcase } from '../../hooks/useGenerateShowcase'
 import { sellerApi } from '../../context/SellerContext'
 
