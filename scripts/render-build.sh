@@ -2,8 +2,7 @@
 set -euo pipefail
 
 # Render build script — called as: bash scripts/render-build.sh <api|consumer|seller>
-# Uses pnpm v9 (no supply-chain release-age policy) with --frozen-lockfile for
-# deterministic installs (exact versions from the committed lockfile).
+# Calls tsc/vite directly (not via pnpm recursive) so all error output is visible in logs.
 
 SERVICE="${1:-}"
 
@@ -20,16 +19,28 @@ echo "==> pnpm $(pnpm --version) / node $(node --version)"
 echo "==> Installing workspace dependencies..."
 pnpm install --frozen-lockfile
 
+ROOT="$(pwd)"
+
 echo "==> Building service: $SERVICE"
 case "$SERVICE" in
   api)
-    pnpm --filter @style-yangu/api-service... build 2>&1
+    cd "$ROOT/services/api"
+    echo "--- tsc ---"
+    "$ROOT/node_modules/.bin/tsc"
     ;;
   consumer)
-    pnpm --filter @style-yangu/consumer... build 2>&1
+    cd "$ROOT/apps/consumer"
+    echo "--- tsc -b ---"
+    "$ROOT/node_modules/.bin/tsc" -b
+    echo "--- vite build ---"
+    "$ROOT/node_modules/.bin/vite" build
     ;;
   seller)
-    pnpm --filter @style-yangu/seller... build 2>&1
+    cd "$ROOT/apps/seller"
+    echo "--- tsc -b ---"
+    "$ROOT/node_modules/.bin/tsc" -b
+    echo "--- vite build ---"
+    "$ROOT/node_modules/.bin/vite" build
     ;;
   *)
     echo "Unknown service '$SERVICE'. Use: api | consumer | seller"
