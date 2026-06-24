@@ -1,12 +1,1848 @@
-<!doctype html>
+<!DOCTYPE html>
 <html lang="en">
-  <head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Style Yangu</title>
-  </head>
-  <body>
-    <div id="root"></div>
-    <script type="module" src="/src/main.tsx"></script>
-  </body>
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Style Yangu — Your Honest Personal Stylist</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,600;0,700;1,300;1,400&family=DM+Sans:opsz,wght@9..40,300;9..40,400;9..40,500;9..40,600&display=swap" rel="stylesheet">
+  <style>
+    /* ── TOKENS ─────────────────────────────────────────── */
+    :root {
+      --dark:     #1A0F0A;
+      --deep:     #2C1810;
+      --mid:      #6B4226;
+      --brand:    #8B4513;
+      --gold:     #D4A853;
+      --gold-dim: #A07830;
+      --sand:     #F5EDE3;
+      --cream:    #FAF6F1;
+      --white:    #FFFFFF;
+      --text:     #2C1810;
+
+      --f-display: 'Cormorant Garamond', Georgia, serif;
+      --f-body:    'DM Sans', system-ui, sans-serif;
+
+      --hero-h: clamp(4rem, 9vw, 8rem);
+      --display: clamp(2.25rem, 5vw, 4.25rem);
+      --title:   clamp(1.4rem, 2.5vw, 2.25rem);
+      --lead:    clamp(1rem, 1.5vw, 1.2rem);
+      --body:    1rem;
+      --small:   0.875rem;
+      --label:   0.72rem;
+
+      --ease: cubic-bezier(0.22, 1, 0.36, 1);
+      --ease-in: cubic-bezier(0.55, 0, 1, 0.45);
+    }
+
+    /* ── RESET ──────────────────────────────────────────── */
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    html { scroll-behavior: smooth; }
+    body {
+      font-family: var(--f-body);
+      background: var(--cream);
+      color: var(--text);
+      overflow-x: hidden;
+      -webkit-font-smoothing: antialiased;
+    }
+    img { display: block; max-width: 100%; }
+    a { text-decoration: none; color: inherit; }
+    button { cursor: pointer; border: none; background: none; font-family: inherit; }
+
+    /* ── UTILITIES ──────────────────────────────────────── */
+    .label-tag {
+      font-family: var(--f-body);
+      font-size: var(--label);
+      font-weight: 600;
+      letter-spacing: 0.2em;
+      text-transform: uppercase;
+      color: var(--gold);
+    }
+    .label-tag--dark { color: var(--mid); }
+
+    /* ── KENTE CORNER BRACKET (signature element) ────────
+       Thin angular gold bracket with geometric inner detail,
+       inspired by the angular grid geometry of kente weaving.
+       Entirely original geometric design.
+    ──────────────────────────────────────────────────────── */
+    .kente-corner {
+      position: relative;
+    }
+    .kente-corner::before,
+    .kente-corner::after {
+      content: '';
+      position: absolute;
+      width: 40px;
+      height: 40px;
+      border-color: var(--gold);
+      border-style: solid;
+      opacity: 0.55;
+    }
+    .kente-corner::before {
+      top: 0; left: 0;
+      border-width: 1.5px 0 0 1.5px;
+    }
+    .kente-corner::after {
+      bottom: 0; right: 0;
+      border-width: 0 1.5px 1.5px 0;
+    }
+    /* Inner diamond accent via box-shadow on a pseudo */
+    .kente-inner {
+      position: relative;
+    }
+    .kente-inner::before {
+      content: '';
+      position: absolute;
+      top: 12px; left: 12px;
+      width: 8px; height: 8px;
+      border: 1px solid var(--gold);
+      transform: rotate(45deg);
+      opacity: 0.4;
+    }
+
+    /* ── ANIMATIONS ─────────────────────────────────────── */
+    @keyframes fadeUp {
+      from { opacity: 0; transform: translateY(28px); }
+      to   { opacity: 1; transform: translateY(0); }
+    }
+    @keyframes fadeIn {
+      from { opacity: 0; }
+      to   { opacity: 1; }
+    }
+    @keyframes ticker {
+      from { transform: translateX(0); }
+      to   { transform: translateX(-50%); }
+    }
+    @keyframes floatUp {
+      from { opacity: 0; transform: translateY(60px) scale(0.97); }
+      to   { opacity: 1; transform: translateY(0) scale(1); }
+    }
+
+    .anim-fade-up {
+      animation: fadeUp 0.9s var(--ease) forwards;
+      opacity: 0;
+    }
+    .anim-fade-up.d1 { animation-delay: 0.1s; }
+    .anim-fade-up.d2 { animation-delay: 0.25s; }
+    .anim-fade-up.d3 { animation-delay: 0.4s; }
+    .anim-fade-up.d4 { animation-delay: 0.55s; }
+    .anim-float {
+      animation: floatUp 1.1s var(--ease) 0.2s forwards;
+      opacity: 0;
+    }
+
+    /* Scroll-reveal */
+    .reveal {
+      opacity: 0;
+      transform: translateY(32px);
+      transition: opacity 0.8s var(--ease), transform 0.8s var(--ease);
+    }
+    .reveal.visible {
+      opacity: 1;
+      transform: translateY(0);
+    }
+
+    /* ── NAVIGATION ─────────────────────────────────────── */
+    .nav {
+      position: fixed;
+      top: 0; left: 0; right: 0;
+      z-index: 100;
+      padding: 1.25rem 2.5rem;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      transition: background 0.4s ease, backdrop-filter 0.4s ease;
+    }
+    .nav.scrolled {
+      background: rgba(26, 15, 10, 0.92);
+      backdrop-filter: blur(12px);
+    }
+    .nav__logo {
+      font-family: var(--f-display);
+      font-size: 1.5rem;
+      font-weight: 600;
+      color: var(--white);
+      letter-spacing: 0.02em;
+    }
+    .nav__logo span {
+      color: var(--gold);
+    }
+    .nav__links {
+      display: flex;
+      gap: 2rem;
+      list-style: none;
+    }
+    .nav__links a {
+      font-size: var(--small);
+      font-weight: 500;
+      letter-spacing: 0.08em;
+      color: rgba(255,255,255,0.75);
+      text-transform: uppercase;
+      transition: color 0.2s;
+    }
+    .nav__links a:hover { color: var(--gold); }
+    .nav__cta {
+      padding: 0.55rem 1.4rem;
+      background: var(--gold);
+      color: var(--dark);
+      font-size: var(--small);
+      font-weight: 600;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      border-radius: 2px;
+      transition: background 0.2s, transform 0.2s;
+    }
+    .nav__cta:hover {
+      background: #E8BB5A;
+      transform: translateY(-1px);
+    }
+    @media (max-width: 768px) {
+      .nav__links { display: none; }
+      .nav { padding: 1rem 1.25rem; }
+    }
+
+    /* ── HERO ───────────────────────────────────────────── */
+    .hero {
+      min-height: 100vh;
+      background: var(--dark);
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      align-items: center;
+      position: relative;
+      overflow: hidden;
+    }
+
+    /* Subtle grain texture overlay */
+    .hero::before {
+      content: '';
+      position: absolute;
+      inset: 0;
+      background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)' opacity='0.035'/%3E%3C/svg%3E");
+      opacity: 0.4;
+      pointer-events: none;
+      z-index: 1;
+    }
+
+    /* Warm gradient wash from right */
+    .hero::after {
+      content: '';
+      position: absolute;
+      inset: 0;
+      background: radial-gradient(ellipse 60% 80% at 75% 50%, rgba(139, 69, 19, 0.18) 0%, transparent 70%);
+      pointer-events: none;
+      z-index: 1;
+    }
+
+    .hero__content {
+      position: relative;
+      z-index: 2;
+      padding: clamp(5rem, 8vw, 8rem) clamp(1.5rem, 5vw, 5rem) clamp(3rem, 5vw, 5rem);
+    }
+
+    .hero__eyebrow {
+      display: flex;
+      align-items: center;
+      gap: 0.75rem;
+      margin-bottom: 1.75rem;
+    }
+    .hero__eyebrow-line {
+      width: 32px;
+      height: 1px;
+      background: var(--gold);
+      opacity: 0.7;
+    }
+
+    .hero__headline {
+      font-family: var(--f-display);
+      font-size: var(--hero-h);
+      font-weight: 300;
+      line-height: 0.95;
+      color: var(--white);
+      letter-spacing: -0.01em;
+      margin-bottom: 0.15em;
+    }
+    .hero__headline em {
+      font-style: italic;
+      color: var(--gold);
+    }
+    .hero__headline-sub {
+      font-family: var(--f-display);
+      font-size: clamp(2rem, 4.5vw, 5.5rem);
+      font-weight: 300;
+      font-style: italic;
+      line-height: 1;
+      color: rgba(255,255,255,0.35);
+      margin-bottom: 2rem;
+    }
+
+    .hero__desc {
+      font-size: var(--lead);
+      font-weight: 300;
+      color: rgba(255,255,255,0.65);
+      line-height: 1.65;
+      max-width: 420px;
+      margin-bottom: 2.5rem;
+    }
+
+    .hero__actions {
+      display: flex;
+      align-items: center;
+      gap: 1.5rem;
+      flex-wrap: wrap;
+    }
+
+    .btn-primary {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.6rem;
+      padding: 0.85rem 2rem;
+      background: var(--gold);
+      color: var(--dark);
+      font-size: var(--small);
+      font-weight: 600;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      border-radius: 2px;
+      transition: background 0.2s, transform 0.2s, box-shadow 0.2s;
+    }
+    .btn-primary:hover {
+      background: #E8BB5A;
+      transform: translateY(-2px);
+      box-shadow: 0 8px 24px rgba(212, 168, 83, 0.3);
+    }
+    .btn-primary svg { transition: transform 0.2s; }
+    .btn-primary:hover svg { transform: translateX(3px); }
+
+    .btn-ghost {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.5rem;
+      font-size: var(--small);
+      font-weight: 500;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      color: rgba(255,255,255,0.6);
+      border-bottom: 1px solid rgba(255,255,255,0.2);
+      padding-bottom: 2px;
+      transition: color 0.2s, border-color 0.2s;
+    }
+    .btn-ghost:hover {
+      color: var(--gold);
+      border-color: var(--gold);
+    }
+
+    .hero__illustration {
+      position: relative;
+      z-index: 2;
+      height: 100vh;
+      display: flex;
+      align-items: flex-end;
+      justify-content: center;
+      overflow: hidden;
+    }
+    .hero__illustration img {
+      height: 95%;
+      width: auto;
+      object-fit: contain;
+      object-position: bottom center;
+      filter: drop-shadow(0 20px 60px rgba(0,0,0,0.5));
+    }
+
+    /* Decorative arc behind illustration */
+    .hero__arc {
+      position: absolute;
+      bottom: -10%;
+      left: 50%;
+      transform: translateX(-50%);
+      width: 120%;
+      height: 120%;
+      border-radius: 50%;
+      border: 1px solid rgba(212, 168, 83, 0.08);
+      pointer-events: none;
+    }
+    .hero__arc:nth-child(2) {
+      width: 90%;
+      height: 90%;
+      border-color: rgba(212, 168, 83, 0.05);
+    }
+
+    @media (max-width: 900px) {
+      .hero {
+        grid-template-columns: 1fr;
+        min-height: auto;
+      }
+      .hero__content {
+        padding-top: 7rem;
+        padding-bottom: 2rem;
+        text-align: center;
+      }
+      .hero__eyebrow { justify-content: center; }
+      .hero__desc { margin: 0 auto 2rem; }
+      .hero__actions { justify-content: center; }
+      .hero__illustration {
+        height: 60vw;
+        min-height: 280px;
+        max-height: 480px;
+      }
+    }
+
+    /* ── TICKER ─────────────────────────────────────────── */
+    .ticker {
+      background: var(--gold);
+      overflow: hidden;
+      padding: 0.7rem 0;
+      white-space: nowrap;
+    }
+    .ticker__track {
+      display: inline-flex;
+      animation: ticker 28s linear infinite;
+    }
+    .ticker__item {
+      font-family: var(--f-display);
+      font-size: 0.95rem;
+      font-weight: 600;
+      letter-spacing: 0.15em;
+      text-transform: uppercase;
+      color: var(--dark);
+      padding: 0 2.5rem;
+    }
+    .ticker__dot {
+      color: var(--brand);
+      font-size: 1.2rem;
+      vertical-align: middle;
+    }
+
+    /* ── SECTION COMMONS ────────────────────────────────── */
+    .section {
+      padding: clamp(4rem, 8vw, 8rem) clamp(1.5rem, 6vw, 6rem);
+    }
+    .section--dark {
+      background: var(--deep);
+      color: var(--white);
+    }
+    .section--sand {
+      background: var(--sand);
+    }
+    .section--cream {
+      background: var(--cream);
+    }
+
+    .section__header {
+      text-align: center;
+      margin-bottom: clamp(3rem, 5vw, 5rem);
+    }
+    .section__header .label-tag {
+      display: block;
+      margin-bottom: 0.75rem;
+    }
+    .section__title {
+      font-family: var(--f-display);
+      font-size: var(--display);
+      font-weight: 400;
+      line-height: 1.1;
+    }
+    .section__title em {
+      font-style: italic;
+      color: var(--gold);
+    }
+    .section__title--light { color: var(--white); }
+    .section__title em.dark { color: var(--brand); }
+
+    .section__divider {
+      width: 48px;
+      height: 1px;
+      background: var(--gold);
+      margin: 1.5rem auto 0;
+      opacity: 0.5;
+    }
+
+    /* ── PROMISE SECTION ────────────────────────────────── */
+    .promise {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: clamp(3rem, 6vw, 6rem);
+      align-items: center;
+      max-width: 1200px;
+      margin: 0 auto;
+    }
+    .promise__text {}
+    .promise__overline {
+      font-size: var(--label);
+      font-weight: 600;
+      letter-spacing: 0.2em;
+      text-transform: uppercase;
+      color: var(--brand);
+      margin-bottom: 1rem;
+    }
+    .promise__headline {
+      font-family: var(--f-display);
+      font-size: clamp(2rem, 4vw, 3.5rem);
+      font-weight: 300;
+      line-height: 1.15;
+      color: var(--white);
+      margin-bottom: 1.5rem;
+    }
+    .promise__headline em {
+      font-style: italic;
+      color: var(--gold);
+    }
+    .promise__body {
+      font-size: var(--lead);
+      font-weight: 300;
+      color: rgba(255,255,255,0.6);
+      line-height: 1.7;
+      margin-bottom: 2rem;
+    }
+    .promise__stats {
+      display: flex;
+      gap: 2.5rem;
+      flex-wrap: wrap;
+    }
+    .promise__stat-num {
+      font-family: var(--f-display);
+      font-size: 2.5rem;
+      font-weight: 600;
+      color: var(--gold);
+      line-height: 1;
+    }
+    .promise__stat-label {
+      font-size: var(--small);
+      color: rgba(255,255,255,0.5);
+      margin-top: 0.25rem;
+    }
+
+    .promise__visual {
+      position: relative;
+      padding: 2.5rem;
+    }
+    .promise__quote-block {
+      background: rgba(212, 168, 83, 0.08);
+      border: 1px solid rgba(212, 168, 83, 0.15);
+      border-radius: 4px;
+      padding: 2.5rem;
+      position: relative;
+    }
+    .promise__quote-mark {
+      font-family: var(--f-display);
+      font-size: 5rem;
+      font-weight: 700;
+      color: var(--gold);
+      opacity: 0.15;
+      line-height: 0;
+      position: absolute;
+      top: 1.5rem;
+      left: 1.5rem;
+    }
+    .promise__quote {
+      font-family: var(--f-display);
+      font-size: clamp(1.1rem, 2vw, 1.5rem);
+      font-style: italic;
+      font-weight: 300;
+      color: var(--white);
+      line-height: 1.6;
+      position: relative;
+      z-index: 1;
+    }
+    .promise__quote-attr {
+      margin-top: 1rem;
+      font-size: var(--small);
+      color: var(--gold);
+      font-weight: 500;
+    }
+
+    @media (max-width: 768px) {
+      .promise { grid-template-columns: 1fr; }
+    }
+
+    /* ── STYLISTS SECTION ───────────────────────────────── */
+    .stylists {
+      max-width: 1200px;
+      margin: 0 auto;
+    }
+    .stylists__grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: clamp(2rem, 4vw, 4rem);
+    }
+    .stylist-card {
+      position: relative;
+      overflow: hidden;
+      background: var(--white);
+      border-radius: 4px;
+      box-shadow: 0 4px 32px rgba(44, 24, 16, 0.08);
+      transition: transform 0.4s var(--ease), box-shadow 0.4s var(--ease);
+    }
+    .stylist-card:hover {
+      transform: translateY(-6px);
+      box-shadow: 0 16px 48px rgba(44, 24, 16, 0.15);
+    }
+    .stylist-card__image-wrap {
+      background: var(--sand);
+      height: clamp(280px, 35vw, 440px);
+      display: flex;
+      align-items: flex-end;
+      justify-content: center;
+      overflow: hidden;
+      position: relative;
+    }
+    .stylist-card__image-wrap::after {
+      content: '';
+      position: absolute;
+      bottom: 0; left: 0; right: 0;
+      height: 30%;
+      background: linear-gradient(to top, var(--sand) 0%, transparent 100%);
+    }
+    .stylist-card__image {
+      height: 100%;
+      width: auto;
+      object-fit: contain;
+      object-position: bottom center;
+      transition: transform 0.6s var(--ease);
+    }
+    .stylist-card:hover .stylist-card__image {
+      transform: scale(1.03);
+    }
+    .stylist-card__body {
+      padding: 2rem 2rem 2.25rem;
+      position: relative;
+    }
+    .stylist-card__tag {
+      font-size: var(--label);
+      font-weight: 600;
+      letter-spacing: 0.2em;
+      text-transform: uppercase;
+      color: var(--gold-dim);
+      margin-bottom: 0.5rem;
+    }
+    .stylist-card__name {
+      font-family: var(--f-display);
+      font-size: clamp(1.75rem, 3vw, 2.5rem);
+      font-weight: 400;
+      color: var(--text);
+      line-height: 1;
+      margin-bottom: 0.75rem;
+    }
+    .stylist-card__tagline {
+      font-family: var(--f-display);
+      font-size: clamp(0.95rem, 1.5vw, 1.15rem);
+      font-style: italic;
+      color: var(--mid);
+      margin-bottom: 1rem;
+    }
+    .stylist-card__desc {
+      font-size: var(--small);
+      font-weight: 400;
+      color: var(--mid);
+      line-height: 1.65;
+    }
+    .stylist-card__accent {
+      position: absolute;
+      top: 1.25rem;
+      right: 1.25rem;
+      width: 36px;
+      height: 36px;
+    }
+    /* kente bracket for cards */
+    .stylist-card__accent::before,
+    .stylist-card__accent::after {
+      content: '';
+      position: absolute;
+      border-color: var(--brand);
+      border-style: solid;
+      opacity: 0.3;
+    }
+    .stylist-card__accent::before {
+      top: 0; right: 0;
+      width: 16px; height: 16px;
+      border-width: 1px 1px 0 0;
+    }
+    .stylist-card__accent::after {
+      bottom: 0; left: 0;
+      width: 16px; height: 16px;
+      border-width: 0 0 1px 1px;
+    }
+
+    @media (max-width: 640px) {
+      .stylists__grid { grid-template-columns: 1fr; }
+    }
+
+    /* ── HOW IT WORKS ───────────────────────────────────── */
+    .steps {
+      max-width: 1100px;
+      margin: 0 auto;
+    }
+    .steps__grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 0;
+      position: relative;
+    }
+    /* Connector line */
+    .steps__grid::before {
+      content: '';
+      position: absolute;
+      top: 2rem;
+      left: calc(100% / 6);
+      right: calc(100% / 6);
+      height: 1px;
+      background: linear-gradient(to right, transparent, var(--gold), transparent);
+      opacity: 0.3;
+    }
+    .step {
+      padding: 0 clamp(1rem, 3vw, 2.5rem);
+      text-align: center;
+      position: relative;
+    }
+    .step__num {
+      font-family: var(--f-display);
+      font-size: 4rem;
+      font-weight: 300;
+      color: var(--gold);
+      opacity: 0.25;
+      line-height: 1;
+      margin-bottom: 1rem;
+    }
+    .step__icon {
+      width: 52px;
+      height: 52px;
+      border-radius: 50%;
+      background: var(--gold);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      margin: 0 auto 1.5rem;
+      position: relative;
+      z-index: 1;
+    }
+    .step__icon svg {
+      width: 22px;
+      height: 22px;
+      color: var(--dark);
+    }
+    .step__title {
+      font-family: var(--f-display);
+      font-size: var(--title);
+      font-weight: 600;
+      color: var(--white);
+      margin-bottom: 0.75rem;
+      line-height: 1.2;
+    }
+    .step__desc {
+      font-size: var(--small);
+      font-weight: 300;
+      color: rgba(255,255,255,0.55);
+      line-height: 1.65;
+    }
+
+    @media (max-width: 640px) {
+      .steps__grid {
+        grid-template-columns: 1fr;
+        gap: 3rem;
+      }
+      .steps__grid::before { display: none; }
+    }
+
+    /* ── PLATFORM ───────────────────────────────────────── */
+    .platform {
+      max-width: 1200px;
+      margin: 0 auto;
+    }
+    .platform__grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 1.5px;
+      background: rgba(44, 24, 16, 0.08);
+      border: 1.5px solid rgba(44, 24, 16, 0.08);
+      border-radius: 4px;
+      overflow: hidden;
+    }
+    .platform__card {
+      background: var(--cream);
+      padding: clamp(2rem, 3.5vw, 3rem);
+      transition: background 0.3s;
+      position: relative;
+    }
+    .platform__card:hover {
+      background: var(--white);
+    }
+    .platform__num {
+      font-family: var(--f-display);
+      font-size: 3.5rem;
+      font-weight: 300;
+      color: var(--brand);
+      opacity: 0.15;
+      line-height: 1;
+      margin-bottom: 0.5rem;
+    }
+    .platform__icon {
+      width: 44px;
+      height: 44px;
+      background: var(--sand);
+      border-radius: 2px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      margin-bottom: 1.5rem;
+    }
+    .platform__icon svg {
+      width: 20px;
+      height: 20px;
+      color: var(--brand);
+    }
+    .platform__role {
+      font-size: var(--label);
+      font-weight: 600;
+      letter-spacing: 0.18em;
+      text-transform: uppercase;
+      color: var(--gold-dim);
+      margin-bottom: 0.5rem;
+    }
+    .platform__title {
+      font-family: var(--f-display);
+      font-size: clamp(1.25rem, 2vw, 1.75rem);
+      font-weight: 600;
+      color: var(--text);
+      margin-bottom: 1rem;
+      line-height: 1.2;
+    }
+    .platform__desc {
+      font-size: var(--small);
+      color: var(--mid);
+      line-height: 1.65;
+      margin-bottom: 1.5rem;
+    }
+    .platform__list {
+      list-style: none;
+      display: flex;
+      flex-direction: column;
+      gap: 0.5rem;
+    }
+    .platform__list li {
+      font-size: var(--small);
+      color: var(--mid);
+      display: flex;
+      align-items: flex-start;
+      gap: 0.5rem;
+    }
+    .platform__list li::before {
+      content: '';
+      display: block;
+      width: 4px;
+      height: 4px;
+      border-radius: 50%;
+      background: var(--gold);
+      margin-top: 0.45rem;
+      flex-shrink: 0;
+    }
+
+    @media (max-width: 768px) {
+      .platform__grid { grid-template-columns: 1fr; }
+    }
+
+    /* ── ARTISAN SECTION ────────────────────────────────── */
+    .artisan-section {
+      background: var(--sand);
+      overflow: hidden;
+      position: relative;
+    }
+    .artisan-section::before {
+      content: '';
+      position: absolute;
+      top: 0; right: 0;
+      width: 40%;
+      height: 100%;
+      background: linear-gradient(to left, rgba(139,69,19,0.06) 0%, transparent 100%);
+      pointer-events: none;
+    }
+    .artisan__inner {
+      max-width: 1200px;
+      margin: 0 auto;
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: clamp(3rem, 6vw, 7rem);
+      align-items: center;
+    }
+    .artisan__text {}
+    .artisan__overline {
+      font-size: var(--label);
+      font-weight: 600;
+      letter-spacing: 0.2em;
+      text-transform: uppercase;
+      color: var(--brand);
+      margin-bottom: 1rem;
+      display: block;
+    }
+    .artisan__headline {
+      font-family: var(--f-display);
+      font-size: clamp(2rem, 4vw, 3.5rem);
+      font-weight: 400;
+      line-height: 1.1;
+      color: var(--text);
+      margin-bottom: 1.25rem;
+    }
+    .artisan__headline em {
+      font-style: italic;
+      color: var(--brand);
+    }
+    .artisan__body {
+      font-size: var(--lead);
+      font-weight: 300;
+      color: var(--mid);
+      line-height: 1.7;
+      margin-bottom: 2.5rem;
+    }
+    .artisan__types {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 0.75rem;
+      margin-bottom: 2.5rem;
+    }
+    .artisan__type-pill {
+      padding: 0.6rem 1rem;
+      background: var(--white);
+      border: 1px solid rgba(139,69,19,0.12);
+      border-radius: 2px;
+      font-size: var(--small);
+      font-weight: 500;
+      color: var(--text);
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+    }
+    .artisan__type-pill::before {
+      content: '';
+      display: block;
+      width: 6px;
+      height: 6px;
+      border-radius: 50%;
+      background: var(--gold);
+      flex-shrink: 0;
+    }
+    .artisan__features {
+      display: flex;
+      flex-direction: column;
+      gap: 1.25rem;
+    }
+    .artisan__feat {
+      display: flex;
+      gap: 1rem;
+      align-items: flex-start;
+    }
+    .artisan__feat-icon {
+      width: 36px;
+      height: 36px;
+      background: var(--white);
+      border: 1px solid rgba(139,69,19,0.1);
+      border-radius: 2px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      flex-shrink: 0;
+      margin-top: 2px;
+    }
+    .artisan__feat-icon svg {
+      width: 16px;
+      height: 16px;
+      color: var(--brand);
+    }
+    .artisan__feat-title {
+      font-size: var(--small);
+      font-weight: 600;
+      color: var(--text);
+      margin-bottom: 0.2rem;
+    }
+    .artisan__feat-desc {
+      font-size: 0.8rem;
+      color: var(--mid);
+      line-height: 1.5;
+    }
+    .artisan__visual {
+      position: relative;
+    }
+    .artisan__card-stack {
+      display: grid;
+      gap: 1rem;
+    }
+    .artisan__info-card {
+      background: var(--white);
+      border-radius: 4px;
+      padding: 1.5rem 1.75rem;
+      box-shadow: 0 2px 16px rgba(44,24,16,0.07);
+      position: relative;
+    }
+    .artisan__info-card::before {
+      content: '';
+      position: absolute;
+      left: 0; top: 0; bottom: 0;
+      width: 3px;
+      background: var(--gold);
+      border-radius: 4px 0 0 4px;
+      opacity: 0.6;
+    }
+    .artisan__card-label {
+      font-size: var(--label);
+      font-weight: 600;
+      letter-spacing: 0.18em;
+      text-transform: uppercase;
+      color: var(--gold-dim);
+      margin-bottom: 0.4rem;
+    }
+    .artisan__card-title {
+      font-family: var(--f-display);
+      font-size: 1.25rem;
+      font-weight: 600;
+      color: var(--text);
+      margin-bottom: 0.5rem;
+    }
+    .artisan__card-desc {
+      font-size: var(--small);
+      color: var(--mid);
+      line-height: 1.6;
+    }
+    .artisan__card-highlight {
+      background: var(--deep);
+      border-radius: 4px;
+      padding: 1.5rem 1.75rem;
+      box-shadow: 0 4px 24px rgba(26,15,10,0.18);
+    }
+    .artisan__card-highlight .artisan__card-label { color: var(--gold); opacity: 0.7; }
+    .artisan__card-highlight .artisan__card-title { color: var(--white); }
+    .artisan__card-highlight .artisan__card-desc { color: rgba(255,255,255,0.55); }
+    @media (max-width: 768px) {
+      .artisan__inner { grid-template-columns: 1fr; }
+      .artisan__types { grid-template-columns: 1fr 1fr; }
+    }
+    @media (max-width: 480px) {
+      .artisan__types { grid-template-columns: 1fr; }
+    }
+
+    /* ── FREE FOREVER ───────────────────────────────────── */
+    .free-section {
+      background: var(--dark);
+      position: relative;
+      overflow: hidden;
+    }
+    .free-section::before {
+      content: '';
+      position: absolute;
+      inset: 0;
+      background: radial-gradient(ellipse 70% 60% at 50% 100%, rgba(139, 69, 19, 0.2) 0%, transparent 70%);
+      pointer-events: none;
+    }
+    .free__inner {
+      max-width: 800px;
+      margin: 0 auto;
+      text-align: center;
+      position: relative;
+      z-index: 1;
+    }
+    .free__headline {
+      font-family: var(--f-display);
+      font-size: clamp(2.5rem, 6vw, 5.5rem);
+      font-weight: 300;
+      line-height: 1.05;
+      color: var(--white);
+      margin-bottom: 1.5rem;
+    }
+    .free__headline em {
+      font-style: italic;
+      color: var(--gold);
+    }
+    .free__subline {
+      font-size: var(--lead);
+      font-weight: 300;
+      color: rgba(255,255,255,0.55);
+      line-height: 1.7;
+      margin-bottom: 3rem;
+      max-width: 560px;
+      margin-left: auto;
+      margin-right: auto;
+    }
+    .free__pills {
+      display: flex;
+      gap: 0.75rem;
+      justify-content: center;
+      flex-wrap: wrap;
+      margin-bottom: 3.5rem;
+    }
+    .free__pill {
+      padding: 0.45rem 1.1rem;
+      border: 1px solid rgba(212, 168, 83, 0.25);
+      border-radius: 100px;
+      font-size: var(--small);
+      font-weight: 400;
+      color: rgba(255,255,255,0.55);
+      letter-spacing: 0.04em;
+    }
+    .free__pill--active {
+      background: rgba(212, 168, 83, 0.12);
+      border-color: rgba(212, 168, 83, 0.4);
+      color: var(--gold);
+    }
+    .free__divider {
+      width: 1px;
+      height: 80px;
+      background: linear-gradient(to bottom, transparent, rgba(212,168,83,0.3), transparent);
+      margin: 0 auto 3rem;
+    }
+
+    /* ── FINAL CTA ──────────────────────────────────────── */
+    .cta-section {
+      background: var(--sand);
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      align-items: center;
+      min-height: 600px;
+      overflow: hidden;
+      position: relative;
+    }
+    .cta__visual {
+      height: 100%;
+      min-height: 500px;
+      position: relative;
+      background: var(--dark);
+      display: flex;
+      align-items: flex-end;
+      justify-content: center;
+      overflow: hidden;
+    }
+    .cta__visual::after {
+      content: '';
+      position: absolute;
+      inset: 0;
+      background: linear-gradient(to right, transparent 60%, var(--sand) 100%);
+    }
+    .cta__visual img {
+      height: 90%;
+      width: auto;
+      object-fit: contain;
+      object-position: bottom center;
+      position: relative;
+      z-index: 1;
+    }
+    .cta__content {
+      padding: clamp(3rem, 6vw, 6rem) clamp(2rem, 5vw, 5rem);
+    }
+    .cta__label {
+      font-size: var(--label);
+      font-weight: 600;
+      letter-spacing: 0.2em;
+      text-transform: uppercase;
+      color: var(--brand);
+      margin-bottom: 1rem;
+      display: block;
+    }
+    .cta__headline {
+      font-family: var(--f-display);
+      font-size: clamp(2rem, 4vw, 3.75rem);
+      font-weight: 400;
+      line-height: 1.1;
+      color: var(--text);
+      margin-bottom: 1.25rem;
+    }
+    .cta__headline em {
+      font-style: italic;
+      color: var(--brand);
+    }
+    .cta__sub {
+      font-size: var(--lead);
+      font-weight: 300;
+      color: var(--mid);
+      line-height: 1.65;
+      margin-bottom: 2.5rem;
+    }
+    .cta__actions {
+      display: flex;
+      flex-direction: column;
+      gap: 0.75rem;
+      align-items: flex-start;
+    }
+    .cta__note {
+      font-size: var(--small);
+      color: rgba(107, 66, 38, 0.5);
+      margin-top: 0.5rem;
+    }
+
+    @media (max-width: 800px) {
+      .cta-section {
+        grid-template-columns: 1fr;
+      }
+      .cta__visual {
+        min-height: 55vw;
+        max-height: 400px;
+      }
+      .cta__visual::after {
+        background: linear-gradient(to bottom, transparent 60%, var(--sand) 100%);
+      }
+    }
+
+    /* ── FOOTER ─────────────────────────────────────────── */
+    .footer {
+      background: var(--dark);
+      padding: 3.5rem clamp(1.5rem, 5vw, 5rem);
+    }
+    .footer__inner {
+      max-width: 1200px;
+      margin: 0 auto;
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-start;
+      flex-wrap: wrap;
+      gap: 2.5rem;
+    }
+    .footer__brand {}
+    .footer__logo {
+      font-family: var(--f-display);
+      font-size: 1.75rem;
+      font-weight: 600;
+      color: var(--white);
+      margin-bottom: 0.5rem;
+    }
+    .footer__logo span { color: var(--gold); }
+    .footer__tagline {
+      font-family: var(--f-display);
+      font-size: 0.9rem;
+      font-style: italic;
+      color: rgba(255,255,255,0.35);
+    }
+    .footer__links {
+      display: flex;
+      gap: 4rem;
+      flex-wrap: wrap;
+    }
+    .footer__col-title {
+      font-size: var(--label);
+      font-weight: 600;
+      letter-spacing: 0.15em;
+      text-transform: uppercase;
+      color: var(--gold);
+      opacity: 0.7;
+      margin-bottom: 1rem;
+    }
+    .footer__col-links {
+      list-style: none;
+      display: flex;
+      flex-direction: column;
+      gap: 0.6rem;
+    }
+    .footer__col-links a {
+      font-size: var(--small);
+      color: rgba(255,255,255,0.4);
+      transition: color 0.2s;
+    }
+    .footer__col-links a:hover { color: var(--gold); }
+    .footer__bottom {
+      max-width: 1200px;
+      margin: 2.5rem auto 0;
+      padding-top: 1.5rem;
+      border-top: 1px solid rgba(255,255,255,0.06);
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      flex-wrap: wrap;
+      gap: 1rem;
+    }
+    .footer__copy {
+      font-size: 0.78rem;
+      color: rgba(255,255,255,0.25);
+    }
+    .footer__badge {
+      font-size: 0.78rem;
+      color: rgba(255,255,255,0.25);
+      display: flex;
+      align-items: center;
+      gap: 0.4rem;
+    }
+    .footer__badge span {
+      color: var(--gold);
+      opacity: 0.6;
+    }
+
+    /* ── SCROLL REVEAL JS HOOK ──────────────────────────── */
+    .sr { opacity: 0; transform: translateY(28px); transition: opacity 0.75s var(--ease), transform 0.75s var(--ease); }
+    .sr.in { opacity: 1; transform: none; }
+    .sr.d1 { transition-delay: 0.05s; }
+    .sr.d2 { transition-delay: 0.15s; }
+    .sr.d3 { transition-delay: 0.25s; }
+    .sr.d4 { transition-delay: 0.35s; }
+    .sr.d5 { transition-delay: 0.45s; }
+  </style>
+</head>
+<body>
+
+  <!-- ── NAVIGATION ──────────────────────────────────── -->
+  <nav class="nav" id="nav">
+    <div class="nav__logo">Style<span>Yangu</span></div>
+    <ul class="nav__links">
+      <li><a href="#stylists">Stylists</a></li>
+      <li><a href="#how">How It Works</a></li>
+      <li><a href="#sellers">For Sellers</a></li>
+      <li><a href="#artisans">For Artisans</a></li>
+    </ul>
+    <a href="#cta" class="nav__cta">Get Started Free</a>
+  </nav>
+
+  <!-- ── HERO ────────────────────────────────────────── -->
+  <section class="hero">
+    <div class="hero__content">
+      <div class="hero__eyebrow anim-fade-up d1">
+        <div class="hero__eyebrow-line"></div>
+        <span class="label-tag">Your Honest Stylist</span>
+      </div>
+      <h1 class="hero__headline anim-fade-up d2">
+        Dress Like<br>
+        <em>You.</em>
+      </h1>
+      <p class="hero__desc anim-fade-up d3">
+        Your personal stylist who tells you the truth about your wardrobe.
+        Built for you. Free, forever.
+      </p>
+      <div class="hero__actions anim-fade-up d4">
+        <a href="#cta" class="btn-primary">
+          Start Styling Free
+          <svg width="14" height="14" viewBox="0 0 14 14" fill="none">
+            <path d="M1 7h12M8 2l5 5-5 5" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+          </svg>
+        </a>
+        <a href="#how" class="btn-ghost">
+          See how it works
+        </a>
+      </div>
+    </div>
+    <div class="hero__illustration anim-float">
+      <div class="hero__arc"></div>
+      <div class="hero__arc"></div>
+      <img src="images/combined.png" alt="Kofi and Amara, your Style Yangu personal stylists">
+    </div>
+  </section>
+
+  <!-- ── TICKER ──────────────────────────────────────── -->
+  <div class="ticker" aria-hidden="true">
+    <div class="ticker__track">
+      <span class="ticker__item">Your Style</span>
+      <span class="ticker__item ticker__dot">·</span>
+      <span class="ticker__item">Truly</span>
+      <span class="ticker__item ticker__dot">·</span>
+      <span class="ticker__item">Honest Styling</span>
+      <span class="ticker__item ticker__dot">·</span>
+      <span class="ticker__item">Free Forever</span>
+      <span class="ticker__item ticker__dot">·</span>
+      <span class="ticker__item">Africa's Stylist</span>
+      <span class="ticker__item ticker__dot">·</span>
+      <span class="ticker__item">Style Yangu</span>
+      <span class="ticker__item ticker__dot">·</span>
+      <span class="ticker__item">Your Style</span>
+      <span class="ticker__item ticker__dot">·</span>
+      <span class="ticker__item">Truly</span>
+      <span class="ticker__item ticker__dot">·</span>
+      <span class="ticker__item">Honest Styling</span>
+      <span class="ticker__item ticker__dot">·</span>
+      <span class="ticker__item">Free Forever</span>
+      <span class="ticker__item ticker__dot">·</span>
+      <span class="ticker__item">Africa's Stylist</span>
+      <span class="ticker__item ticker__dot">·</span>
+      <span class="ticker__item">Style Yangu</span>
+      <span class="ticker__item ticker__dot">·</span>
+    </div>
+  </div>
+
+  <!-- ── PROMISE ─────────────────────────────────────── -->
+  <section class="section section--dark">
+    <div class="promise">
+      <div class="promise__text sr">
+        <p class="promise__overline">The honest difference</p>
+        <h2 class="promise__headline">
+          The stylist who <em>tells you the truth.</em>
+        </h2>
+        <p class="promise__body">
+          Most fashion apps are designed to make you feel good. Style Yangu is designed to make you look good.
+          Your personal stylist — Amara or Kofi — gives you honest, specific advice based on your actual body type,
+          skin tone, and the clothes you actually own.
+        </p>
+        <div class="promise__stats">
+          <div class="sr d2">
+            <div class="promise__stat-num">100%</div>
+            <div class="promise__stat-label">Based on your wardrobe</div>
+          </div>
+          <div class="sr d3">
+            <div class="promise__stat-num">Free</div>
+            <div class="promise__stat-label">Always, forever</div>
+          </div>
+          <div class="sr d4">
+            <div class="promise__stat-num">Local</div>
+            <div class="promise__stat-label">Local sellers & artisans</div>
+          </div>
+        </div>
+      </div>
+      <div class="promise__visual sr d2">
+        <div class="promise__quote-block kente-corner kente-inner">
+          <div class="promise__quote-mark">"</div>
+          <p class="promise__quote">
+            Wearing a beautiful dress that genuinely works for your colouring and proportions
+            is more powerful than wearing the most expensive dress in the room.
+          </p>
+          <p class="promise__quote-attr">— The Style Yangu philosophy</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ── MEET THE STYLISTS ───────────────────────────── -->
+  <section class="section section--sand" id="stylists">
+    <div class="section__header sr">
+      <span class="label-tag label-tag--dark">Your personal stylist</span>
+      <h2 class="section__title">
+        Meet <em>Amara</em> and <em>Kofi</em>
+      </h2>
+      <div class="section__divider"></div>
+    </div>
+    <div class="stylists">
+      <div class="stylists__grid">
+        <!-- AMARA -->
+        <div class="stylist-card sr d1">
+          <div class="stylist-card__image-wrap">
+            <img
+              class="stylist-card__image"
+              src="images/amara.png"
+              alt="Amara, your female personal stylist on Style Yangu"
+            >
+          </div>
+          <div class="stylist-card__body">
+            <div class="stylist-card__accent"></div>
+            <p class="stylist-card__tag">Female Stylist</p>
+            <h3 class="stylist-card__name">Amara</h3>
+            <p class="stylist-card__tagline">"Warm. Direct. She'll tell you the truth."</p>
+            <p class="stylist-card__desc">
+              Amara gives you the kind of honest feedback only a trusted friend would.
+              She knows what works for your colouring, your build, and your life —
+              and she will not flatter you with advice that does not serve you.
+            </p>
+          </div>
+        </div>
+        <!-- KOFI -->
+        <div class="stylist-card sr d2">
+          <div class="stylist-card__image-wrap">
+            <img
+              class="stylist-card__image"
+              src="images/kofi.png"
+              alt="Kofi, your male personal stylist on Style Yangu"
+            >
+          </div>
+          <div class="stylist-card__body">
+            <div class="stylist-card__accent"></div>
+            <p class="stylist-card__tag">Male Stylist</p>
+            <h3 class="stylist-card__name">Kofi</h3>
+            <p class="stylist-card__tagline">"Sharp. Confident. No-fluff advice."</p>
+            <p class="stylist-card__desc">
+              Kofi is the knowledgeable friend who gives you reasons, not just verdicts.
+              He understands proportion, colour, and occasion — and he speaks plainly
+              about what is and what is not working.
+            </p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ── HOW IT WORKS ────────────────────────────────── -->
+  <section class="section section--dark" id="how">
+    <div class="section__header sr">
+      <span class="label-tag">Simple by design</span>
+      <h2 class="section__title section__title--light">
+        How Style Yangu <em>works</em>
+      </h2>
+      <div class="section__divider"></div>
+    </div>
+    <div class="steps">
+      <div class="steps__grid">
+        <div class="step sr d1">
+          <div class="step__num">01</div>
+          <div class="step__icon">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+              <path d="M20 21v-2a4 4 0 00-4-4H8a4 4 0 00-4 4v2"/>
+              <circle cx="12" cy="7" r="4"/>
+            </svg>
+          </div>
+          <h3 class="step__title">Build your profile</h3>
+          <p class="step__desc">
+            Tell us your skin tone, body type, and style preferences.
+            Choose Amara or Kofi as your personal stylist.
+            Add your wardrobe by photographing your actual clothes.
+          </p>
+        </div>
+        <div class="step sr d2">
+          <div class="step__num">02</div>
+          <div class="step__icon">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+              <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/>
+            </svg>
+          </div>
+          <h3 class="step__title">Get honest daily looks</h3>
+          <p class="step__desc">
+            Your stylist sends you a daily outfit idea based on your wardrobe,
+            the weather, your occasion, and what genuinely works for your colouring.
+          </p>
+        </div>
+        <div class="step sr d3">
+          <div class="step__num">03</div>
+          <div class="step__icon">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+              <circle cx="9" cy="21" r="1"/><circle cx="20" cy="21" r="1"/>
+              <path d="M1 1h4l2.68 13.39a2 2 0 001.99 1.61H17a2 2 0 001.97-1.67L21 6H6"/>
+            </svg>
+          </div>
+          <h3 class="step__title">Shop smarter, locally</h3>
+          <p class="step__desc">
+            Discover items from local sellers and artisans who match your style.
+            Set your budget in KES. Find tailors to bring your fabric visions to life.
+          </p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ── PLATFORM ─────────────────────────────────────── -->
+  <section class="section section--cream" id="platform">
+    <div class="section__header sr">
+      <span class="label-tag label-tag--dark">One platform</span>
+      <h2 class="section__title">
+        Built for <em>three worlds</em>
+      </h2>
+      <div class="section__divider"></div>
+    </div>
+    <div class="platform">
+      <div class="platform__grid">
+        <!-- CONSUMERS -->
+        <div class="platform__card sr d1">
+          <div class="platform__num">01</div>
+          <div class="platform__icon">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+              <path d="M20 21v-2a4 4 0 00-4-4H8a4 4 0 00-4 4v2"/>
+              <circle cx="12" cy="7" r="4"/>
+            </svg>
+          </div>
+          <p class="platform__role">Consumers</p>
+          <h3 class="platform__title">Your honest stylist. Free forever.</h3>
+          <p class="platform__desc">
+            Daily outfit suggestions, weather-aware advice,
+            fabric design tools, and a wardrobe that grows smarter with every look.
+          </p>
+          <ul class="platform__list">
+            <li>Named personal stylist: Amara or Kofi</li>
+            <li>Outfit suggestions from your actual wardrobe</li>
+            <li>Skin tone and body type matching</li>
+            <li>Design custom garments from kitenge fabric</li>
+            <li>Rate my outfit with honest AI feedback</li>
+          </ul>
+        </div>
+        <!-- SELLERS -->
+        <div class="platform__card sr d2" id="sellers">
+          <div class="platform__num">02</div>
+          <div class="platform__icon">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+              <path d="M6 2L3 6v14a2 2 0 002 2h14a2 2 0 002-2V6l-3-4z"/>
+              <line x1="3" y1="6" x2="21" y2="6"/>
+              <path d="M16 10a4 4 0 01-8 0"/>
+            </svg>
+          </div>
+          <p class="platform__role">Sellers</p>
+          <h3 class="platform__title">A professional showcase. No models needed.</h3>
+          <p class="platform__desc">
+            AI-generated showcases using diverse African model faces.
+            A full e-shop on your own subdomain.
+            A POS and inventory system built for how you actually sell.
+          </p>
+          <ul class="platform__list">
+            <li>AI model showcases — from KES 900/month</li>
+            <li>Professional storefront on your subdomain</li>
+            <li>Inventory, POS, and WhatsApp receipts</li>
+            <li>Client list and Try This On feature</li>
+            <li>Boost your items to matched consumers</li>
+          </ul>
+        </div>
+        <!-- ARTISANS -->
+        <div class="platform__card sr d3" id="artisans-card">
+          <div class="platform__num">03</div>
+          <div class="platform__icon">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+              <path d="M14.7 6.3a1 1 0 000 1.4l1.6 1.6a1 1 0 001.4 0l3.77-3.77a6 6 0 01-7.94 7.94l-6.91 6.91a2.12 2.12 0 01-3-3l6.91-6.91a6 6 0 017.94-7.94l-3.76 3.76z"/>
+            </svg>
+          </div>
+          <p class="platform__role">Tailors & Artisans</p>
+          <h3 class="platform__title">Digital tools for your craft.</h3>
+          <p class="platform__desc">
+            Receive clear design briefs. Manage orders and deposits.
+            Build a portfolio that showcases your work professionally.
+          </p>
+          <ul class="platform__list">
+            <li>Design briefs from consumers' fabric designs</li>
+            <li>M-Pesa deposit protection via escrow</li>
+            <li>Portfolio rendered on AI avatars</li>
+            <li>Appointment booking and order tracking</li>
+            <li>Cobblers matched to size-specific consumers</li>
+          </ul>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ── ARTISANS ────────────────────────────────────────── -->
+  <section class="section artisan-section" id="artisans">
+    <div class="artisan__inner">
+      <div class="artisan__text">
+        <span class="artisan__overline sr">For tailors, cobblers & makers</span>
+        <h2 class="artisan__headline sr d1">
+          Your craft.<br>
+          <em>Digitised.</em>
+        </h2>
+        <p class="artisan__body sr d2">
+          Style Yangu gives artisans their first proper digital home.
+          Receive clear design briefs, protect your deposits through M-Pesa escrow,
+          showcase your portfolio professionally, and get discovered by consumers
+          who are actively looking for your skill.
+        </p>
+        <div class="artisan__types sr d2">
+          <div class="artisan__type-pill">Tailors</div>
+          <div class="artisan__type-pill">Cobblers</div>
+          <div class="artisan__type-pill">Bag Makers</div>
+          <div class="artisan__type-pill">Jewellery Makers</div>
+        </div>
+        <div class="artisan__features sr d3">
+          <div class="artisan__feat">
+            <div class="artisan__feat-icon">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+                <path d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8z"/>
+                <polyline points="14 2 14 8 20 8"/>
+                <line x1="16" y1="13" x2="8" y2="13"/>
+                <line x1="16" y1="17" x2="8" y2="17"/>
+                <polyline points="10 9 9 9 8 9"/>
+              </svg>
+            </div>
+            <div>
+              <div class="artisan__feat-title">Clear design briefs — no more WhatsApp confusion</div>
+              <div class="artisan__feat-desc">Receive a complete brief with the consumer's fabric photo, chosen silhouette, avatar render, occasion, and measurements. Every order starts with full context.</div>
+            </div>
+          </div>
+          <div class="artisan__feat">
+            <div class="artisan__feat-icon">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+                <rect x="1" y="4" width="22" height="16" rx="2" ry="2"/>
+                <line x1="1" y1="10" x2="23" y2="10"/>
+              </svg>
+            </div>
+            <div>
+              <div class="artisan__feat-title">Deposit protection via M-Pesa escrow</div>
+              <div class="artisan__feat-desc">Deposits are held securely by the platform and released when the consumer confirms collection. No more chasing payments or losing deposits.</div>
+            </div>
+          </div>
+          <div class="artisan__feat">
+            <div class="artisan__feat-icon">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+                <rect x="3" y="3" width="18" height="18" rx="2" ry="2"/>
+                <circle cx="8.5" cy="8.5" r="1.5"/>
+                <polyline points="21 15 16 10 5 21"/>
+              </svg>
+            </div>
+            <div>
+              <div class="artisan__feat-title">Portfolio rendered on professional AI avatars</div>
+              <div class="artisan__feat-desc">Your completed work displayed on diverse African model avatars — no photographer needed. First impressions that match your actual skill.</div>
+            </div>
+          </div>
+          <div class="artisan__feat">
+            <div class="artisan__feat-icon">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+                <path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0118 0z"/>
+                <circle cx="12" cy="10" r="3"/>
+              </svg>
+            </div>
+            <div>
+              <div class="artisan__feat-title">Cobblers matched to size-specific consumers</div>
+              <div class="artisan__feat-desc">If you make custom shoes to any size, you are matched directly to consumers whose size is underserved by standard retail — extremely high purchase intent.</div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="artisan__visual sr d2">
+        <div class="artisan__card-stack">
+          <div class="artisan__card-highlight kente-corner">
+            <div class="artisan__card-label">Escrow protection</div>
+            <div class="artisan__card-title">Your deposit is safe before you cut a single thread</div>
+            <div class="artisan__card-desc">
+              Consumers pay a deposit through Style Yangu before you begin work.
+              Funds are held securely and released when the order is collected and confirmed.
+              No more lost deposits, no more unpaid work.
+            </div>
+          </div>
+          <div class="artisan__info-card">
+            <div class="artisan__card-label">Appointment booking</div>
+            <div class="artisan__card-title">Measurement sessions at your workshop</div>
+            <div class="artisan__card-desc">
+              Consumers book in-person measurement appointments at your listed location directly through the app.
+              Measurements saved to their profile for every future order.
+            </div>
+          </div>
+          <div class="artisan__info-card">
+            <div class="artisan__card-label">Order tracking</div>
+            <div class="artisan__card-title">From brief to collection — every step tracked</div>
+            <div class="artisan__card-desc">
+              Mark orders through Received, In Progress, Ready for Collection.
+              Automatic WhatsApp notifications keep your clients informed at every stage.
+            </div>
+          </div>
+          <div class="artisan__info-card">
+            <div class="artisan__card-label">Ad boost</div>
+            <div class="artisan__card-title">Reach matched consumers directly</div>
+            <div class="artisan__card-desc">
+              Boost your portfolio pieces or specialisations to free-tier consumers whose style,
+              size, and occasion match your craft. Starting from KES 100 per week.
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ── FREE FOREVER ─────────────────────────────────── -->
+  <section class="section free-section">
+    <div class="free__inner">
+      <span class="label-tag sr">The model</span>
+      <h2 class="free__headline sr d1">
+        Your style is <em>free.</em><br>Always.
+      </h2>
+      <p class="free__subline sr d2">
+        Style Yangu is free forever for consumers,
+        sustained by local sellers and artisans who want to reach
+        people who genuinely match their style.
+        No foreign ads. No data sold. Just your style community funding your access.
+      </p>
+      <div class="free__pills sr d3">
+        <span class="free__pill free__pill--active">Free daily suggestions</span>
+        <span class="free__pill">Local sellers fund your access</span>
+        <span class="free__pill">No data sold</span>
+        <span class="free__pill">No foreign ads</span>
+        <span class="free__pill free__pill--active">Upgrade for unlimited</span>
+      </div>
+      <div class="free__divider sr d4"></div>
+      <a href="#cta" class="btn-primary sr d5" style="margin: 0 auto; display: inline-flex;">
+        Start Free Today
+        <svg width="14" height="14" viewBox="0 0 14 14" fill="none">
+          <path d="M1 7h12M8 2l5 5-5 5" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+        </svg>
+      </a>
+    </div>
+  </section>
+
+  <!-- ── FINAL CTA ────────────────────────────────────── -->
+  <section class="cta-section" id="cta">
+    <div class="cta__visual">
+      <img src="images/combined.png" alt="Kofi and Amara ready to style you">
+    </div>
+    <div class="cta__content">
+      <span class="cta__label sr">Ready?</span>
+      <h2 class="cta__headline sr d1">
+        Dress like <em>you.</em><br>
+        Every day.
+      </h2>
+      <p class="cta__sub sr d2">
+        Join consumers, sellers, and artisans already building
+        the most honest fashion community.
+        Free to start. Takes two minutes.
+      </p>
+      <div class="cta__actions sr d3">
+        <a href="#" class="btn-primary" style="background: var(--brand); color: var(--white);">
+          Get Started Free
+          <svg width="14" height="14" viewBox="0 0 14 14" fill="none">
+            <path d="M1 7h12M8 2l5 5-5 5" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+          </svg>
+        </a>
+        <p class="cta__note">No credit card needed. Free forever.</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- ── FOOTER ───────────────────────────────────────── -->
+  <footer class="footer">
+    <div class="footer__inner">
+      <div class="footer__brand">
+        <div class="footer__logo">Style<span>Yangu</span></div>
+        <div class="footer__tagline">Your honest stylist, in your pocket.</div>
+      </div>
+      <div class="footer__links">
+        <div>
+          <p class="footer__col-title">Consumers</p>
+          <ul class="footer__col-links">
+            <li><a href="#">Download the app</a></li>
+            <li><a href="#">Meet your stylist</a></li>
+            <li><a href="#">How it works</a></li>
+            <li><a href="#">Premium plan</a></li>
+          </ul>
+        </div>
+        <div>
+          <p class="footer__col-title">Sellers</p>
+          <ul class="footer__col-links">
+            <li><a href="#">List your shop</a></li>
+            <li><a href="#">AI showcases</a></li>
+            <li><a href="#">Ad boost</a></li>
+            <li><a href="#">Pricing</a></li>
+          </ul>
+        </div>
+        <div>
+          <p class="footer__col-title">Artisans</p>
+          <ul class="footer__col-links">
+            <li><a href="#artisans">Join as a tailor</a></li>
+            <li><a href="#artisans">Join as a cobbler</a></li>
+            <li><a href="#artisans">How escrow works</a></li>
+            <li><a href="#artisans">Portfolio tool</a></li>
+          </ul>
+        </div>
+        <div>
+          <p class="footer__col-title">Company</p>
+          <ul class="footer__col-links">
+            <li><a href="#">About</a></li>
+            <li><a href="#">Privacy policy</a></li>
+            <li><a href="#">Terms of service</a></li>
+            <li><a href="#">Contact</a></li>
+          </ul>
+        </div>
+      </div>
+    </div>
+    <div class="footer__bottom">
+      <p class="footer__copy">© 2026 Style Yangu. Born in Africa.</p>
+      <p class="footer__badge">Built for East Africa <span>♦</span> styleyangu.co.ke</p>
+    </div>
+  </footer>
+
+  <script>
+    // Nav scroll state
+    const nav = document.getElementById('nav');
+    window.addEventListener('scroll', () => {
+      nav.classList.toggle('scrolled', window.scrollY > 60);
+    }, { passive: true });
+
+    // Scroll reveal
+    const srEls = document.querySelectorAll('.sr');
+    const observer = new IntersectionObserver((entries) => {
+      entries.forEach(e => {
+        if (e.isIntersecting) {
+          e.target.classList.add('in');
+          observer.unobserve(e.target);
+        }
+      });
+    }, { threshold: 0.12, rootMargin: '0px 0px -40px 0px' });
+    srEls.forEach(el => observer.observe(el));
+
+    // Respect reduced motion
+    if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
+      document.querySelectorAll('.anim-fade-up, .anim-float').forEach(el => {
+        el.style.animation = 'none';
+        el.style.opacity = '1';
+        el.style.transform = 'none';
+      });
+      document.querySelectorAll('.ticker__track').forEach(el => {
+        el.style.animation = 'none';
+      });
+    }
+  </script>
+</body>
 </html>

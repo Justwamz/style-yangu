@@ -50,3 +50,15 @@ services:
       - type: rewrite
         source: /*
         destination: /index.html
+
+  # ── Landing Page (Static HTML, no build step) ──────────────────────────────
+  - type: web
+    name: style-yangu-landing
+    env: static
+    region: frankfurt
+    plan: free
+    staticPublishPath: apps/landing
+    routes:
+      - type: rewrite
+        source: /*
+        destination: /index.html
