@@ -146,7 +146,7 @@ export default function InventoryNewPage() {
   if (state.step === 0) {
     return (
       <div className="p-4">
-        <p className="text-xs text-gray-500 mb-4">Step 1 of 4 — Photo</p>
+        <p className="text-xs text-mid/70 mb-4">Step 1 of 4 — Photo</p>
         <label htmlFor="photo-input" className="block text-sm font-medium mb-2">
           Choose photo
         </label>
@@ -167,7 +167,7 @@ export default function InventoryNewPage() {
         <button
           onClick={() => dispatch({ type: 'NEXT_STEP' })}
           disabled={!state.photoFile}
-          className="w-full bg-amber-800 text-white rounded-lg py-3 font-semibold disabled:opacity-50"
+          className="w-full bg-brand text-white rounded-lg py-3 font-semibold disabled:opacity-50"
         >
           Next
         </button>
@@ -179,12 +179,12 @@ export default function InventoryNewPage() {
   if (state.step === 1) {
     return (
       <div className="p-4 space-y-4">
-        <p className="text-xs text-gray-500">Step 2 of 4 — Details</p>
+        <p className="text-xs text-mid/70">Step 2 of 4 — Details</p>
         <input
           placeholder="Item name"
           value={state.name}
           onChange={e => dispatch({ type: 'SET_FIELD', field: 'name', value: e.target.value })}
-          className="w-full border border-gray-300 rounded-lg px-3 py-2"
+          className="w-full border border-sand rounded-lg px-3 py-2"
         />
         <label htmlFor="category-select" className="sr-only">Category</label>
         <select
@@ -192,7 +192,7 @@ export default function InventoryNewPage() {
           aria-label="Category"
           value={state.category}
           onChange={e => dispatch({ type: 'SET_FIELD', field: 'category', value: e.target.value })}
-          className="w-full border border-gray-300 rounded-lg px-3 py-2"
+          className="w-full border border-sand rounded-lg px-3 py-2"
         >
           <option value="">Select category</option>
           {(['top','bottom','dress','suit','outerwear','jumpsuit','hat','headwrap','shoe','bag','jewellery','accessory'] as ItemCategory[]).map(c => (
@@ -204,7 +204,7 @@ export default function InventoryNewPage() {
           placeholder="Price (KES)"
           value={state.priceKES}
           onChange={e => dispatch({ type: 'SET_FIELD', field: 'priceKES', value: e.target.value })}
-          className="w-full border border-gray-300 rounded-lg px-3 py-2"
+          className="w-full border border-sand rounded-lg px-3 py-2"
         />
         <div>
           <p className="text-sm font-medium mb-2">Occasion tags</p>
@@ -216,8 +216,8 @@ export default function InventoryNewPage() {
                 onClick={() => dispatch({ type: 'TOGGLE_TAG', tag })}
                 className={`px-3 py-1 rounded-full text-sm border ${
                   state.occasionTags.includes(tag)
-                    ? 'bg-amber-800 text-white border-amber-800'
-                    : 'border-gray-300 text-gray-600'
+                    ? 'bg-brand text-white border-brand'
+                    : 'border-sand text-mid'
                 }`}
               >
                 {tag}
@@ -233,7 +233,7 @@ export default function InventoryNewPage() {
             aria-label="Discount %"
             value={state.discountPercent}
             onChange={e => dispatch({ type: 'SET_FIELD', field: 'discountPercent', value: e.target.value })}
-            className="w-full border border-gray-300 rounded-lg px-3 py-2 mt-1"
+            className="w-full border border-sand rounded-lg px-3 py-2 mt-1"
           />
         </label>
         <label className="block">
@@ -243,13 +243,13 @@ export default function InventoryNewPage() {
             aria-label="Discount Expires"
             value={state.discountExpiresAt}
             onChange={e => dispatch({ type: 'SET_FIELD', field: 'discountExpiresAt', value: e.target.value })}
-            className="w-full border border-gray-300 rounded-lg px-3 py-2 mt-1"
+            className="w-full border border-sand rounded-lg px-3 py-2 mt-1"
           />
         </label>
         <button
           onClick={() => dispatch({ type: 'NEXT_STEP' })}
           disabled={!state.name || !state.category || !state.priceKES}
-          className="w-full bg-amber-800 text-white rounded-lg py-3 font-semibold disabled:opacity-50"
+          className="w-full bg-brand text-white rounded-lg py-3 font-semibold disabled:opacity-50"
         >
           Next
         </button>
@@ -266,7 +266,7 @@ export default function InventoryNewPage() {
 
     return (
       <div className="p-4 space-y-4">
-        <p className="text-xs text-gray-500">Step 3 of 4 — Sizes</p>
+        <p className="text-xs text-mid/70">Step 3 of 4 — Sizes</p>
         <div className="flex flex-wrap gap-2">
           {sizeOptions.map(size => {
             const selected = state.sizes.find(s => s.size === size)
@@ -276,7 +276,7 @@ export default function InventoryNewPage() {
                   type="button"
                   onClick={() => dispatch({ type: 'TOGGLE_SIZE', size })}
                   className={`px-3 py-1 rounded-full text-sm border ${
-                    selected ? 'bg-amber-800 text-white border-amber-800' : 'border-gray-300 text-gray-600'
+                    selected ? 'bg-brand text-white border-brand' : 'border-sand text-mid'
                   }`}
                 >
                   {size}
@@ -287,7 +287,7 @@ export default function InventoryNewPage() {
                     min={0}
                     value={selected.quantity}
                     onChange={e => dispatch({ type: 'SET_QTY', size, qty: Number(e.target.value) })}
-                    className="w-14 border border-gray-300 rounded text-center text-sm py-0.5"
+                    className="w-14 border border-sand rounded text-center text-sm py-0.5"
                   />
                 )}
               </div>
@@ -297,7 +297,7 @@ export default function InventoryNewPage() {
         <button
           onClick={handleSaveItem}
           disabled={state.sizes.length === 0}
-          className="w-full bg-amber-800 text-white rounded-lg py-3 font-semibold disabled:opacity-50"
+          className="w-full bg-brand text-white rounded-lg py-3 font-semibold disabled:opacity-50"
         >
           Next
         </button>
@@ -308,7 +308,7 @@ export default function InventoryNewPage() {
   // Step 3: AI Showcase
   return (
     <div className="p-4 space-y-4">
-      <p className="text-xs text-gray-500">Step 4 of 4 — AI Showcase</p>
+      <p className="text-xs text-mid/70">Step 4 of 4 — AI Showcase</p>
 
       {capReached ? (
         <p className="text-sm text-red-600">
@@ -338,7 +338,7 @@ export default function InventoryNewPage() {
           aria-label="Generate showcase"
           onClick={handleGenerate}
           disabled={capReached || generating || !state.selectedFaceId}
-          className="w-full bg-amber-800 text-white rounded-lg py-3 font-semibold disabled:opacity-50"
+          className="w-full bg-brand text-white rounded-lg py-3 font-semibold disabled:opacity-50"
         >
           {generating ? 'Generating…' : 'Generate showcase'}
         </button>

@@ -41,7 +41,7 @@ export default function ProfileTab() {
     <div className="p-4 space-y-6 pb-24">
       {/* Business header */}
       <div className="flex items-center gap-4">
-        <div className="w-16 h-16 rounded-full bg-amber-100 flex items-center justify-center text-2xl">
+        <div className="w-16 h-16 rounded-full bg-sand flex items-center justify-center text-2xl">
           {profile.avatarUrl ? (
             <img src={profile.avatarUrl} alt={profile.businessName} className="w-full h-full rounded-full object-cover" />
           ) : (
@@ -49,14 +49,14 @@ export default function ProfileTab() {
           )}
         </div>
         <div>
-          <h2 className="text-xl font-bold">{profile.businessName}</h2>
+          <h2 className="text-xl font-bold font-display">{profile.businessName}</h2>
           <TierBadge tier={profile.tier} />
         </div>
       </div>
 
       {/* Edit details */}
       <div className="space-y-3">
-        <h3 className="text-sm font-semibold text-gray-700 uppercase tracking-wide">Business details</h3>
+        <h3 className="text-sm font-semibold text-dark/70 uppercase tracking-wide">Business details</h3>
         {[
           { label: 'Bio', value: bio, setter: setBio, placeholder: 'Tell customers about your business' },
           { label: 'Instagram', value: instagram, setter: setInstagram, placeholder: '@handle' },
@@ -64,13 +64,13 @@ export default function ProfileTab() {
           { label: 'Location', value: location, setter: setLocation, placeholder: 'City, Neighbourhood' },
         ].map(({ label, value, setter, placeholder }) => (
           <div key={label}>
-            <label className="text-xs text-gray-500 block mb-0.5">{label}</label>
+            <label className="text-xs text-mid/70 block mb-0.5">{label}</label>
             <input
               value={value}
               onChange={e => setter(e.target.value)}
               onBlur={saveProfile}
               placeholder={placeholder}
-              className="w-full border border-gray-200 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-1 focus:ring-amber-700"
+              className="w-full border border-sand rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-1 focus:ring-brand"
             />
           </div>
         ))}
@@ -78,17 +78,17 @@ export default function ProfileTab() {
 
       {/* Generation meter */}
       <div className="space-y-1">
-        <h3 className="text-sm font-semibold text-gray-700 uppercase tracking-wide">AI Showcase</h3>
+        <h3 className="text-sm font-semibold text-dark/70 uppercase tracking-wide">AI Showcase</h3>
         {isUnlimited ? (
-          <p className="text-sm text-amber-900 font-medium">Unlimited showcase generations</p>
+          <p className="text-sm text-brand font-medium">Unlimited showcase generations</p>
         ) : (
           <>
-            <p className="text-sm text-gray-600">
+            <p className="text-sm text-mid">
               {profile.generationsUsed} of {profile.generationsLimit} showcase generations used this month
             </p>
-            <div className="w-full bg-gray-200 rounded-full h-2">
+            <div className="w-full bg-sand/60 rounded-full h-2">
               <div
-                className="bg-amber-700 h-2 rounded-full transition-all"
+                className="bg-brand h-2 rounded-full transition-all"
                 style={{ width: `${Math.min(100, (profile.generationsUsed / profile.generationsLimit) * 100)}%` }}
               />
             </div>
@@ -98,12 +98,12 @@ export default function ProfileTab() {
 
       {/* Subscription */}
       <div className="space-y-2">
-        <h3 className="text-sm font-semibold text-gray-700 uppercase tracking-wide">Subscription</h3>
-        <div className="border border-gray-200 rounded-xl p-3 flex justify-between items-center">
+        <h3 className="text-sm font-semibold text-dark/70 uppercase tracking-wide">Subscription</h3>
+        <div className="border border-sand rounded-xl p-3 flex justify-between items-center">
           <div>
             <p className="text-sm font-medium capitalize">{profile.tier.replace('_', ' ')}</p>
           </div>
-          <button className="text-xs border border-amber-700 text-amber-800 px-3 py-1 rounded-full">
+          <button className="text-xs border border-brand text-brand px-3 py-1 rounded-full">
             Upgrade
           </button>
         </div>
@@ -111,12 +111,12 @@ export default function ProfileTab() {
 
       {/* Storefront */}
       <div className="space-y-2">
-        <h3 className="text-sm font-semibold text-gray-700 uppercase tracking-wide">Storefront</h3>
+        <h3 className="text-sm font-semibold text-dark/70 uppercase tracking-wide">Storefront</h3>
         <a
           href={`https://styleyangu.com/shop/${storefrontSlug}`}
           target="_blank"
           rel="noreferrer"
-          className="block border border-gray-200 rounded-xl p-3 text-sm text-amber-800 font-medium"
+          className="block border border-sand rounded-xl p-3 text-sm text-brand font-medium"
         >
           View my storefront →
         </a>

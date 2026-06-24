@@ -37,7 +37,7 @@ export default function DashboardTab() {
     <div className="p-4 space-y-5">
       {/* Greeting */}
       <div>
-        <h1 className="text-xl font-bold" style={{ color: '#8B4513' }}>
+        <h1 className="text-xl font-bold font-display" style={{ color: '#8B4513' }}>
           {timeGreeting()}, {profile?.businessName ?? '…'}
         </h1>
       </div>
@@ -45,19 +45,19 @@ export default function DashboardTab() {
       {/* Stats row */}
       {data && (
         <div className="grid grid-cols-3 gap-3">
-          <div className="bg-amber-50 rounded-xl p-3 text-center">
+          <div className="bg-sand rounded-xl p-3 text-center">
             <p className="text-lg font-bold" style={{ color: '#8B4513' }}>
               KES {data.todayRevenueKES.toLocaleString()}
             </p>
-            <p className="text-xs text-gray-500">Today's revenue</p>
+            <p className="text-xs text-mid/70">Today's revenue</p>
           </div>
-          <div className="bg-amber-50 rounded-xl p-3 text-center">
+          <div className="bg-sand rounded-xl p-3 text-center">
             <p className="text-lg font-bold" style={{ color: '#8B4513' }}>{data.todayItemsSold} items</p>
-            <p className="text-xs text-gray-500">Sold today</p>
+            <p className="text-xs text-mid/70">Sold today</p>
           </div>
-          <div className="bg-amber-50 rounded-xl p-3 text-center">
+          <div className="bg-sand rounded-xl p-3 text-center">
             <p className="text-lg font-bold" style={{ color: '#8B4513' }}>{data.storefrontViews}</p>
-            <p className="text-xs text-gray-500">Storefront views</p>
+            <p className="text-xs text-mid/70">Storefront views</p>
           </div>
         </div>
       )}
@@ -66,13 +66,13 @@ export default function DashboardTab() {
       <div className="flex gap-2">
         <button
           onClick={() => navigate('/inventory/new')}
-          className="flex-1 border border-amber-700 text-amber-800 rounded-xl py-2 text-sm font-semibold"
+          className="flex-1 border border-brand text-brand rounded-xl py-2 text-sm font-semibold"
         >
           + Add item
         </button>
         <button
           onClick={() => navigate('/pos/new')}
-          className="flex-1 border border-amber-700 text-amber-800 rounded-xl py-2 text-sm font-semibold"
+          className="flex-1 border border-brand text-brand rounded-xl py-2 text-sm font-semibold"
         >
           Record sale
         </button>
@@ -80,7 +80,7 @@ export default function DashboardTab() {
           href={`https://styleyangu.com/shop/${profile?.businessName?.toLowerCase().replace(/\s+/g, '-') ?? ''}`}
           target="_blank"
           rel="noreferrer"
-          className="flex-1 border border-amber-700 text-amber-800 rounded-xl py-2 text-sm font-semibold text-center"
+          className="flex-1 border border-brand text-brand rounded-xl py-2 text-sm font-semibold text-center"
         >
           View Storefront
         </a>
@@ -88,23 +88,23 @@ export default function DashboardTab() {
 
       {/* Weekly aggregates (hustler) */}
       {data?.weeklyAggregates && (
-        <div className="border border-gray-100 rounded-xl p-4 space-y-2">
-          <h3 className="text-sm font-semibold text-gray-700">This week</h3>
+        <div className="border border-sand/60 rounded-xl p-4 space-y-2">
+          <h3 className="text-sm font-semibold text-dark/70">This week</h3>
           <div className="grid grid-cols-2 gap-2 text-sm">
             <div className="flex justify-between">
-              <span className="text-gray-500">Impressions</span>
+              <span className="text-mid/70">Impressions</span>
               <span className="font-medium">{data.weeklyAggregates.impressions}</span>
             </div>
             <div className="flex justify-between">
-              <span className="text-gray-500">Saves</span>
+              <span className="text-mid/70">Saves</span>
               <span className="font-medium">{data.weeklyAggregates.saves}</span>
             </div>
             <div className="flex justify-between">
-              <span className="text-gray-500">Follows</span>
+              <span className="text-mid/70">Follows</span>
               <span className="font-medium">{data.weeklyAggregates.follows}</span>
             </div>
             <div className="flex justify-between">
-              <span className="text-gray-500">Talk to Seller</span>
+              <span className="text-mid/70">Talk to Seller</span>
               <span className="font-medium">{data.weeklyAggregates.talkToSeller}</span>
             </div>
           </div>
@@ -113,15 +113,15 @@ export default function DashboardTab() {
 
       {/* Item-level analytics (boutique+) */}
       {!itemAnalyticsAllowed ? (
-        <div className="border border-dashed border-gray-200 rounded-xl p-4 text-center">
-          <p className="text-sm text-gray-400">{upgradeReason}</p>
+        <div className="border border-dashed border-sand rounded-xl p-4 text-center">
+          <p className="text-sm text-mid/50">{upgradeReason}</p>
         </div>
       ) : data?.itemBreakdown && data.itemBreakdown.length > 0 ? (
-        <div className="border border-gray-100 rounded-xl p-4">
-          <h3 className="text-sm font-semibold text-gray-700 mb-3">Item breakdown</h3>
+        <div className="border border-sand/60 rounded-xl p-4">
+          <h3 className="text-sm font-semibold text-dark/70 mb-3">Item breakdown</h3>
           <table className="w-full text-xs">
             <thead>
-              <tr className="text-gray-500 text-left">
+              <tr className="text-mid/70 text-left">
                 <th className="pb-2">Item</th>
                 <th className="pb-2">Impressions</th>
                 <th className="pb-2">Saves</th>

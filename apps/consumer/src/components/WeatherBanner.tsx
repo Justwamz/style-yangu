@@ -18,11 +18,11 @@ export default function WeatherBanner({ weather, clothingTags, stylistName }: Pr
   const icon = CONDITION_ICON[weather.condition] ?? '🌤️'
 
   return (
-    <div className={`rounded-2xl p-3 border ${warning ? 'bg-amber-50 border-amber-200' : 'bg-white border-[#E8DDD5]'}`}>
+    <div className={`rounded-2xl p-3 border ${warning ? 'bg-amber-50 border-amber-200' : 'bg-white border-sand'}`}>
       <div className="flex items-center gap-2">
         <span className="text-2xl">{icon}</span>
         <div className="flex-1">
-          <p className="text-sm font-medium text-[#1A0A00]">
+          <p className="text-sm font-medium text-dark">
             {weather.temp}°C · {weather.condition}
           </p>
           {weather.simulated && (

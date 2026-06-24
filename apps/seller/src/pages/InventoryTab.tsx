@@ -34,7 +34,7 @@ export default function InventoryTab() {
             key={chip}
             onClick={() => setFilter(chip)}
             className={`px-3 py-1 rounded-full text-sm border whitespace-nowrap ${
-              filter === chip ? 'bg-amber-800 text-white border-amber-800' : 'border-gray-300 text-gray-600'
+              filter === chip ? 'bg-brand text-white border-brand' : 'border-sand text-mid'
             }`}
           >
             {chip}
@@ -43,7 +43,7 @@ export default function InventoryTab() {
       </div>
 
       {isLoading ? (
-        <p className="text-center text-gray-400 py-8">Loading…</p>
+        <p className="text-center text-mid/50 py-8">Loading…</p>
       ) : (
         <div className="grid grid-cols-2 gap-3">
           {visible.map(item => (
@@ -57,7 +57,7 @@ export default function InventoryTab() {
       <button
         onClick={() => navigate('/inventory/new')}
         aria-label="+"
-        className="fixed bottom-20 right-4 w-14 h-14 rounded-full bg-amber-800 text-white text-2xl shadow-lg flex items-center justify-center"
+        className="fixed bottom-20 right-4 w-14 h-14 rounded-full bg-brand text-white text-2xl shadow-lg flex items-center justify-center"
       >
         +
       </button>

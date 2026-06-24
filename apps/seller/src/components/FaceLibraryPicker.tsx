@@ -35,7 +35,7 @@ export default function FaceLibraryPicker({ selectedId, onSelect, tier }: Props)
               alt={`${face.gender} ${face.styleVibe}`}
               onClick={() => !locked && onSelect(face.id)}
               className={`w-full aspect-square object-cover rounded-lg cursor-pointer border-2 ${
-                selected ? 'border-amber-700' : 'border-transparent'
+                selected ? 'border-brand' : 'border-transparent'
               } ${locked ? 'opacity-40' : ''}`}
             />
             {locked && (

@@ -72,10 +72,10 @@ export default function Step07Wardrobe() {
   return (
     <div className="flex flex-col gap-4">
       <div>
-        <p className="text-xs text-[#8B4513] font-medium">
+        <p className="text-xs text-brand font-medium">
           {promptIndex + 1} of {PROMPTS.length}
         </p>
-        <h2 className="text-xl font-bold text-[#1A0A00] mt-1">{PROMPTS[promptIndex]}</h2>
+        <h2 className="font-display text-xl font-bold text-dark mt-1">{PROMPTS[promptIndex]}</h2>
       </div>
 
       {streamError ? (
@@ -93,7 +93,7 @@ export default function Step07Wardrobe() {
       <button
         onClick={() => capture('owned')}
         disabled={streamError}
-        className="bg-[#8B4513] text-white rounded-xl py-3 font-semibold disabled:opacity-40"
+        className="bg-brand text-white rounded-xl py-3 font-semibold disabled:opacity-40"
       >
         Capture
       </button>
@@ -101,7 +101,7 @@ export default function Step07Wardrobe() {
       <button
         onClick={() => capture('purchased_planned')}
         disabled={streamError}
-        className="border border-[#E8DDD5] rounded-xl py-3 text-sm text-[#1A0A00]"
+        className="border border-sand rounded-xl py-3 text-sm text-dark"
       >
         Use Instagram screenshot
       </button>
@@ -109,13 +109,13 @@ export default function Step07Wardrobe() {
       <div className="flex gap-3">
         <button
           onClick={() => advance()}
-          className="flex-1 border border-[#E8DDD5] rounded-xl py-2 text-sm text-[#1A0A00]"
+          className="flex-1 border border-sand rounded-xl py-2 text-sm text-dark"
         >
           Skip this item
         </button>
         <button
           onClick={() => done()}
-          className="flex-1 border border-[#E8DDD5] rounded-xl py-2 text-sm text-[#1A0A00]"
+          className="flex-1 border border-sand rounded-xl py-2 text-sm text-dark"
         >
           Done
         </button>

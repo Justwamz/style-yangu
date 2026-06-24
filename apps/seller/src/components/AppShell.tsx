@@ -23,7 +23,7 @@ export default function AppShell() {
       <main className="flex-1 overflow-y-auto pb-16">
         <Outlet />
       </main>
-      <nav className="fixed bottom-0 inset-x-0 bg-white border-t border-gray-200 flex justify-around py-2 z-50">
+      <nav className="fixed bottom-0 inset-x-0 bg-cream border-t border-sand flex justify-around py-2 z-50">
         <NavLink to="/dashboard" style={navStyle}>
           <span>🏠</span>
           <span>Dashboard</span>

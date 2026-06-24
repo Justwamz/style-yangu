@@ -19,9 +19,9 @@ export default function DiscoverTab() {
 
   return (
     <div className="p-4 max-w-lg mx-auto">
-      <h1 className="text-xl font-bold text-[#1A0A00] mb-4">Discover</h1>
+      <h1 className="font-display text-xl font-bold text-dark mb-4">Discover</h1>
       {loading ? (
-        <p className="text-center text-sm text-[#1A0A00]/40 py-8">Finding items for you…</p>
+        <p className="text-center text-sm text-dark/40 py-8">Finding items for you…</p>
       ) : (
         <div className="flex flex-col gap-4 pb-6">
           {items.map(item => (

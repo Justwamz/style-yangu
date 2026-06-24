@@ -28,7 +28,7 @@ export default function ClientDetailPage() {
     enabled: showPicker,
   })
 
-  if (isLoading || !client) return <p className="p-4 text-gray-400">Loading…</p>
+  if (isLoading || !client) return <p className="p-4 text-mid/50">Loading…</p>
 
   const remaining = client.tryOnLimit - client.tryOnUsedThisMonth
   const atLimit = remaining <= 0
@@ -45,38 +45,38 @@ export default function ClientDetailPage() {
   return (
     <div className="p-4 space-y-4">
       <div>
-        <h2 className="text-xl font-bold">{client.nickname}</h2>
-        <p className="text-sm text-gray-400">{client.consumerUsername}</p>
+        <h2 className="text-xl font-bold font-display">{client.nickname}</h2>
+        <p className="text-sm text-mid/50">{client.consumerUsername}</p>
       </div>
 
-      <div className="flex gap-4 text-sm text-gray-600">
+      <div className="flex gap-4 text-sm text-mid">
         <span>{client.tryOnSent} try-ons sent</span>
         <span>{client.tryOnActed} acted</span>
       </div>
 
-      <div className={`text-sm ${atLimit ? 'text-red-600' : 'text-gray-600'}`}>
+      <div className={`text-sm ${atLimit ? 'text-red-600' : 'text-mid'}`}>
         {remaining} of {client.tryOnLimit} sends remaining this month
       </div>
 
       <button
         onClick={() => setShowPicker(true)}
         disabled={atLimit}
-        className="w-full bg-amber-800 text-white rounded-lg py-3 font-semibold disabled:opacity-50"
+        className="w-full bg-brand text-white rounded-lg py-3 font-semibold disabled:opacity-50"
       >
         Send item
       </button>
 
       {atLimit && (
-        <p className="text-xs text-center text-gray-400">Upgrade your plan to send more items this month.</p>
+        <p className="text-xs text-center text-mid/50">Upgrade your plan to send more items this month.</p>
       )}
 
       {client.purchaseHistory.length > 0 && (
         <div>
-          <p className="text-xs text-gray-500 font-medium uppercase tracking-wide mb-2">Purchase history</p>
+          <p className="text-xs text-mid/70 font-medium uppercase tracking-wide mb-2">Purchase history</p>
           {client.purchaseHistory.map(tx => (
-            <div key={tx.id} className="flex justify-between text-sm py-1 border-b border-gray-100">
+            <div key={tx.id} className="flex justify-between text-sm py-1 border-b border-sand/60">
               <span>{tx.itemName}</span>
-              <span className="text-gray-500">KES {tx.finalPriceKES.toLocaleString()}</span>
+              <span className="text-mid/70">KES {tx.finalPriceKES.toLocaleString()}</span>
             </div>
           ))}
         </div>
@@ -85,18 +85,18 @@ export default function ClientDetailPage() {
       {showPicker && (
         <div className="fixed inset-0 bg-black/40 flex items-end z-50" onClick={() => setShowPicker(false)}>
           <div className="w-full bg-white rounded-t-2xl p-6 space-y-4 max-h-[70vh] overflow-y-auto" onClick={e => e.stopPropagation()}>
-            <h3 className="text-lg font-bold">Choose item to send</h3>
+            <h3 className="text-lg font-bold font-display">Choose item to send</h3>
             <div className="space-y-2">
               {(inventory as InventoryItem[]).filter(i => i.isLive).map(item => (
                 <button
                   key={item.id}
                   onClick={() => setSelectedItemId(item.id)}
                   className={`w-full text-left p-3 rounded-lg border ${
-                    selectedItemId === item.id ? 'border-amber-700 bg-amber-50' : 'border-gray-200'
+                    selectedItemId === item.id ? 'border-brand bg-sand' : 'border-sand'
                   }`}
                 >
                   <p className="text-sm font-medium">{item.name}</p>
-                  <p className="text-xs text-gray-500">KES {item.priceKES.toLocaleString()}</p>
+                  <p className="text-xs text-mid/70">KES {item.priceKES.toLocaleString()}</p>
                 </button>
               ))}
             </div>
@@ -105,12 +105,12 @@ export default function ClientDetailPage() {
               value={note}
               onChange={e => setNote(e.target.value)}
               rows={2}
-              className="w-full border border-gray-300 rounded-lg px-3 py-2 text-sm resize-none"
+              className="w-full border border-sand rounded-lg px-3 py-2 text-sm resize-none"
             />
             <button
               onClick={handleSend}
               disabled={!selectedItemId}
-              className="w-full bg-amber-800 text-white rounded-lg py-3 font-semibold disabled:opacity-50"
+              className="w-full bg-brand text-white rounded-lg py-3 font-semibold disabled:opacity-50"
             >
               Send
             </button>

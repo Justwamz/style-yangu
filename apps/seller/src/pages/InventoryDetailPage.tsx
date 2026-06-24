@@ -79,7 +79,7 @@ export default function InventoryDetailPage() {
     profile?.tier !== 'brand' &&
     profile?.tier !== 'enterprise'
 
-  if (isLoading || !item) return <p className="p-4 text-gray-400">Loading…</p>
+  if (isLoading || !item) return <p className="p-4 text-mid/50">Loading…</p>
 
   const totalStock = item.sizes.reduce((sum, s) => sum + s.quantity, 0)
 
@@ -99,24 +99,24 @@ export default function InventoryDetailPage() {
             aria-label="Item name"
             value={editName}
             onChange={e => setEditName(e.target.value)}
-            className="w-full border border-gray-300 rounded-lg px-3 py-2"
+            className="w-full border border-sand rounded-lg px-3 py-2"
           />
           <input
             aria-label="Price KES"
             type="number"
             value={editPrice}
             onChange={e => setEditPrice(e.target.value)}
-            className="w-full border border-gray-300 rounded-lg px-3 py-2"
+            className="w-full border border-sand rounded-lg px-3 py-2"
           />
           <button
             onClick={handleSave}
-            className="w-full bg-amber-800 text-white rounded-lg py-2 font-semibold"
+            className="w-full bg-brand text-white rounded-lg py-2 font-semibold"
           >
             Save
           </button>
           <button
             onClick={() => setIsEditing(false)}
-            className="w-full border border-gray-300 text-gray-600 rounded-lg py-2"
+            className="w-full border border-sand text-mid rounded-lg py-2"
           >
             Cancel
           </button>
@@ -124,26 +124,26 @@ export default function InventoryDetailPage() {
       ) : (
         <>
           <div className="flex items-center justify-between">
-            <h2 className="text-xl font-bold">{item.name}</h2>
+            <h2 className="text-xl font-bold font-display">{item.name}</h2>
             <button
               onClick={startEditing}
-              className="text-sm border border-amber-700 text-amber-800 rounded-lg px-3 py-1"
+              className="text-sm border border-brand text-brand rounded-lg px-3 py-1"
             >
               Edit
             </button>
           </div>
-          <p className="text-gray-500">KES {item.priceKES.toLocaleString()}</p>
-          <p className="text-sm text-gray-400">Category: {item.category}</p>
+          <p className="text-mid/70">KES {item.priceKES.toLocaleString()}</p>
+          <p className="text-sm text-mid/50">Category: {item.category}</p>
         </>
       )}
 
       {/* Regenerate Showcase */}
       <div className="space-y-2">
-        <h3 className="text-sm font-semibold text-gray-700">Showcase</h3>
+        <h3 className="text-sm font-semibold text-dark/70">Showcase</h3>
         <button
           onClick={handleRegenerate}
           disabled={capReached || generating}
-          className="w-full border border-amber-700 text-amber-800 rounded-lg py-2 text-sm font-semibold disabled:opacity-50"
+          className="w-full border border-brand text-brand rounded-lg py-2 text-sm font-semibold disabled:opacity-50"
         >
           {generating ? 'Generating…' : 'Regenerate Showcase'}
         </button>
@@ -154,8 +154,8 @@ export default function InventoryDetailPage() {
 
       {/* Stock section */}
       <div className="space-y-2">
-        <h3 className="text-sm font-semibold text-gray-700">Stock</h3>
-        <p className="text-sm text-gray-600">Total: {totalStock} units</p>
+        <h3 className="text-sm font-semibold text-dark/70">Stock</h3>
+        <p className="text-sm text-mid">Total: {totalStock} units</p>
         {showStockInput ? (
           <div className="flex gap-2">
             <input
@@ -163,12 +163,12 @@ export default function InventoryDetailPage() {
               type="number"
               value={stockInputVal}
               onChange={e => setStockInputVal(e.target.value)}
-              className="flex-1 border border-gray-300 rounded-lg px-3 py-2 text-sm"
+              className="flex-1 border border-sand rounded-lg px-3 py-2 text-sm"
               placeholder="New total stock"
             />
             <button
               onClick={handleStockAdjust}
-              className="border border-amber-700 text-amber-800 rounded-lg px-4 py-2 text-sm font-semibold"
+              className="border border-brand text-brand rounded-lg px-4 py-2 text-sm font-semibold"
             >
               Save
             </button>
@@ -176,7 +176,7 @@ export default function InventoryDetailPage() {
         ) : (
           <button
             onClick={() => setShowStockInput(true)}
-            className="border border-gray-300 text-gray-600 rounded-lg py-2 px-4 text-sm"
+            className="border border-sand text-mid rounded-lg py-2 px-4 text-sm"
           >
             Adjust
           </button>

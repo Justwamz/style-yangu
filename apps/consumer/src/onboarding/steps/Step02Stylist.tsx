@@ -40,8 +40,8 @@ export default function Step02Stylist() {
   return (
     <div className="flex flex-col gap-6">
       <div>
-        <h2 className="text-2xl font-bold text-[#1A0A00]">Choose your stylist</h2>
-        <p className="mt-1 text-sm text-[#8B4513]">You can change this later.</p>
+        <h2 className="font-display text-2xl font-bold text-dark">Choose your stylist</h2>
+        <p className="mt-1 text-sm text-brand">You can change this later.</p>
       </div>
 
       <div className="flex gap-4">
@@ -54,13 +54,13 @@ export default function Step02Stylist() {
             className={[
               'flex-1 flex flex-col items-center gap-3 p-5 rounded-2xl border-2 transition-colors',
               state.stylist === s.id
-                ? 'border-[#8B4513] bg-[#8B4513]/5'
-                : 'border-[#E8DDD5] bg-white',
+                ? 'border-brand bg-brand/5'
+                : 'border-sand bg-white',
             ].join(' ')}
           >
             <s.Avatar />
-            <span className="font-bold text-[#1A0A00] text-lg">{s.name}</span>
-            <span className="text-xs text-center text-[#1A0A00]/70 leading-relaxed">
+            <span className="font-bold text-dark text-lg">{s.name}</span>
+            <span className="text-xs text-center text-dark/70 leading-relaxed">
               {s.personality}
             </span>
           </button>

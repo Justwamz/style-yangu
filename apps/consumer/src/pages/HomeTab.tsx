@@ -14,8 +14,8 @@ export default function HomeTab() {
   const { weather } = useWeatherApi()
 
   if (profileLoading) {
-    return <div className="min-h-screen bg-[#FDFAF7] flex items-center justify-center">
-      <p className="text-sm text-[#1A0A00]/50">Loading...</p>
+    return <div className="min-h-screen bg-cream flex items-center justify-center">
+      <p className="text-sm text-dark/50">Loading...</p>
     </div>
   }
 

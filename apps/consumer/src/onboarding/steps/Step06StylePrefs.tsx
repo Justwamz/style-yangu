@@ -25,7 +25,7 @@ export default function Step06StylePrefs() {
 
   return (
     <div className="flex flex-col gap-4 p-4">
-      <h2 className="text-xl font-semibold text-center">Your Style Preferences</h2>
+      <h2 className="font-display text-xl font-semibold text-center">Your Style Preferences</h2>
       <p className="text-sm text-center text-gray-500">Pick all that resonate with you.</p>
 
       <div className="grid grid-cols-2 gap-3">
@@ -39,7 +39,7 @@ export default function Step06StylePrefs() {
               className={[
                 'flex flex-col items-center gap-1 rounded-lg border-2 p-4 text-center text-sm font-medium transition-colors',
                 isSelected
-                  ? 'border-[#8B4513] bg-[#8B4513]/10 text-[#8B4513]'
+                  ? 'border-brand bg-brand/10 text-brand'
                   : 'border-gray-200 bg-white text-gray-700 hover:border-gray-400',
               ].join(' ')}
               aria-pressed={isSelected}

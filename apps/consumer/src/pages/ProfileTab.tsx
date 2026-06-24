@@ -46,53 +46,53 @@ export default function ProfileTab() {
 
   return (
     <div className="p-4 max-w-lg mx-auto flex flex-col gap-5 pb-8">
-      <div className="flex items-center gap-4 bg-white rounded-2xl border border-[#E8DDD5] p-4">
-        <div className="w-16 h-16 rounded-full bg-[#F5EDE5] border-2 border-[#E8DDD5] flex items-center justify-center text-2xl">
+      <div className="flex items-center gap-4 bg-white rounded-2xl border border-sand p-4">
+        <div className="w-16 h-16 rounded-full bg-sand border-2 border-sand flex items-center justify-center text-2xl">
           {profile?.avatarUrl ? (
             <img src={profile.avatarUrl} alt="avatar" className="w-full h-full object-cover rounded-full" />
           ) : '👤'}
         </div>
         <div>
-          <p className="font-bold text-[#1A0A00]">My Style</p>
-          <p className="text-sm text-[#1A0A00]/60">Styled by {stylistDisplay}</p>
-          <span className="text-xs bg-[#F5EDE5] text-[#8B4513] px-2 py-0.5 rounded-full mt-1 inline-block">
+          <p className="font-bold text-dark">My Style</p>
+          <p className="text-sm text-dark/60">Styled by {stylistDisplay}</p>
+          <span className="text-xs bg-sand text-brand px-2 py-0.5 rounded-full mt-1 inline-block">
             {profile?.tier === 'premium' ? 'Premium' : 'Free'}
           </span>
         </div>
       </div>
 
       {streak && (
-        <div className="bg-white rounded-2xl border border-[#E8DDD5] p-4">
-          <p className="font-bold text-[#1A0A00] mb-3">Style Stats</p>
+        <div className="bg-white rounded-2xl border border-sand p-4">
+          <p className="font-bold text-dark mb-3">Style Stats</p>
           <div className="grid grid-cols-2 gap-3">
-            <div className="bg-[#F5EDE5] rounded-xl p-3 text-center">
-              <p className="text-2xl font-bold text-[#8B4513]">🔥 {streak.streakDays}</p>
-              <p className="text-xs text-[#1A0A00]/60 mt-0.5">Day streak</p>
+            <div className="bg-sand rounded-xl p-3 text-center">
+              <p className="text-2xl font-bold text-brand">🔥 {streak.streakDays}</p>
+              <p className="text-xs text-dark/60 mt-0.5">Day streak</p>
             </div>
-            <div className="bg-[#F5EDE5] rounded-xl p-3 text-center">
-              <p className="text-2xl font-bold text-[#8B4513]">{streak.stylePoints}</p>
-              <p className="text-xs text-[#1A0A00]/60 mt-0.5">Style points</p>
+            <div className="bg-sand rounded-xl p-3 text-center">
+              <p className="text-2xl font-bold text-brand">{streak.stylePoints}</p>
+              <p className="text-xs text-dark/60 mt-0.5">Style points</p>
             </div>
-            <div className="bg-[#F5EDE5] rounded-xl p-3 text-center">
-              <p className="text-2xl font-bold text-[#8B4513]">{streak.weeklyScore}/10</p>
-              <p className="text-xs text-[#1A0A00]/60 mt-0.5">Weekly score</p>
+            <div className="bg-sand rounded-xl p-3 text-center">
+              <p className="text-2xl font-bold text-brand">{streak.weeklyScore}/10</p>
+              <p className="text-xs text-dark/60 mt-0.5">Weekly score</p>
             </div>
-            <div className="bg-[#F5EDE5] rounded-xl p-3 text-center">
-              <p className="text-2xl font-bold text-[#8B4513]">#{streak.leaderboardRank}</p>
-              <p className="text-xs text-[#1A0A00]/60 mt-0.5">Leaderboard</p>
+            <div className="bg-sand rounded-xl p-3 text-center">
+              <p className="text-2xl font-bold text-brand">#{streak.leaderboardRank}</p>
+              <p className="text-xs text-dark/60 mt-0.5">Leaderboard</p>
             </div>
           </div>
         </div>
       )}
 
       {referral && (
-        <div className="bg-white rounded-2xl border border-[#E8DDD5] p-4">
-          <p className="font-bold text-[#1A0A00] mb-3">Invite Friends</p>
-          <div className="bg-[#F5EDE5] rounded-xl p-3 flex items-center justify-between mb-3">
-            <span className="font-mono font-bold text-[#8B4513] tracking-widest">{referral.code}</span>
+        <div className="bg-white rounded-2xl border border-sand p-4">
+          <p className="font-bold text-dark mb-3">Invite Friends</p>
+          <div className="bg-sand rounded-xl p-3 flex items-center justify-between mb-3">
+            <span className="font-mono font-bold text-brand tracking-widest">{referral.code}</span>
             <button
               onClick={shareReferral}
-              className="text-xs bg-[#8B4513] text-white px-3 py-1.5 rounded-lg"
+              className="text-xs bg-brand text-white px-3 py-1.5 rounded-lg"
             >
               Share
             </button>
@@ -104,17 +104,17 @@ export default function ProfileTab() {
               { label: 'Awaiting Upgrade', value: referral.counters.awaitingUpgrade },
               { label: 'Upgraded This Month', value: referral.counters.upgradedThisMonth },
             ].map(({ label, value }) => (
-              <div key={label} className="bg-[#F5EDE5] rounded-xl p-2.5 text-center">
-                <p className="font-bold text-[#1A0A00]">{value}</p>
-                <p className="text-xs text-[#1A0A00]/50 leading-tight">{label}</p>
+              <div key={label} className="bg-sand rounded-xl p-2.5 text-center">
+                <p className="font-bold text-dark">{value}</p>
+                <p className="text-xs text-dark/50 leading-tight">{label}</p>
               </div>
             ))}
           </div>
         </div>
       )}
 
-      <div className="bg-white rounded-2xl border border-[#E8DDD5] p-4">
-        <p className="font-bold text-[#1A0A00] mb-3">Notifications</p>
+      <div className="bg-white rounded-2xl border border-sand p-4">
+        <p className="font-bold text-dark mb-3">Notifications</p>
         <div className="flex flex-col gap-2">
           {NOTIF_OPTIONS.map(({ value, label }) => (
             <button
@@ -122,8 +122,8 @@ export default function ProfileTab() {
               onClick={() => handleNotifChange(value)}
               className={`flex items-center justify-between px-4 py-3 rounded-xl border transition-colors ${
                 notifFreq === value
-                  ? 'border-[#8B4513] bg-[#F5EDE5] text-[#8B4513]'
-                  : 'border-[#E8DDD5] text-[#1A0A00]'
+                  ? 'border-brand bg-sand text-brand'
+                  : 'border-sand text-dark'
               }`}
             >
               <span className="text-sm">{label}</span>

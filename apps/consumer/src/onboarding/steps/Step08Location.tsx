@@ -33,14 +33,14 @@ export default function Step08Location() {
   return (
     <div className="flex flex-col gap-6">
       <div>
-        <h2 className="text-2xl font-bold text-[#1A0A00]">One more thing</h2>
-        <p className="mt-2 text-sm text-[#1A0A00]/70 leading-relaxed">
+        <h2 className="font-display text-2xl font-bold text-dark">One more thing</h2>
+        <p className="mt-2 text-sm text-dark/70 leading-relaxed">
           So {stylistName} can factor in today's weather when styling you. No location data is stored.
         </p>
       </div>
       <button
         onClick={requestLocation}
-        className="bg-[#8B4513] text-white rounded-xl py-3 font-semibold"
+        className="bg-brand text-white rounded-xl py-3 font-semibold"
       >
         Allow location
       </button>
@@ -49,7 +49,7 @@ export default function Step08Location() {
           dispatch({ type: 'SET_LOCATION', locationPermission: 'denied', lat: NAIROBI_LAT, lon: NAIROBI_LON })
           dispatch({ type: 'SET_STEP', step: 9 })
         }}
-        className="text-[#8B4513] text-sm underline text-center"
+        className="text-brand text-sm underline text-center"
       >
         Skip
       </button>

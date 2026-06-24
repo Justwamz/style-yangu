@@ -104,7 +104,7 @@ export default function POSNewPage() {
   if (state.step === 0) {
     return (
       <div className="p-4 space-y-3">
-        <p className="text-xs text-gray-500">Step 1 of 4 — Item</p>
+        <p className="text-xs text-mid/70">Step 1 of 4 — Item</p>
         <input
           placeholder="Search or type item name"
           value={itemSearch}
@@ -112,7 +112,7 @@ export default function POSNewPage() {
             setItemSearch(e.target.value)
             if (e.target.value) dispatch({ type: 'SET_CUSTOM_NAME', name: e.target.value })
           }}
-          className="w-full border border-gray-300 rounded-lg px-3 py-2"
+          className="w-full border border-sand rounded-lg px-3 py-2"
         />
         <div className="space-y-2 max-h-64 overflow-y-auto">
           {filteredInventory.map(item => (
@@ -120,18 +120,18 @@ export default function POSNewPage() {
               key={item.id}
               onClick={() => dispatch({ type: 'SELECT_ITEM', item })}
               className={`w-full text-left p-2 rounded-lg border ${
-                state.selectedItemId === item.id ? 'border-amber-700 bg-amber-50' : 'border-gray-200'
+                state.selectedItemId === item.id ? 'border-brand bg-sand' : 'border-sand'
               }`}
             >
               <p className="text-sm font-medium">{item.name}</p>
-              <p className="text-xs text-gray-500">KES {item.priceKES.toLocaleString()}</p>
+              <p className="text-xs text-mid/70">KES {item.priceKES.toLocaleString()}</p>
             </button>
           ))}
         </div>
         <button
           onClick={() => dispatch({ type: 'NEXT_STEP' })}
           disabled={!state.customItemName}
-          className="w-full bg-amber-800 text-white rounded-lg py-3 font-semibold disabled:opacity-50"
+          className="w-full bg-brand text-white rounded-lg py-3 font-semibold disabled:opacity-50"
         >
           Next
         </button>
@@ -143,19 +143,19 @@ export default function POSNewPage() {
   if (state.step === 1) {
     return (
       <div className="p-4 space-y-3">
-        <p className="text-xs text-gray-500">Step 2 of 4 — Price</p>
-        <p className="text-sm text-gray-600">Listed price: KES {state.listedPriceKES.toLocaleString()}</p>
+        <p className="text-xs text-mid/70">Step 2 of 4 — Price</p>
+        <p className="text-sm text-mid">Listed price: KES {state.listedPriceKES.toLocaleString()}</p>
         <label className="block text-sm font-medium">Negotiated price (KES)</label>
         <input
           type="number"
           value={state.finalPriceKES || ''}
           onChange={e => dispatch({ type: 'SET_FINAL_PRICE', price: Number(e.target.value) })}
-          className="w-full border border-gray-300 rounded-lg px-3 py-2"
+          className="w-full border border-sand rounded-lg px-3 py-2"
         />
         <button
           onClick={() => dispatch({ type: 'NEXT_STEP' })}
           disabled={state.finalPriceKES === undefined || state.finalPriceKES === null}
-          className="w-full bg-amber-800 text-white rounded-lg py-3 font-semibold disabled:opacity-50"
+          className="w-full bg-brand text-white rounded-lg py-3 font-semibold disabled:opacity-50"
         >
           Next
         </button>
@@ -167,7 +167,7 @@ export default function POSNewPage() {
   if (state.step === 2) {
     return (
       <div className="p-4 space-y-4">
-        <p className="text-xs text-gray-500">Step 3 of 4 — Payment</p>
+        <p className="text-xs text-mid/70">Step 3 of 4 — Payment</p>
         <div>
           <p className="text-sm font-medium mb-2">Payment method</p>
           {(['mpesa', 'cash', 'bank_transfer', 'card'] as PaymentMethod[]).map(method => (
@@ -202,7 +202,7 @@ export default function POSNewPage() {
         </div>
         <button
           onClick={() => dispatch({ type: 'NEXT_STEP' })}
-          className="w-full bg-amber-800 text-white rounded-lg py-3 font-semibold"
+          className="w-full bg-brand text-white rounded-lg py-3 font-semibold"
         >
           Next
         </button>
@@ -214,32 +214,32 @@ export default function POSNewPage() {
   const selectedClient = clients.find(c => c.id === state.selectedClientId)
   return (
     <div className="p-4 space-y-3">
-      <p className="text-xs text-gray-500">Step 4 of 4 — Attach client (optional)</p>
-      <p className="text-sm text-gray-600">Link a client to this sale</p>
+      <p className="text-xs text-mid/70">Step 4 of 4 — Attach client (optional)</p>
+      <p className="text-sm text-mid">Link a client to this sale</p>
       <div className="space-y-2 max-h-48 overflow-y-auto">
         {clients.map(client => (
           <button
             key={client.id}
             onClick={() => dispatch({ type: 'SELECT_CLIENT', id: client.id })}
             className={`w-full text-left p-2 rounded-lg border ${
-              state.selectedClientId === client.id ? 'border-amber-700 bg-amber-50' : 'border-gray-200'
+              state.selectedClientId === client.id ? 'border-brand bg-sand' : 'border-sand'
             }`}
           >
             <p className="text-sm font-medium">{client.nickname}</p>
-            <p className="text-xs text-gray-500">{client.consumerUsername}</p>
+            <p className="text-xs text-mid/70">{client.consumerUsername}</p>
           </button>
         ))}
       </div>
       <div className="flex gap-3">
         <button
           onClick={() => handleConfirm(state.selectedClientId)}
-          className="flex-1 bg-amber-800 text-white rounded-lg py-3 font-semibold"
+          className="flex-1 bg-brand text-white rounded-lg py-3 font-semibold"
         >
           Confirm
         </button>
         <button
           onClick={() => handleConfirm(null)}
-          className="flex-1 border border-gray-300 text-gray-600 rounded-lg py-3 font-semibold"
+          className="flex-1 border border-sand text-mid rounded-lg py-3 font-semibold"
         >
           Skip
         </button>

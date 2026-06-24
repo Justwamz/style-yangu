@@ -27,9 +27,9 @@ export default function OTPVerify() {
   }
 
   return (
-    <div className="min-h-screen flex flex-col items-center justify-center bg-white px-6">
-      <h1 className="text-2xl font-bold mb-1" style={{ color: '#8B4513' }}>Verify your number</h1>
-      <p className="text-sm text-gray-500 mb-8">
+    <div className="min-h-screen flex flex-col items-center justify-center bg-cream px-6">
+      <h1 className="text-2xl font-bold font-display mb-1" style={{ color: '#8B4513' }}>Verify your number</h1>
+      <p className="text-sm text-mid/70 mb-8">
         Enter the 6-digit code sent to {state?.phone}
       </p>
       <input
@@ -38,13 +38,13 @@ export default function OTPVerify() {
         maxLength={6}
         value={code}
         onChange={e => setCode(e.target.value.replace(/\D/g, ''))}
-        className="w-full max-w-sm border border-gray-300 rounded-lg px-4 py-3 text-base mb-2 tracking-widest text-center focus:outline-none focus:ring-2 focus:ring-amber-700"
+        className="w-full max-w-sm border border-sand rounded-lg px-4 py-3 text-base mb-2 tracking-widest text-center focus:outline-none focus:ring-2 focus:ring-brand"
       />
       {error && <p className="text-red-600 text-sm mb-2">{error}</p>}
       <button
         onClick={handleVerify}
         disabled={loading || code.length !== 6}
-        className="w-full max-w-sm bg-amber-800 text-white rounded-lg py-3 font-semibold disabled:opacity-50"
+        className="w-full max-w-sm bg-brand text-white rounded-lg py-3 font-semibold disabled:opacity-50"
       >
         {loading ? 'Verifying…' : 'Verify'}
       </button>

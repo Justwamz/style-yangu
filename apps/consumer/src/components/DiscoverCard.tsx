@@ -19,7 +19,7 @@ export default function DiscoverCard({ item, stylistName }: Props) {
   }
 
   return (
-    <div className="bg-white rounded-2xl border border-[#E8DDD5] overflow-hidden shadow-sm">
+    <div className="bg-white rounded-2xl border border-sand overflow-hidden shadow-sm">
       <div className="relative">
         <img src={item.photoUrl} alt={item.name} className="w-full aspect-[4/5] object-cover" />
         {item.sponsored && (
@@ -29,26 +29,26 @@ export default function DiscoverCard({ item, stylistName }: Props) {
         )}
       </div>
       <div className="p-3">
-        <p className="text-xs text-[#8B4513] mb-1">{name} found this for you</p>
-        <p className="font-semibold text-[#1A0A00] text-sm">{item.name}</p>
-        <p className="text-sm text-[#1A0A00]/60">KES {item.priceKES.toLocaleString()} · {item.sellerName}</p>
-        <p className="text-xs text-[#1A0A00]/50 mt-1">{item.matchReason}</p>
+        <p className="text-xs text-brand mb-1">{name} found this for you</p>
+        <p className="font-semibold text-dark text-sm">{item.name}</p>
+        <p className="text-sm text-dark/60">KES {item.priceKES.toLocaleString()} · {item.sellerName}</p>
+        <p className="text-xs text-dark/50 mt-1">{item.matchReason}</p>
         <button
           onClick={talkToSeller}
-          className="mt-3 w-full bg-[#8B4513] text-white rounded-xl py-2 text-sm font-medium"
+          className="mt-3 w-full bg-brand text-white rounded-xl py-2 text-sm font-medium"
         >
           Talk to Seller
         </button>
         <div className="flex gap-2 mt-2">
           <button
             onClick={() => setFollowed(f => !f)}
-            className={`flex-1 border rounded-xl py-1.5 text-xs transition-colors ${followed ? 'border-[#8B4513] text-[#8B4513]' : 'border-[#E8DDD5] text-[#1A0A00]/60'}`}
+            className={`flex-1 border rounded-xl py-1.5 text-xs transition-colors ${followed ? 'border-brand text-brand' : 'border-sand text-dark/60'}`}
           >
             {followed ? 'Following' : 'Follow'}
           </button>
           <button
             onClick={() => setWishlisted(w => !w)}
-            className={`flex-1 border rounded-xl py-1.5 text-xs transition-colors ${wishlisted ? 'border-[#8B4513] text-[#8B4513]' : 'border-[#E8DDD5] text-[#1A0A00]/60'}`}
+            className={`flex-1 border rounded-xl py-1.5 text-xs transition-colors ${wishlisted ? 'border-brand text-brand' : 'border-sand text-dark/60'}`}
           >
             {wishlisted ? '♥ Saved' : '♡ Wishlist'}
           </button>

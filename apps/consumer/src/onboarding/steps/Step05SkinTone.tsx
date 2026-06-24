@@ -79,11 +79,11 @@ export default function Step05SkinTone() {
   if (sub === 'henna_check') {
     return (
       <div className="flex flex-col items-center justify-center gap-6 py-16">
-        <div className="w-12 h-12 border-4 border-[#8B4513] border-t-transparent rounded-full animate-spin" />
-        <p className="text-[#1A0A00] text-center font-medium">
+        <div className="w-12 h-12 border-4 border-brand border-t-transparent rounded-full animate-spin" />
+        <p className="text-dark text-center font-medium">
           Checking for henna…
         </p>
-        <p className="text-xs text-center text-[#1A0A00]/60 max-w-xs leading-relaxed">
+        <p className="text-xs text-center text-dark/60 max-w-xs leading-relaxed">
           Your photo is analysed on-device and never stored or uploaded.
         </p>
       </div>
@@ -96,22 +96,22 @@ export default function Step05SkinTone() {
     return (
       <div className="flex flex-col gap-6">
         <div>
-          <h2 className="text-xl font-bold text-[#1A0A00]">Does this look right?</h2>
-          <p className="text-sm text-[#1A0A00]/70 mt-1">
+          <h2 className="font-display text-xl font-bold text-dark">Does this look right?</h2>
+          <p className="text-sm text-dark/70 mt-1">
             {stylistName} detected your skin tone — adjust if needed.
           </p>
         </div>
 
         {/* Preview swatch */}
-        <div className="flex items-center gap-4 bg-[#FAF6F1] rounded-2xl p-4">
+        <div className="flex items-center gap-4 bg-cream rounded-2xl p-4">
           <div
             className="w-16 h-16 rounded-full border-2 border-white shadow-md flex-shrink-0"
             style={{ backgroundColor: depthChoice.bg }}
             aria-label={`Skin depth swatch: ${depthChoice.label}`}
           />
           <div>
-            <p className="font-semibold text-[#1A0A00]">{depthChoice.label}</p>
-            <p className="text-sm text-[#1A0A00]/60 capitalize">{selectedUndertone} undertone</p>
+            <p className="font-semibold text-dark">{depthChoice.label}</p>
+            <p className="text-sm text-dark/60 capitalize">{selectedUndertone} undertone</p>
           </div>
         </div>
 
@@ -128,7 +128,7 @@ export default function Step05SkinTone() {
 
         {/* Depth selector */}
         <div>
-          <p className="text-xs font-semibold text-[#1A0A00]/60 uppercase tracking-wide mb-2">Depth</p>
+          <p className="text-xs font-semibold text-dark/60 uppercase tracking-wide mb-2">Depth</p>
           <div className="flex gap-2 flex-wrap">
             {DEPTH_OPTIONS.map(opt => (
               <button
@@ -138,8 +138,8 @@ export default function Step05SkinTone() {
                 aria-pressed={selectedDepth === opt.value}
                 className={`w-10 h-10 rounded-full border-2 transition-transform ${
                   selectedDepth === opt.value
-                    ? 'border-[#8B4513] scale-110'
-                    : 'border-transparent hover:border-[#8B4513]/40'
+                    ? 'border-brand scale-110'
+                    : 'border-transparent hover:border-brand/40'
                 }`}
                 style={{ backgroundColor: opt.bg }}
               />
@@ -149,7 +149,7 @@ export default function Step05SkinTone() {
 
         {/* Undertone selector */}
         <div>
-          <p className="text-xs font-semibold text-[#1A0A00]/60 uppercase tracking-wide mb-2">Undertone</p>
+          <p className="text-xs font-semibold text-dark/60 uppercase tracking-wide mb-2">Undertone</p>
           <div className="flex gap-3">
             {UNDERTONE_OPTIONS.map(opt => (
               <button
@@ -159,7 +159,7 @@ export default function Step05SkinTone() {
                 className={`flex-1 py-2 rounded-xl text-sm font-medium border transition-colors ${
                   selectedUndertone === opt.value
                     ? 'text-white border-transparent'
-                    : 'bg-white border-[#E5DDD5] text-[#1A0A00]/70 hover:border-[#8B4513]/40'
+                    : 'bg-white border-sand text-dark/70 hover:border-brand/40'
                 }`}
                 style={selectedUndertone === opt.value ? { backgroundColor: opt.accent } : undefined}
               >
@@ -171,11 +171,11 @@ export default function Step05SkinTone() {
 
         <button
           onClick={confirm}
-          className="bg-[#8B4513] text-white rounded-xl py-3 font-semibold"
+          className="bg-brand text-white rounded-xl py-3 font-semibold"
         >
           Looks good — continue
         </button>
-        <button onClick={skip} className="text-[#8B4513] text-sm underline text-center">
+        <button onClick={skip} className="text-brand text-sm underline text-center">
           Skip for now
         </button>
       </div>
@@ -193,7 +193,7 @@ export default function Step05SkinTone() {
         </div>
         <button
           onClick={skip}
-          className="bg-[#8B4513] text-white rounded-xl py-3 font-semibold"
+          className="bg-brand text-white rounded-xl py-3 font-semibold"
         >
           Skip this step
         </button>
@@ -205,8 +205,8 @@ export default function Step05SkinTone() {
   return (
     <div className="flex flex-col gap-4">
       <div>
-        <h2 className="text-xl font-bold text-[#1A0A00]">Show us the back of your hand</h2>
-        <p className="text-sm text-[#1A0A00]/70 mt-1">
+        <h2 className="font-display text-xl font-bold text-dark">Show us the back of your hand</h2>
+        <p className="text-sm text-dark/70 mt-1">
           Place the back of your hand between your wrist and knuckles in the frame.
         </p>
       </div>
@@ -218,11 +218,11 @@ export default function Step05SkinTone() {
 
       <button
         onClick={capture}
-        className="bg-[#8B4513] text-white rounded-xl py-3 font-semibold"
+        className="bg-brand text-white rounded-xl py-3 font-semibold"
       >
         Capture
       </button>
-      <button onClick={skip} className="text-[#8B4513] text-sm underline text-center">
+      <button onClick={skip} className="text-brand text-sm underline text-center">
         Skip for now
       </button>
     </div>

@@ -53,12 +53,12 @@ export default function Step03BodySelfie() {
 
   if (sub === 'processing') {
     return (
-      <div className="fixed inset-0 bg-[#FDFAF7] flex flex-col items-center justify-center gap-6 px-6 z-50">
-        <div className="w-12 h-12 border-4 border-[#8B4513] border-t-transparent rounded-full animate-spin" />
-        <p className="text-[#1A0A00] text-center font-medium">
+      <div className="fixed inset-0 bg-cream flex flex-col items-center justify-center gap-6 px-6 z-50">
+        <div className="w-12 h-12 border-4 border-brand border-t-transparent rounded-full animate-spin" />
+        <p className="text-dark text-center font-medium">
           {stylistName} is getting to know your shape…
         </p>
-        <p className="text-xs text-center text-[#1A0A00]/60 max-w-xs leading-relaxed">
+        <p className="text-xs text-center text-dark/60 max-w-xs leading-relaxed">
           Your selfie is used only to generate your cartoon avatar and is immediately deleted after processing. We never store your actual photo at any point.
         </p>
       </div>
@@ -75,7 +75,7 @@ export default function Step03BodySelfie() {
         </div>
         <button
           onClick={skip}
-          className="bg-[#8B4513] text-white rounded-xl py-3 font-semibold"
+          className="bg-brand text-white rounded-xl py-3 font-semibold"
         >
           Skip this step
         </button>
@@ -86,16 +86,16 @@ export default function Step03BodySelfie() {
   return (
     <div className="flex flex-col gap-4">
       <div>
-        <h2 className="text-xl font-bold text-[#1A0A00]">
+        <h2 className="font-display text-xl font-bold text-dark">
           {sub === 'front' ? 'Stand facing forward' : 'Turn to your left'}
         </h2>
-        <p className="text-sm text-[#1A0A00]/70 mt-1">
+        <p className="text-sm text-dark/70 mt-1">
           {sub === 'front'
             ? 'Arms slightly away from sides, full body in frame.'
             : 'Stay in the same spot.'}
         </p>
         {sub === 'front' && (
-          <p className="text-xs text-[#1A0A00]/50 mt-1">
+          <p className="text-xs text-dark/50 mt-1">
             You may need a phone stand or a friend for the next one.
           </p>
         )}
@@ -114,11 +114,11 @@ export default function Step03BodySelfie() {
       <button
         onClick={capture}
         disabled={!distanceOk}
-        className="bg-[#8B4513] text-white rounded-xl py-3 font-semibold disabled:opacity-40"
+        className="bg-brand text-white rounded-xl py-3 font-semibold disabled:opacity-40"
       >
         Capture
       </button>
-      <button onClick={skip} className="text-[#8B4513] text-sm underline text-center">
+      <button onClick={skip} className="text-brand text-sm underline text-center">
         Skip for now
       </button>
     </div>

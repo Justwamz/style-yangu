@@ -76,8 +76,8 @@ export default function RateMyOutfit() {
   if (step === 'processing') {
     return (
       <div className="flex-1 flex flex-col items-center justify-center gap-4 py-12">
-        <div className="w-16 h-16 border-4 border-[#8B4513] border-t-transparent rounded-full animate-spin" />
-        <p className="text-sm text-[#1A0A00]/70">Your stylist is reviewing your look…</p>
+        <div className="w-16 h-16 border-4 border-brand border-t-transparent rounded-full animate-spin" />
+        <p className="text-sm text-dark/70">Your stylist is reviewing your look…</p>
       </div>
     )
   }
@@ -86,20 +86,20 @@ export default function RateMyOutfit() {
     return (
       <div className="flex flex-col gap-4">
         <img src={result.photoDataUrl} alt="Your outfit" className="w-full aspect-[3/4] object-cover rounded-2xl" />
-        <div className="bg-white rounded-2xl border border-[#E8DDD5] p-4">
+        <div className="bg-white rounded-2xl border border-sand p-4">
           <div className="flex items-center justify-between mb-3">
-            <p className="font-bold text-[#1A0A00] text-lg">Overall: {result.overall}/10</p>
-            <button onClick={() => setStep('idle')} className="text-xs text-[#1A0A00]/50">Retake</button>
+            <p className="font-bold text-dark text-lg">Overall: {result.overall}/10</p>
+            <button onClick={() => setStep('idle')} className="text-xs text-dark/50">Retake</button>
           </div>
           {CATEGORIES.map(cat => (
-            <div key={cat} className="flex items-center justify-between py-1.5 border-b border-[#E8DDD5] last:border-0">
-              <span className="text-sm text-[#1A0A00]">{cat}</span>
-              <span className="text-sm font-medium text-[#8B4513]">{result.scores[cat]}/10</span>
+            <div key={cat} className="flex items-center justify-between py-1.5 border-b border-sand last:border-0">
+              <span className="text-sm text-dark">{cat}</span>
+              <span className="text-sm font-medium text-brand">{result.scores[cat]}/10</span>
             </div>
           ))}
         </div>
-        <p className="text-sm text-[#1A0A00]/70 italic px-1">"{result.stylistFeedback}"</p>
-        <button onClick={share} className="w-full bg-[#8B4513] text-white rounded-xl py-3 font-semibold">
+        <p className="text-sm text-dark/70 italic px-1">"{result.stylistFeedback}"</p>
+        <button onClick={share} className="w-full bg-brand text-white rounded-xl py-3 font-semibold">
           Share my score
         </button>
       </div>
@@ -109,7 +109,7 @@ export default function RateMyOutfit() {
   return (
     <button
       onClick={startCamera}
-      className="w-full bg-[#8B4513] text-white rounded-xl py-3 font-semibold text-sm"
+      className="w-full bg-brand text-white rounded-xl py-3 font-semibold text-sm"
     >
       Take a photo to rate
     </button>

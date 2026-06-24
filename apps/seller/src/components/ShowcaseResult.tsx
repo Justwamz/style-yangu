@@ -45,14 +45,14 @@ export default function ShowcaseResult({ imageUrl, itemName, priceKES, itemId, t
       <div className="flex gap-3 w-full max-w-xs">
         <button
           onClick={handlePublish}
-          className="flex-1 bg-amber-800 text-white rounded-lg py-2 text-sm font-semibold"
+          className="flex-1 bg-brand text-white rounded-lg py-2 text-sm font-semibold"
         >
           Publish to shop
         </button>
         <a
           href={imageUrl}
           download={`${itemName}.jpg`}
-          className="flex-1 border border-amber-800 text-amber-900 rounded-lg py-2 text-sm font-semibold text-center"
+          className="flex-1 border border-brand text-brand rounded-lg py-2 text-sm font-semibold text-center"
         >
           Download
         </a>

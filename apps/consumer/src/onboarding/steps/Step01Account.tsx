@@ -32,8 +32,8 @@ export default function Step01Account() {
   return (
     <div className="flex flex-col gap-6">
       <div>
-        <h2 className="text-2xl font-bold text-[#1A0A00]">Create your account</h2>
-        <p className="mt-1 text-sm text-[#8B4513]">Style Yangu is just for you.</p>
+        <h2 className="font-display text-2xl font-bold text-dark">Create your account</h2>
+        <p className="mt-1 text-sm text-brand">Style Yangu is just for you.</p>
       </div>
 
       <form onSubmit={handleSubmit} className="flex flex-col gap-4">
@@ -43,7 +43,7 @@ export default function Step01Account() {
           value={email}
           onChange={e => setEmail(e.target.value)}
           required
-          className="border border-[#E8DDD5] rounded-xl px-4 py-3 bg-[#FDFAF7] text-[#1A0A00] focus:outline-none focus:border-[#8B4513]"
+          className="border border-sand rounded-xl px-4 py-3 bg-cream text-dark focus:outline-none focus:border-brand"
         />
         <input
           type="password"
@@ -52,13 +52,13 @@ export default function Step01Account() {
           onChange={e => setPassword(e.target.value)}
           minLength={8}
           required
-          className="border border-[#E8DDD5] rounded-xl px-4 py-3 bg-[#FDFAF7] text-[#1A0A00] focus:outline-none focus:border-[#8B4513]"
+          className="border border-sand rounded-xl px-4 py-3 bg-cream text-dark focus:outline-none focus:border-brand"
         />
         {error && <p role="alert" className="text-red-600 text-sm">{error}</p>}
         <button
           type="submit"
           disabled={loading}
-          className="bg-[#8B4513] text-white rounded-xl py-3 font-semibold disabled:opacity-60"
+          className="bg-brand text-white rounded-xl py-3 font-semibold disabled:opacity-60"
         >
           {loading ? 'Creating…' : 'Create Account'}
         </button>
@@ -68,7 +68,7 @@ export default function Step01Account() {
         type="button"
         disabled
         title="Coming soon"
-        className="border border-[#E8DDD5] rounded-xl py-3 text-[#1A0A00] opacity-40 cursor-not-allowed"
+        className="border border-sand rounded-xl py-3 text-dark opacity-40 cursor-not-allowed"
       >
         Continue with Google
       </button>

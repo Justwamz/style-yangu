@@ -62,8 +62,8 @@ export default function Step11AvatarPreview() {
   return (
     <div className="flex flex-col items-center gap-6 py-4">
       <div className="text-center">
-        <h2 className="text-2xl font-bold text-[#1A0A00]">Meet your look</h2>
-        <p className="mt-1 text-sm text-[#1A0A00]/60">Your personalised style profile.</p>
+        <h2 className="font-display text-2xl font-bold text-dark">Meet your look</h2>
+        <p className="mt-1 text-sm text-dark/60">Your personalised style profile.</p>
       </div>
 
       {/* Consumer avatar */}
@@ -74,13 +74,13 @@ export default function Step11AvatarPreview() {
             alt="Your avatar"
             role="img"
             aria-label="avatar"
-            className="w-40 h-56 object-contain rounded-2xl border-2 border-[#E8DDD5]"
+            className="w-40 h-56 object-contain rounded-2xl border-2 border-sand"
           />
         ) : (
           <div
             role="img"
             aria-label="avatar"
-            className="w-40 h-56 rounded-2xl border-2 border-[#E8DDD5] bg-[#F5EDE5] flex items-center justify-center"
+            className="w-40 h-56 rounded-2xl border-2 border-sand bg-sand flex items-center justify-center"
           >
             <BodySilhouette bodyType={state.bodyType} />
           </div>
@@ -95,11 +95,11 @@ export default function Step11AvatarPreview() {
       </div>
 
       {/* Stylist companion */}
-      <div className="flex items-center gap-4 bg-[#F5EDE5] rounded-2xl p-4 w-full">
+      <div className="flex items-center gap-4 bg-sand rounded-2xl p-4 w-full">
         {stylist === 'kofi' ? <KofiCompanion /> : <AmaraCompanion />}
         <div>
-          <p className="font-bold text-[#1A0A00]">{stylistName}</p>
-          <p className="text-xs text-[#1A0A00]/70 leading-relaxed">
+          <p className="font-bold text-dark">{stylistName}</p>
+          <p className="text-xs text-dark/70 leading-relaxed">
             {STYLIST_PERSONALITY[stylist] ?? ''}
           </p>
         </div>
@@ -107,7 +107,7 @@ export default function Step11AvatarPreview() {
 
       <button
         onClick={complete}
-        className="w-full bg-[#8B4513] text-white rounded-xl py-4 font-semibold text-lg mt-2"
+        className="w-full bg-brand text-white rounded-xl py-4 font-semibold text-lg mt-2"
       >
         Meet {stylistName}, let's go
       </button>

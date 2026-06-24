@@ -14,7 +14,7 @@ interface Props {
 
 function AmaraAvatar() {
   return (
-    <div className="w-12 h-12 rounded-full bg-[#C4834A] flex items-center justify-center text-white font-bold text-lg shrink-0">
+    <div className="w-12 h-12 rounded-full bg-mid flex items-center justify-center text-white font-bold text-lg shrink-0">
       A
     </div>
   )
@@ -22,7 +22,7 @@ function AmaraAvatar() {
 
 function KofiAvatar() {
   return (
-    <div className="w-12 h-12 rounded-full bg-[#5C3A1E] flex items-center justify-center text-white font-bold text-lg shrink-0">
+    <div className="w-12 h-12 rounded-full bg-deep flex items-center justify-center text-white font-bold text-lg shrink-0">
       K
     </div>
   )
@@ -31,11 +31,11 @@ function KofiAvatar() {
 export default function StylistGreetingCard({ stylistName, timeOfDay }: Props) {
   const name = stylistName.charAt(0).toUpperCase() + stylistName.slice(1)
   return (
-    <div className="flex items-center gap-3 bg-white rounded-2xl p-4 shadow-sm border border-[#E8DDD5]">
+    <div className="flex items-center gap-3 bg-white rounded-2xl p-4 shadow-sm border border-sand">
       {stylistName === 'kofi' ? <KofiAvatar /> : <AmaraAvatar />}
       <div>
-        <p className="font-bold text-[#1A0A00] text-sm">{name}</p>
-        <p className="text-xs text-[#1A0A00]/70 leading-relaxed">{GREETINGS[timeOfDay]}</p>
+        <p className="font-bold text-dark text-sm">{name}</p>
+        <p className="text-xs text-dark/70 leading-relaxed">{GREETINGS[timeOfDay]}</p>
       </div>
     </div>
   )

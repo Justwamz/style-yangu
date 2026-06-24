@@ -55,34 +55,34 @@ export default function UnlockMechanic({ unlockState, stylistName, onUnlockByAd,
 
   if (showingAd) {
     return (
-      <div className="bg-white rounded-2xl border border-[#E8DDD5] overflow-hidden">
+      <div className="bg-white rounded-2xl border border-sand overflow-hidden">
         <div className="relative">
           <img src={adCard.showcaseImageUrl} alt={adCard.sellerStorefrontName} className="w-full aspect-[3/4] object-cover" />
           <div className="absolute top-2 right-2 bg-black/60 text-white text-xs px-2 py-0.5 rounded-full">
             Sponsored
           </div>
-          <div className="absolute bottom-2 right-2 bg-[#8B4513] text-white text-sm font-bold w-8 h-8 rounded-full flex items-center justify-center">
+          <div className="absolute bottom-2 right-2 bg-brand text-white text-sm font-bold w-8 h-8 rounded-full flex items-center justify-center">
             {adTimer}
           </div>
         </div>
         <div className="p-3">
-          <p className="font-medium text-sm text-[#1A0A00]">{adCard.sellerStorefrontName}</p>
-          <p className="text-sm text-[#1A0A00]/60">KES {adCard.priceKES.toLocaleString()}</p>
+          <p className="font-medium text-sm text-dark">{adCard.sellerStorefrontName}</p>
+          <p className="text-sm text-dark/60">KES {adCard.priceKES.toLocaleString()}</p>
         </div>
       </div>
     )
   }
 
   return (
-    <div className="bg-[#F5EDE5] rounded-2xl p-4">
-      <p className="text-sm font-semibold text-[#1A0A00] mb-3">
+    <div className="bg-sand rounded-2xl p-4">
+      <p className="text-sm font-semibold text-dark mb-3">
         Want {3 - unlockState.unlockCount} more {3 - unlockState.unlockCount === 1 ? 'idea' : 'ideas'} today?
       </p>
       <div className="flex gap-2">
         {canWatchAd(unlockState) && (
           <button
             onClick={watchAd}
-            className="flex-1 bg-[#8B4513] text-white rounded-xl py-2.5 text-sm font-medium"
+            className="flex-1 bg-brand text-white rounded-xl py-2.5 text-sm font-medium"
           >
             Watch a look
           </button>
@@ -90,14 +90,14 @@ export default function UnlockMechanic({ unlockState, stylistName, onUnlockByAd,
         {canAddWardrobe(unlockState) && (
           <button
             onClick={onStartWardrobeUnlock}
-            className="flex-1 border border-[#8B4513] text-[#8B4513] rounded-xl py-2.5 text-sm font-medium"
+            className="flex-1 border border-brand text-brand rounded-xl py-2.5 text-sm font-medium"
           >
             Add 2 items
           </button>
         )}
       </div>
       {unlockState.wardrobePairsUsed > 0 && (
-        <p className="mt-2 text-xs text-[#1A0A00]/50 text-center">
+        <p className="mt-2 text-xs text-dark/50 text-center">
           {unlockState.adsWatched}/{2} ads · {unlockState.wardrobePairsUsed}/{2} wardrobe pairs
         </p>
       )}

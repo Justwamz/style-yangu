@@ -12,20 +12,20 @@ export default function InventoryCard({ item }: { item: InventoryItem }) {
   const badge = stockBadge(item)
 
   return (
-    <div className="rounded-xl overflow-hidden border border-gray-100 shadow-sm">
+    <div className="rounded-xl overflow-hidden border border-sand/60 shadow-sm">
       {item.showcaseImageUrl ? (
         <img src={item.showcaseImageUrl} alt={item.name} className="w-full aspect-[3/4] object-cover" />
       ) : (
         <div
           data-testid="img-placeholder"
-          className="w-full aspect-[3/4] bg-gradient-to-br from-amber-100 to-amber-200 flex items-center justify-center"
+          className="w-full aspect-[3/4] bg-gradient-to-br from-sand to-sand flex items-center justify-center"
         >
-          <span className="text-amber-600 text-xs">No image</span>
+          <span className="text-mid/70 text-xs">No image</span>
         </div>
       )}
       <div className="p-2">
         <p className="text-sm font-semibold truncate">{item.name}</p>
-        <p className="text-xs text-gray-500">KES {item.priceKES.toLocaleString()}</p>
+        <p className="text-xs text-mid/70">KES {item.priceKES.toLocaleString()}</p>
         {badge && (
           <span className={`inline-block mt-1 text-xs px-2 py-0.5 rounded-full ${badge.color}`}>
             {badge.label}

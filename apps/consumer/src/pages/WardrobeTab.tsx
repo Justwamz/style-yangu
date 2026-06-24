@@ -42,16 +42,16 @@ export default function WardrobeTab() {
   return (
     <div className="p-4 max-w-lg mx-auto">
       {isUnlockMode && (
-        <div className="mb-4 bg-[#F5EDE5] rounded-2xl p-3 border border-[#8B4513]/20">
-          <p className="text-sm font-semibold text-[#8B4513]">
+        <div className="mb-4 bg-sand rounded-2xl p-3 border border-brand/20">
+          <p className="text-sm font-semibold text-brand">
             Add 2 items to unlock a suggestion — {capturedInSession.length}/2 captured
           </p>
         </div>
       )}
 
       <div className="flex items-center justify-between mb-4">
-        <h1 className="text-xl font-bold text-[#1A0A00]">My Wardrobe</h1>
-        <p className="text-sm text-[#1A0A00]/50">{total} item{total !== 1 ? 's' : ''}</p>
+        <h1 className="font-display text-xl font-bold text-dark">My Wardrobe</h1>
+        <p className="text-sm text-dark/50">{total} item{total !== 1 ? 's' : ''}</p>
       </div>
 
       <div className="flex gap-2 overflow-x-auto pb-2 mb-4 scrollbar-none">
@@ -61,8 +61,8 @@ export default function WardrobeTab() {
             onClick={() => setActiveCategory(cat)}
             className={`shrink-0 px-3 py-1.5 rounded-full text-sm font-medium transition-colors ${
               activeCategory === cat
-                ? 'bg-[#8B4513] text-white'
-                : 'bg-white border border-[#E8DDD5] text-[#1A0A00]'
+                ? 'bg-brand text-white'
+                : 'bg-white border border-sand text-dark'
             }`}
           >
             {cat.charAt(0).toUpperCase() + cat.slice(1)}
@@ -71,13 +71,13 @@ export default function WardrobeTab() {
       </div>
 
       {loading ? (
-        <p className="text-center text-sm text-[#1A0A00]/40 py-8">Loading wardrobe...</p>
+        <p className="text-center text-sm text-dark/40 py-8">Loading wardrobe...</p>
       ) : items.length === 0 ? (
-        <p className="text-center text-sm text-[#1A0A00]/40 py-8">No items in this category yet.</p>
+        <p className="text-center text-sm text-dark/40 py-8">No items in this category yet.</p>
       ) : (
         <div className="grid grid-cols-2 gap-3 mb-20">
           {items.map((item: WardrobeItem) => (
-            <div key={item.id} className="aspect-square rounded-2xl overflow-hidden border border-[#E8DDD5] bg-[#F5EDE5]">
+            <div key={item.id} className="aspect-square rounded-2xl overflow-hidden border border-sand bg-sand">
               <img src={item.photoUrl} alt="Wardrobe item" className="w-full h-full object-cover" />
             </div>
           ))}
@@ -87,7 +87,7 @@ export default function WardrobeTab() {
       <button
         onClick={() => setShowCamera(true)}
         aria-label="Add item"
-        className="fixed bottom-20 right-4 w-14 h-14 bg-[#8B4513] text-white rounded-full shadow-lg flex items-center justify-center text-2xl z-40"
+        className="fixed bottom-20 right-4 w-14 h-14 bg-brand text-white rounded-full shadow-lg flex items-center justify-center text-2xl z-40"
       >
         📷
       </button>

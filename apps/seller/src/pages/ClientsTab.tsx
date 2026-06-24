@@ -36,11 +36,11 @@ export default function ClientsTab() {
           placeholder="Search clients"
           value={search}
           onChange={e => setSearch(e.target.value)}
-          className="flex-1 border border-gray-300 rounded-lg px-3 py-2 text-sm"
+          className="flex-1 border border-sand rounded-lg px-3 py-2 text-sm"
         />
         <button
           onClick={() => setShowSheet(true)}
-          className="px-3 py-2 bg-amber-800 text-white rounded-lg text-sm font-semibold"
+          className="px-3 py-2 bg-brand text-white rounded-lg text-sm font-semibold"
         >
           Add client
         </button>
@@ -57,23 +57,23 @@ export default function ClientsTab() {
       {showSheet && (
         <div className="fixed inset-0 bg-black/40 flex items-end z-50" onClick={() => setShowSheet(false)}>
           <div className="w-full bg-white rounded-t-2xl p-6 space-y-4" onClick={e => e.stopPropagation()}>
-            <h3 className="text-lg font-bold">Add client</h3>
+            <h3 className="text-lg font-bold font-display">Add client</h3>
             <input
               placeholder="@username"
               value={username}
               onChange={e => setUsername(e.target.value)}
-              className="w-full border border-gray-300 rounded-lg px-3 py-2"
+              className="w-full border border-sand rounded-lg px-3 py-2"
             />
             <input
               placeholder="Nickname"
               value={nickname}
               onChange={e => setNickname(e.target.value)}
-              className="w-full border border-gray-300 rounded-lg px-3 py-2"
+              className="w-full border border-sand rounded-lg px-3 py-2"
             />
             <button
               onClick={handleAddClient}
               disabled={!username || !nickname}
-              className="w-full bg-amber-800 text-white rounded-lg py-3 font-semibold disabled:opacity-50"
+              className="w-full bg-brand text-white rounded-lg py-3 font-semibold disabled:opacity-50"
             >
               Add
             </button>

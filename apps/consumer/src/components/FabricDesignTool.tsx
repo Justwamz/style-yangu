@@ -56,8 +56,8 @@ export default function FabricDesignTool() {
   if (step === 'analysis') {
     return (
       <div className="flex flex-col items-center justify-center gap-4 py-8">
-        <div className="w-12 h-12 border-4 border-[#8B4513] border-t-transparent rounded-full animate-spin" />
-        <p className="text-sm text-[#1A0A00]/70">Analysing your fabric…</p>
+        <div className="w-12 h-12 border-4 border-brand border-t-transparent rounded-full animate-spin" />
+        <p className="text-sm text-dark/70">Analysing your fabric…</p>
       </div>
     )
   }
@@ -65,18 +65,18 @@ export default function FabricDesignTool() {
   if (step === 'garment-select' && analysis) {
     return (
       <div className="flex flex-col gap-4">
-        <div className="bg-[#F5EDE5] rounded-2xl p-4">
-          <p className="font-semibold text-[#1A0A00] text-sm">{analysis.pattern}</p>
-          <p className="text-xs text-[#1A0A00]/60 mt-1">{analysis.colours.join(', ')} · {analysis.texture}</p>
-          <p className="text-xs text-[#8B4513] mt-2 italic">{analysis.stylistComment}</p>
+        <div className="bg-sand rounded-2xl p-4">
+          <p className="font-semibold text-dark text-sm">{analysis.pattern}</p>
+          <p className="text-xs text-dark/60 mt-1">{analysis.colours.join(', ')} · {analysis.texture}</p>
+          <p className="text-xs text-brand mt-2 italic">{analysis.stylistComment}</p>
         </div>
-        <p className="text-sm font-semibold text-[#1A0A00]">Choose a garment type:</p>
+        <p className="text-sm font-semibold text-dark">Choose a garment type:</p>
         <div className="grid grid-cols-2 gap-2">
           {GARMENT_TYPES.map(type => (
             <button
               key={type}
               onClick={() => selectGarment(type)}
-              className="border border-[#E8DDD5] rounded-xl py-2.5 text-sm text-[#1A0A00] hover:border-[#8B4513] hover:text-[#8B4513] transition-colors"
+              className="border border-sand rounded-xl py-2.5 text-sm text-dark hover:border-brand hover:text-brand transition-colors"
             >
               {type}
             </button>
@@ -95,19 +95,19 @@ export default function FabricDesignTool() {
           alt={`${garment} render`}
           className="w-full aspect-[3/4] object-cover rounded-2xl"
         />
-        <div className="bg-white rounded-2xl border border-[#E8DDD5] p-4">
-          <p className="font-semibold text-[#1A0A00]">{garment}</p>
-          <p className="text-sm text-[#1A0A00]/60 mt-1">{analysis.pattern}</p>
-          <p className="text-sm text-[#1A0A00]/60 mt-0.5">Estimated fabric: {metres}</p>
-          <p className="text-xs text-[#8B4513] mt-2 italic">{analysis.stylistComment}</p>
+        <div className="bg-white rounded-2xl border border-sand p-4">
+          <p className="font-semibold text-dark">{garment}</p>
+          <p className="text-sm text-dark/60 mt-1">{analysis.pattern}</p>
+          <p className="text-sm text-dark/60 mt-0.5">Estimated fabric: {metres}</p>
+          <p className="text-xs text-brand mt-2 italic">{analysis.stylistComment}</p>
         </div>
         <button
-          className="w-full border border-[#E8DDD5] rounded-xl py-3 text-sm text-[#1A0A00]/50"
+          className="w-full border border-sand rounded-xl py-3 text-sm text-dark/50"
           disabled
         >
           Send to Tailor — Coming soon
         </button>
-        <button onClick={() => setStep('idle')} className="w-full bg-[#8B4513] text-white rounded-xl py-3 font-semibold text-sm">
+        <button onClick={() => setStep('idle')} className="w-full bg-brand text-white rounded-xl py-3 font-semibold text-sm">
           Start over
         </button>
       </div>
@@ -118,13 +118,13 @@ export default function FabricDesignTool() {
     <div className="flex flex-col gap-3">
       <button
         onClick={startCamera}
-        className="w-full bg-[#8B4513] text-white rounded-xl py-3 font-semibold text-sm"
+        className="w-full bg-brand text-white rounded-xl py-3 font-semibold text-sm"
       >
         Photograph fabric
       </button>
       <button
         onClick={() => fileRef.current?.click()}
-        className="w-full border border-[#E8DDD5] rounded-xl py-3 text-sm text-[#1A0A00]"
+        className="w-full border border-sand rounded-xl py-3 text-sm text-dark"
       >
         Upload screenshot
       </button>

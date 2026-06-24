@@ -50,7 +50,7 @@ export default function OnboardingWizard() {
   const showNext    = nextEnabled || [9, 10].includes(state.step) || [2, 5, 6].includes(state.step)
 
   return (
-    <div className="min-h-screen bg-[#FDFAF7] flex flex-col max-w-[430px] mx-auto">
+    <div className="min-h-screen bg-cream flex flex-col max-w-[430px] mx-auto">
       {/* Progress bar */}
       <div className="flex gap-1 px-4 pt-4 pb-2">
         {Array.from({ length: 11 }, (_, i) => (
@@ -58,7 +58,7 @@ export default function OnboardingWizard() {
             key={i}
             data-testid="progress-segment"
             className="h-1 flex-1 rounded-full transition-colors duration-300"
-            style={{ backgroundColor: i < state.step ? '#8B4513' : '#E8DDD5' }}
+            style={{ backgroundColor: i < state.step ? '#8B4513' : '#F5EDE3' }}
           />
         ))}
       </div>
@@ -71,11 +71,11 @@ export default function OnboardingWizard() {
       </div>
 
       {/* Footer */}
-      <div className="flex gap-3 px-6 py-4 border-t border-[#E8DDD5]">
+      <div className="flex gap-3 px-6 py-4 border-t border-sand">
         {showBack && (
           <button
             onClick={() => dispatch({ type: 'SET_STEP', step: state.step - 1 })}
-            className="flex-1 border border-[#E8DDD5] rounded-xl py-3 text-[#1A0A00] font-semibold"
+            className="flex-1 border border-sand rounded-xl py-3 text-dark font-semibold"
           >
             Back
           </button>
@@ -84,7 +84,7 @@ export default function OnboardingWizard() {
           <button
             disabled={!nextEnabled}
             onClick={() => dispatch({ type: 'SET_STEP', step: state.step + 1 })}
-            className="flex-1 bg-[#8B4513] text-white rounded-xl py-3 font-semibold disabled:opacity-40"
+            className="flex-1 bg-brand text-white rounded-xl py-3 font-semibold disabled:opacity-40"
           >
             Next
           </button>

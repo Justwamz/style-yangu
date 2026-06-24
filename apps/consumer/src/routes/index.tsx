@@ -11,7 +11,7 @@ const StyleTab    = lazy(() => import('../pages/StyleTab'))
 const DiscoverTab = lazy(() => import('../pages/DiscoverTab'))
 const ProfileTab  = lazy(() => import('../pages/ProfileTab'))
 
-const loading = <div className="min-h-screen bg-[#FDFAF7]" />
+const loading = <div className="min-h-screen bg-cream" />
 
 function AuthGuard() {
   const token = localStorage.getItem('sy_token')

@@ -31,17 +31,17 @@ export default function Step09Budget() {
   return (
     <div className="flex flex-col gap-6">
       <div>
-        <h2 className="text-2xl font-bold text-[#1A0A00]">Your budget</h2>
-        <p className="mt-1 text-sm text-[#1A0A00]/60">Optional. Leave blank to skip a category.</p>
+        <h2 className="font-display text-2xl font-bold text-dark">Your budget</h2>
+        <p className="mt-1 text-sm text-dark/60">Optional. Leave blank to skip a category.</p>
       </div>
       <div className="flex flex-col gap-4">
         {CATEGORIES.map(c => (
           <div key={c.key}>
-            <label htmlFor={`budget-${c.key}`} className="block text-sm font-medium text-[#1A0A00] mb-1">
+            <label htmlFor={`budget-${c.key}`} className="block text-sm font-medium text-dark mb-1">
               {c.label}
             </label>
-            <div className="flex items-center border border-[#E8DDD5] rounded-xl overflow-hidden bg-[#FDFAF7]">
-              <span className="px-3 py-3 text-sm text-[#1A0A00]/50 bg-[#F5EDE5]">KES</span>
+            <div className="flex items-center border border-sand rounded-xl overflow-hidden bg-cream">
+              <span className="px-3 py-3 text-sm text-dark/50 bg-sand">KES</span>
               <input
                 id={`budget-${c.key}`}
                 type="number"
@@ -50,7 +50,7 @@ export default function Step09Budget() {
                 placeholder="0"
                 value={values[c.key]}
                 onChange={e => handleChange(c.key, e.target.value)}
-                className="flex-1 px-3 py-3 bg-transparent text-[#1A0A00] focus:outline-none text-sm"
+                className="flex-1 px-3 py-3 bg-transparent text-dark focus:outline-none text-sm"
               />
             </div>
           </div>

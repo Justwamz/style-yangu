@@ -14,12 +14,12 @@ const STATUS_LABEL: Record<string, string> = {
 
 export default function POSTransactionCard({ tx }: { tx: POSTransaction }) {
   return (
-    <div className="border border-gray-100 rounded-xl p-3 flex items-center justify-between shadow-sm">
+    <div className="border border-sand/60 rounded-xl p-3 flex items-center justify-between shadow-sm">
       <div>
         <p className="text-sm font-semibold">{tx.itemName}</p>
-        <p className="text-xs text-gray-500 capitalize">{tx.paymentMethod}</p>
+        <p className="text-xs text-mid/70 capitalize">{tx.paymentMethod}</p>
         {tx.clientNickname && (
-          <p className="text-xs text-gray-400">{tx.clientNickname}</p>
+          <p className="text-xs text-mid/50">{tx.clientNickname}</p>
         )}
       </div>
       <div className="flex flex-col items-end gap-1">

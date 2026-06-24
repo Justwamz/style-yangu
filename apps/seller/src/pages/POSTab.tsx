@@ -18,11 +18,11 @@ export default function POSTab() {
   return (
     <div className="p-4 space-y-4">
       {summary && typeof summary.todayRevenueKES === 'number' && (
-        <div className="bg-amber-50 rounded-2xl p-4 space-y-1">
+        <div className="bg-sand rounded-2xl p-4 space-y-1">
           <p className="text-2xl font-bold" style={{ color: '#8B4513' }}>
             KES {summary.todayRevenueKES.toLocaleString()}
           </p>
-          <p className="text-sm text-gray-600">{summary.todayItemsSold} items sold today</p>
+          <p className="text-sm text-mid">{summary.todayItemsSold} items sold today</p>
           {summary.outstandingCount > 0 && (
             <p className="text-sm text-orange-700">
               {summary.outstandingCount} outstanding · KES {summary.outstandingKES.toLocaleString()}
@@ -33,14 +33,14 @@ export default function POSTab() {
 
       <button
         onClick={() => navigate('/pos/new')}
-        className="w-full bg-amber-800 text-white rounded-xl py-3 font-semibold"
+        className="w-full bg-brand text-white rounded-xl py-3 font-semibold"
       >
         Record Sale
       </button>
 
       {transactions.length > 0 && (
         <div className="space-y-2">
-          <p className="text-xs text-gray-500 font-medium uppercase tracking-wide">Today</p>
+          <p className="text-xs text-mid/70 font-medium uppercase tracking-wide">Today</p>
           {transactions.map(tx => (
             <POSTransactionCard key={tx.id} tx={tx} />
           ))}
