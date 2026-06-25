@@ -9,6 +9,10 @@ export default defineConfig({
     VitePWA({
       registerType: 'autoUpdate',
       includeAssets: ['icons/*.png'],
+      workbox: {
+        skipWaiting: true,
+        clientsClaim: true,
+      },
       manifest: {
         name: 'Style Yangu',
         short_name: 'Style Yangu',

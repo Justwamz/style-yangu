@@ -197,8 +197,87 @@
       background: #E8BB5A;
       transform: translateY(-1px);
     }
+    /* Hamburger button */
+    .nav__burger {
+      display: none;
+      flex-direction: column;
+      justify-content: center;
+      gap: 5px;
+      padding: 4px;
+      background: none;
+      border: none;
+      cursor: pointer;
+    }
+    .nav__burger span {
+      display: block;
+      width: 22px;
+      height: 2px;
+      background: var(--white);
+      border-radius: 1px;
+    }
+
+    /* Mobile full-screen overlay */
+    .nav__mobile {
+      position: fixed;
+      inset: 0;
+      z-index: 200;
+      background: var(--dark);
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      gap: 2.5rem;
+      opacity: 0;
+      pointer-events: none;
+      transition: opacity 0.25s ease;
+    }
+    .nav__mobile.open {
+      opacity: 1;
+      pointer-events: auto;
+    }
+    .nav__mobile-close {
+      position: absolute;
+      top: 1.25rem;
+      right: 1.25rem;
+      color: var(--white);
+      font-size: 1.4rem;
+      opacity: 0.5;
+      line-height: 1;
+      padding: 4px;
+    }
+    .nav__mobile-close:hover { opacity: 1; }
+    .nav__mobile-links {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 2rem;
+    }
+    .nav__mobile-link {
+      font-family: var(--f-display);
+      font-size: 2.25rem;
+      font-weight: 300;
+      color: rgba(255,255,255,0.85);
+      letter-spacing: 0.03em;
+      transition: color 0.2s;
+    }
+    .nav__mobile-link:hover { color: var(--gold); }
+    .nav__mobile-cta {
+      margin-top: 0.5rem;
+      padding: 0.75rem 2.25rem;
+      background: var(--gold);
+      color: var(--dark);
+      font-family: var(--f-body);
+      font-size: var(--small);
+      font-weight: 600;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+      border-radius: 2px;
+    }
+
     @media (max-width: 768px) {
       .nav__links { display: none; }
+      .nav__cta   { display: none; }
+      .nav__burger { display: flex; }
       .nav { padding: 1rem 1.25rem; }
     }
 
@@ -1290,7 +1369,22 @@
       <li><a href="#artisans">For Artisans</a></li>
     </ul>
     <a href="https://style-yangu-consumer.onrender.com" class="nav__cta">Get Started Free</a>
+    <button class="nav__burger" id="navBurger" aria-label="Open menu">
+      <span></span><span></span><span></span>
+    </button>
   </nav>
+
+  <!-- Mobile navigation overlay -->
+  <div class="nav__mobile" id="navMobile" aria-hidden="true">
+    <button class="nav__mobile-close" id="navClose" aria-label="Close menu">✕</button>
+    <div class="nav__mobile-links">
+      <a href="#stylists" class="nav__mobile-link">Stylists</a>
+      <a href="#how" class="nav__mobile-link">How It Works</a>
+      <a href="#sellers" class="nav__mobile-link">For Sellers</a>
+      <a href="#artisans" class="nav__mobile-link">For Artisans</a>
+    </div>
+    <a href="https://style-yangu-consumer.onrender.com" class="nav__mobile-cta">Get Started Free</a>
+  </div>
 
   <!-- ── HERO ────────────────────────────────────────── -->
   <section class="hero">
@@ -1840,6 +1934,21 @@
     window.addEventListener('scroll', () => {
       nav.classList.toggle('scrolled', window.scrollY > 60);
     }, { passive: true });
+
+    // Mobile hamburger menu
+    const mobileMenu = document.getElementById('navMobile');
+    document.getElementById('navBurger').addEventListener('click', () => {
+      mobileMenu.classList.add('open');
+      mobileMenu.removeAttribute('aria-hidden');
+      document.body.style.overflow = 'hidden';
+    });
+    function closeMobileNav() {
+      mobileMenu.classList.remove('open');
+      mobileMenu.setAttribute('aria-hidden', 'true');
+      document.body.style.overflow = '';
+    }
+    document.getElementById('navClose').addEventListener('click', closeMobileNav);
+    mobileMenu.querySelectorAll('a').forEach(a => a.addEventListener('click', closeMobileNav));
 
     // Scroll reveal
     const srEls = document.querySelectorAll('.sr');
