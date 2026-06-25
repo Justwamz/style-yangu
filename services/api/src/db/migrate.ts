@@ -87,4 +87,102 @@ export async function runMigrations(): Promise<void> {
   await db.query(`CREATE INDEX IF NOT EXISTS idx_referral_attributions_referrer ON referral_attributions(referrer_id)`)
   await db.query(`CREATE INDEX IF NOT EXISTS idx_referral_attributions_referred ON referral_attributions(referred_id)`)
   await db.query(`CREATE INDEX IF NOT EXISTS idx_wishlists_user_id ON wishlists(user_id)`)
+
+  // ── Seller tables ────────────────────────────────────────────────────────────
+
+  await db.query(`
+    CREATE TABLE IF NOT EXISTS otp_codes (
+      id         UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+      phone      TEXT NOT NULL,
+      code       TEXT NOT NULL,
+      expires_at TIMESTAMPTZ NOT NULL,
+      used       BOOLEAN NOT NULL DEFAULT false,
+      created_at TIMESTAMPTZ DEFAULT NOW()
+    )
+  `)
+  await db.query(`
+    CREATE TABLE IF NOT EXISTS sellers (
+      id               UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+      phone            TEXT UNIQUE NOT NULL,
+      business_name    TEXT NOT NULL DEFAULT '',
+      seller_type      TEXT NOT NULL DEFAULT 'seller',
+      tier             TEXT NOT NULL DEFAULT 'free_trial',
+      bio              TEXT,
+      instagram_handle TEXT,
+      whatsapp_number  TEXT,
+      location         TEXT,
+      onboarding_done  BOOLEAN NOT NULL DEFAULT false,
+      created_at       TIMESTAMPTZ DEFAULT NOW(),
+      updated_at       TIMESTAMPTZ DEFAULT NOW()
+    )
+  `)
+  await db.query(`
+    CREATE TABLE IF NOT EXISTS inventory_items (
+      id                  UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+      seller_id           UUID NOT NULL REFERENCES sellers(id),
+      name                TEXT NOT NULL,
+      category            TEXT NOT NULL,
+      price_kes           INT NOT NULL,
+      occasion_tags       TEXT[] DEFAULT '{}',
+      sizes               JSONB NOT NULL DEFAULT '[]',
+      showcase_image_url  TEXT,
+      is_live             BOOLEAN NOT NULL DEFAULT false,
+      discount_percent    INT,
+      discount_expires_at TIMESTAMPTZ,
+      created_at          TIMESTAMPTZ DEFAULT NOW(),
+      updated_at          TIMESTAMPTZ DEFAULT NOW()
+    )
+  `)
+  await db.query(`
+    CREATE TABLE IF NOT EXISTS seller_clients (
+      id                 UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+      seller_id          UUID NOT NULL REFERENCES sellers(id),
+      consumer_username  TEXT NOT NULL,
+      nickname           TEXT NOT NULL,
+      whatsapp_number    TEXT,
+      last_purchase_date TIMESTAMPTZ,
+      try_on_sent        INT NOT NULL DEFAULT 0,
+      try_on_acted       INT NOT NULL DEFAULT 0,
+      created_at         TIMESTAMPTZ DEFAULT NOW(),
+      UNIQUE(seller_id, consumer_username)
+    )
+  `)
+  await db.query(`
+    CREATE TABLE IF NOT EXISTS pos_transactions (
+      id               UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+      seller_id        UUID NOT NULL REFERENCES sellers(id),
+      item_id          UUID REFERENCES inventory_items(id),
+      item_name        TEXT NOT NULL,
+      listed_price_kes INT NOT NULL,
+      final_price_kes  INT NOT NULL,
+      payment_method   TEXT NOT NULL,
+      payment_status   TEXT NOT NULL,
+      client_id        UUID REFERENCES seller_clients(id),
+      created_at       TIMESTAMPTZ DEFAULT NOW()
+    )
+  `)
+  await db.query(`
+    CREATE TABLE IF NOT EXISTS try_ons (
+      id         UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+      client_id  UUID NOT NULL REFERENCES seller_clients(id),
+      item_id    UUID NOT NULL REFERENCES inventory_items(id),
+      note       TEXT,
+      created_at TIMESTAMPTZ DEFAULT NOW()
+    )
+  `)
+  await db.query(`
+    CREATE TABLE IF NOT EXISTS adboost_waitlist (
+      id        UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+      seller_id UUID NOT NULL REFERENCES sellers(id),
+      joined_at TIMESTAMPTZ DEFAULT NOW(),
+      UNIQUE(seller_id)
+    )
+  `)
+  await db.query(`CREATE INDEX IF NOT EXISTS idx_otp_phone       ON otp_codes(phone)`)
+  await db.query(`CREATE INDEX IF NOT EXISTS idx_sellers_phone   ON sellers(phone)`)
+  await db.query(`CREATE INDEX IF NOT EXISTS idx_inv_seller      ON inventory_items(seller_id)`)
+  await db.query(`CREATE INDEX IF NOT EXISTS idx_pos_seller      ON pos_transactions(seller_id)`)
+  await db.query(`CREATE INDEX IF NOT EXISTS idx_pos_created     ON pos_transactions(created_at)`)
+  await db.query(`CREATE INDEX IF NOT EXISTS idx_clients_seller  ON seller_clients(seller_id)`)
+  await db.query(`CREATE INDEX IF NOT EXISTS idx_tryons_client   ON try_ons(client_id)`)
 }

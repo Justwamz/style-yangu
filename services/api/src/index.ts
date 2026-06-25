@@ -4,6 +4,7 @@ import helmet from 'helmet'
 import authRouter from './routes/auth'
 import onboardingRouter from './routes/onboarding'
 import consumerRouter from './routes/consumer'
+import sellerRouter from './routes/seller'
 import { runMigrations } from './db/migrate'
 
 const app = express()
@@ -16,6 +17,7 @@ app.use(express.json({ limit: '200kb' }))
 app.use(authRouter)
 app.use(onboardingRouter)
 app.use(consumerRouter)
+app.use(sellerRouter)
 
 app.get('/health', (_req, res) => {
   res.json({ status: 'ok', service: 'api', timestamp: new Date().toISOString() })
