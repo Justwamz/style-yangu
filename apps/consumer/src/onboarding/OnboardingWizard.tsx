@@ -40,6 +40,12 @@ function canAdvance(step: number, state: OnboardingState): boolean {
 
 const LANDING_URL = 'https://style-yangu-landing.onrender.com'
 
+const CONSUMER_VALUE_PROPS = [
+  'AI-matched outfits, every day',
+  'Virtual try-on with your selfie',
+  'Stylists who know East Africa',
+]
+
 export default function OnboardingWizard() {
   const { state, dispatch } = useOnboarding()
   const prevStepRef = useRef(state.step)
@@ -50,22 +56,73 @@ export default function OnboardingWizard() {
   const nextEnabled = canAdvance(state.step, state)
   const showNext    = nextEnabled || [9, 10].includes(state.step) || [2, 5, 6].includes(state.step)
 
-  function goBack() {
-    if (state.step === 1) {
-      window.location.href = LANDING_URL
-    } else {
-      dispatch({ type: 'SET_STEP', step: state.step - 1 })
-    }
+  /* ── Step 1: full split-screen (matches seller auth aesthetic) ── */
+  if (state.step === 1) {
+    return (
+      <div className="min-h-screen flex flex-col md:flex-row">
+
+        {/* Left: dark brand panel */}
+        <div className="bg-dark relative flex flex-col justify-between px-8 py-10 md:flex-1 md:py-16 md:px-14 overflow-hidden">
+          <div className="absolute top-0 left-0 w-14 h-14 border-t-2 border-l-2 border-gold/20 pointer-events-none" />
+          <div className="absolute bottom-0 right-0 w-14 h-14 border-b-2 border-r-2 border-gold/20 pointer-events-none" />
+
+          <a href={LANDING_URL} className="font-display text-2xl text-white tracking-wide leading-none">
+            Style<span className="text-gold">Yangu</span>
+          </a>
+
+          <div className="py-10 md:py-0">
+            <p className="text-gold text-[10px] font-semibold tracking-[0.25em] uppercase mb-5">
+              For you
+            </p>
+            <h1 className="font-display text-4xl md:text-5xl font-light text-white leading-[1.1] mb-8">
+              Your style,<br />
+              <em className="italic text-gold">beautifully</em><br />
+              curated.
+            </h1>
+            <ul className="flex flex-col gap-4">
+              {CONSUMER_VALUE_PROPS.map(prop => (
+                <li key={prop} className="flex items-center gap-3 text-white/50 text-sm">
+                  <span className="w-1 h-1 rounded-full bg-gold/70 shrink-0" />
+                  {prop}
+                </li>
+              ))}
+            </ul>
+          </div>
+
+          <a
+            href={LANDING_URL}
+            className="text-white/25 text-xs tracking-wide hover:text-white/55 transition-colors self-start"
+          >
+            ← Back to Style Yangu
+          </a>
+        </div>
+
+        {/* Right: form panel */}
+        <div className="bg-cream flex flex-col items-center justify-center px-8 py-14 md:flex-1 md:px-16">
+          <div className="w-full max-w-sm">
+            <a
+              href={LANDING_URL}
+              className="inline-flex items-center gap-2 text-sm text-mid/60 hover:text-dark transition-colors mb-8"
+            >
+              ← Back
+            </a>
+            <Suspense fallback={<div />}>
+              <StepAccount />
+            </Suspense>
+          </div>
+        </div>
+      </div>
+    )
   }
 
+  /* ── Steps 2–11: wizard layout ── */
   return (
     <div className="min-h-screen bg-cream flex flex-col max-w-[430px] mx-auto">
       {/* Branded header */}
       <div className="bg-dark px-5 pt-5 pb-4 shrink-0">
         <div className="flex items-center gap-3 mb-4">
-          {/* Back arrow — always visible */}
           <button
-            onClick={goBack}
+            onClick={() => dispatch({ type: 'SET_STEP', step: state.step - 1 })}
             aria-label="Back"
             className="text-white/70 hover:text-white transition-colors text-lg leading-none pr-1"
           >
@@ -75,10 +132,9 @@ export default function OnboardingWizard() {
             Style<span className="text-gold">Yangu</span>
           </span>
           <span className="text-white/40 text-[11px] tracking-[0.2em] uppercase font-body">
-            {state.step}&thinsp;/&thinsp;11
+            {state.step} / 11
           </span>
         </div>
-        {/* Gold progress bar */}
         <div className="flex gap-0.5">
           {Array.from({ length: 11 }, (_, i) => (
             <div
@@ -91,14 +147,12 @@ export default function OnboardingWizard() {
         </div>
       </div>
 
-      {/* Step content */}
       <div key={state.step} className={`flex-1 px-6 py-8 overflow-y-auto ${slideClass}`}>
         <Suspense fallback={<div className="flex-1" />}>
           <StepComponent />
         </Suspense>
       </div>
 
-      {/* Footer — Next only; back is in the header */}
       {showNext && (
         <div className="px-6 pb-8 pt-4 border-t border-sand/60 shrink-0">
           <button
