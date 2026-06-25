@@ -64,18 +64,19 @@ export default function PhoneEntry() {
           </ul>
         </div>
 
-        {/* Back link */}
-        <a
-          href={LANDING_URL}
-          className="text-white/25 text-xs tracking-wide hover:text-white/55 transition-colors self-start"
-        >
-          ← Back to Style Yangu
-        </a>
       </div>
 
       {/* ── Right: form panel ── */}
       <div className="bg-cream flex flex-col items-center justify-center px-8 py-14 md:flex-1 md:px-16">
         <div className="w-full max-w-sm">
+
+          {/* Visible back button */}
+          <a
+            href={LANDING_URL}
+            className="inline-flex items-center gap-2 text-sm text-mid/60 hover:text-dark transition-colors mb-8"
+          >
+            ← Back
+          </a>
 
           <p className="text-[10px] font-semibold tracking-[0.25em] uppercase text-gold mb-4">
             Get started

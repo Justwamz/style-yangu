@@ -54,17 +54,17 @@ export default function OnboardingWizard() {
             </p>
           </div>
 
-          <button
-            onClick={() => navigate('/auth')}
-            className="text-white/25 text-xs tracking-wide hover:text-white/55 transition-colors self-start"
-          >
-            ← Back
-          </button>
         </div>
 
         {/* Right: form */}
         <div className="bg-cream flex flex-col items-center justify-center px-8 py-14 md:flex-1 md:px-16">
           <div className="w-full max-w-sm">
+            <button
+              onClick={() => navigate('/auth')}
+              className="inline-flex items-center gap-2 text-sm text-mid/60 hover:text-dark transition-colors mb-8"
+            >
+              ← Back
+            </button>
             <p className="text-[10px] font-semibold tracking-[0.25em] uppercase text-gold mb-4">
               Your business
             </p>
@@ -130,17 +130,17 @@ export default function OnboardingWizard() {
           </p>
         </div>
 
-        <button
-          onClick={() => setStep(0)}
-          className="text-white/25 text-xs tracking-wide hover:text-white/55 transition-colors self-start"
-        >
-          ← Back
-        </button>
       </div>
 
       {/* Right: seller type selection */}
       <div className="bg-cream flex flex-col items-center justify-center px-8 py-14 md:flex-1 md:px-16">
         <div className="w-full max-w-sm">
+          <button
+            onClick={() => setStep(0)}
+            className="inline-flex items-center gap-2 text-sm text-mid/60 hover:text-dark transition-colors mb-8"
+          >
+            ← Back
+          </button>
           <p className="text-[10px] font-semibold tracking-[0.25em] uppercase text-gold mb-4">
             Your craft
           </p>

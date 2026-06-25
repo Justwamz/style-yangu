@@ -30,7 +30,7 @@ export default function Step01Account() {
   }
 
   return (
-    <div className="flex flex-col gap-10">
+    <div className="flex flex-col gap-8">
       {/* Heading */}
       <div>
         <p className="text-[10px] font-semibold tracking-[0.25em] uppercase text-gold mb-3">
@@ -45,15 +45,8 @@ export default function Step01Account() {
         </p>
       </div>
 
-      {/* Decorative rule */}
-      <div className="flex items-center gap-3">
-        <div className="h-px flex-1 bg-sand" />
-        <div className="w-1 h-1 rounded-full bg-gold/50" />
-        <div className="h-px w-6 bg-sand" />
-      </div>
-
       {/* Form */}
-      <form onSubmit={handleSubmit} className="flex flex-col gap-7">
+      <form onSubmit={handleSubmit} className="flex flex-col gap-6">
         <div className="flex flex-col gap-1.5">
           <label className="text-[10px] font-semibold tracking-[0.2em] uppercase text-dark/40">
             Email address
@@ -88,7 +81,7 @@ export default function Step01Account() {
         </div>
 
         {error && (
-          <p role="alert" className="text-red-600 text-sm -mt-3">
+          <p role="alert" className="text-red-600 text-sm -mt-2">
             {error}
           </p>
         )}
@@ -96,29 +89,29 @@ export default function Step01Account() {
         <button
           type="submit"
           disabled={loading}
-          className="bg-brand text-white rounded-lg py-4 text-sm font-semibold tracking-wider
-                     disabled:opacity-40 transition-opacity mt-1"
+          className="bg-brand text-white rounded-lg py-3.5 text-sm font-semibold tracking-wider
+                     disabled:opacity-40 transition-opacity"
         >
           {loading ? 'Creating…' : 'Create Account'}
         </button>
+
+        {/* Divider + Google grouped tight */}
+        <div className="flex flex-col gap-3 pt-1">
+          <div className="flex items-center gap-4">
+            <div className="flex-1 h-px bg-sand" />
+            <span className="text-[10px] text-mid/30 tracking-[0.2em] uppercase">or</span>
+            <div className="flex-1 h-px bg-sand" />
+          </div>
+          <button
+            type="button"
+            disabled
+            title="Coming soon"
+            className="border border-sand/60 rounded-lg py-3 text-dark/25 text-sm cursor-not-allowed tracking-wide"
+          >
+            Continue with Google
+          </button>
+        </div>
       </form>
-
-      {/* Divider */}
-      <div className="relative flex items-center gap-4">
-        <div className="flex-1 h-px bg-sand" />
-        <span className="text-[10px] text-mid/30 tracking-[0.2em] uppercase">or</span>
-        <div className="flex-1 h-px bg-sand" />
-      </div>
-
-      {/* Google — disabled until wired up */}
-      <button
-        type="button"
-        disabled
-        title="Coming soon"
-        className="border border-sand/60 rounded-lg py-3.5 text-dark/25 text-sm cursor-not-allowed tracking-wide"
-      >
-        Continue with Google
-      </button>
     </div>
   )
 }

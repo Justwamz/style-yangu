@@ -47,18 +47,33 @@ export default function OnboardingWizard() {
   prevStepRef.current = state.step
 
   const StepComponent = STEP_MAP[state.step] ?? StepAccount
-  const showBack    = state.step > 1
   const nextEnabled = canAdvance(state.step, state)
   const showNext    = nextEnabled || [9, 10].includes(state.step) || [2, 5, 6].includes(state.step)
+
+  function goBack() {
+    if (state.step === 1) {
+      window.location.href = LANDING_URL
+    } else {
+      dispatch({ type: 'SET_STEP', step: state.step - 1 })
+    }
+  }
 
   return (
     <div className="min-h-screen bg-cream flex flex-col max-w-[430px] mx-auto">
       {/* Branded header */}
       <div className="bg-dark px-5 pt-5 pb-4 shrink-0">
-        <div className="flex items-center justify-between mb-4">
-          <a href={LANDING_URL} className="font-display text-xl text-white tracking-wide leading-none">
+        <div className="flex items-center gap-3 mb-4">
+          {/* Back arrow — always visible */}
+          <button
+            onClick={goBack}
+            aria-label="Back"
+            className="text-white/70 hover:text-white transition-colors text-lg leading-none pr-1"
+          >
+            ←
+          </button>
+          <span className="font-display text-xl text-white tracking-wide leading-none flex-1">
             Style<span className="text-gold">Yangu</span>
-          </a>
+          </span>
           <span className="text-white/40 text-[11px] tracking-[0.2em] uppercase font-body">
             {state.step}&thinsp;/&thinsp;11
           </span>
@@ -83,36 +98,18 @@ export default function OnboardingWizard() {
         </Suspense>
       </div>
 
-      {/* Navigation footer */}
-      <div className="px-6 pb-8 pt-4 border-t border-sand/60 shrink-0">
-        {state.step === 1 && (
-          <a
-            href={LANDING_URL}
-            className="flex items-center gap-1.5 text-xs text-mid/40 hover:text-mid/70 transition-colors mb-4 tracking-wide"
+      {/* Footer — Next only; back is in the header */}
+      {showNext && (
+        <div className="px-6 pb-8 pt-4 border-t border-sand/60 shrink-0">
+          <button
+            disabled={!nextEnabled}
+            onClick={() => dispatch({ type: 'SET_STEP', step: state.step + 1 })}
+            className="w-full bg-brand text-white rounded-lg py-3 text-sm font-semibold tracking-wide disabled:opacity-30 transition-opacity"
           >
-            <span className="text-base leading-none">←</span> Back to Style Yangu
-          </a>
-        )}
-        <div className="flex gap-3">
-          {showBack && (
-            <button
-              onClick={() => dispatch({ type: 'SET_STEP', step: state.step - 1 })}
-              className="flex-1 border border-sand text-dark/60 rounded-lg py-3 text-sm font-medium tracking-wide hover:border-mid/40 transition-colors"
-            >
-              Back
-            </button>
-          )}
-          {showNext && (
-            <button
-              disabled={!nextEnabled}
-              onClick={() => dispatch({ type: 'SET_STEP', step: state.step + 1 })}
-              className="flex-1 bg-brand text-white rounded-lg py-3 text-sm font-semibold tracking-wide disabled:opacity-30 transition-opacity"
-            >
-              Next
-            </button>
-          )}
+            Next
+          </button>
         </div>
-      </div>
+      )}
     </div>
   )
 }
