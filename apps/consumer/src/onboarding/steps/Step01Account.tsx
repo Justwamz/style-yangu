@@ -30,45 +30,92 @@ export default function Step01Account() {
   }
 
   return (
-    <div className="flex flex-col gap-6">
+    <div className="flex flex-col gap-10">
+      {/* Heading */}
       <div>
-        <h2 className="font-display text-2xl font-bold text-dark">Create your account</h2>
-        <p className="mt-1 text-sm text-brand">Style Yangu is just for you.</p>
+        <p className="text-[10px] font-semibold tracking-[0.25em] uppercase text-gold mb-3">
+          Welcome
+        </p>
+        <h2 className="font-display text-4xl font-light text-dark leading-[1.1] mb-3">
+          Create your<br />
+          <em className="italic">account.</em>
+        </h2>
+        <p className="text-sm text-mid/60 leading-relaxed">
+          Your personal style journey starts here.
+        </p>
       </div>
 
-      <form onSubmit={handleSubmit} className="flex flex-col gap-4">
-        <input
-          type="email"
-          placeholder="Email"
-          value={email}
-          onChange={e => setEmail(e.target.value)}
-          required
-          className="border border-sand rounded-xl px-4 py-3 bg-cream text-dark focus:outline-none focus:border-brand"
-        />
-        <input
-          type="password"
-          placeholder="Password (min 8 characters)"
-          value={password}
-          onChange={e => setPassword(e.target.value)}
-          minLength={8}
-          required
-          className="border border-sand rounded-xl px-4 py-3 bg-cream text-dark focus:outline-none focus:border-brand"
-        />
-        {error && <p role="alert" className="text-red-600 text-sm">{error}</p>}
+      {/* Decorative rule */}
+      <div className="flex items-center gap-3">
+        <div className="h-px flex-1 bg-sand" />
+        <div className="w-1 h-1 rounded-full bg-gold/50" />
+        <div className="h-px w-6 bg-sand" />
+      </div>
+
+      {/* Form */}
+      <form onSubmit={handleSubmit} className="flex flex-col gap-7">
+        <div className="flex flex-col gap-1.5">
+          <label className="text-[10px] font-semibold tracking-[0.2em] uppercase text-dark/40">
+            Email address
+          </label>
+          <input
+            type="email"
+            placeholder="you@example.com"
+            value={email}
+            onChange={e => setEmail(e.target.value)}
+            required
+            className="border-0 border-b border-sand bg-transparent text-dark py-2 text-base
+                       focus:outline-none focus:border-brand transition-colors duration-200
+                       placeholder:text-mid/25"
+          />
+        </div>
+
+        <div className="flex flex-col gap-1.5">
+          <label className="text-[10px] font-semibold tracking-[0.2em] uppercase text-dark/40">
+            Password
+          </label>
+          <input
+            type="password"
+            placeholder="Min. 8 characters"
+            value={password}
+            onChange={e => setPassword(e.target.value)}
+            minLength={8}
+            required
+            className="border-0 border-b border-sand bg-transparent text-dark py-2 text-base
+                       focus:outline-none focus:border-brand transition-colors duration-200
+                       placeholder:text-mid/25"
+          />
+        </div>
+
+        {error && (
+          <p role="alert" className="text-red-600 text-sm -mt-3">
+            {error}
+          </p>
+        )}
+
         <button
           type="submit"
           disabled={loading}
-          className="bg-brand text-white rounded-xl py-3 font-semibold disabled:opacity-60"
+          className="bg-brand text-white rounded-lg py-4 text-sm font-semibold tracking-wider
+                     disabled:opacity-40 transition-opacity mt-1"
         >
           {loading ? 'Creating…' : 'Create Account'}
         </button>
       </form>
 
+      {/* Divider */}
+      <div className="relative flex items-center gap-4">
+        <div className="flex-1 h-px bg-sand" />
+        <span className="text-[10px] text-mid/30 tracking-[0.2em] uppercase">or</span>
+        <div className="flex-1 h-px bg-sand" />
+      </div>
+
+      {/* Google — disabled until wired up */}
       <button
         type="button"
         disabled
         title="Coming soon"
-        className="border border-sand rounded-xl py-3 text-dark opacity-40 cursor-not-allowed"
+        className="border border-sand/60 rounded-lg py-3.5 text-dark/25 text-sm cursor-not-allowed tracking-wide"
       >
         Continue with Google
       </button>

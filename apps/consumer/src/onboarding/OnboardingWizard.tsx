@@ -38,6 +38,8 @@ function canAdvance(step: number, state: OnboardingState): boolean {
   }
 }
 
+const LANDING_URL = 'https://style-yangu-landing.onrender.com'
+
 export default function OnboardingWizard() {
   const { state, dispatch } = useOnboarding()
   const prevStepRef = useRef(state.step)
@@ -51,44 +53,65 @@ export default function OnboardingWizard() {
 
   return (
     <div className="min-h-screen bg-cream flex flex-col max-w-[430px] mx-auto">
-      {/* Progress bar */}
-      <div className="flex gap-1 px-4 pt-4 pb-2">
-        {Array.from({ length: 11 }, (_, i) => (
-          <div
-            key={i}
-            data-testid="progress-segment"
-            className="h-1 flex-1 rounded-full transition-colors duration-300"
-            style={{ backgroundColor: i < state.step ? '#8B4513' : '#F5EDE3' }}
-          />
-        ))}
+      {/* Branded header */}
+      <div className="bg-dark px-5 pt-5 pb-4 shrink-0">
+        <div className="flex items-center justify-between mb-4">
+          <a href={LANDING_URL} className="font-display text-xl text-white tracking-wide leading-none">
+            Style<span className="text-gold">Yangu</span>
+          </a>
+          <span className="text-white/40 text-[11px] tracking-[0.2em] uppercase font-body">
+            {state.step}&thinsp;/&thinsp;11
+          </span>
+        </div>
+        {/* Gold progress bar */}
+        <div className="flex gap-0.5">
+          {Array.from({ length: 11 }, (_, i) => (
+            <div
+              key={i}
+              data-testid="progress-segment"
+              className="h-px flex-1 rounded-full transition-all duration-500"
+              style={{ backgroundColor: i < state.step ? '#D4A853' : 'rgba(255,255,255,0.10)' }}
+            />
+          ))}
+        </div>
       </div>
 
-      {/* Step */}
-      <div key={state.step} className={`flex-1 px-6 py-4 overflow-y-auto ${slideClass}`}>
+      {/* Step content */}
+      <div key={state.step} className={`flex-1 px-6 py-8 overflow-y-auto ${slideClass}`}>
         <Suspense fallback={<div className="flex-1" />}>
           <StepComponent />
         </Suspense>
       </div>
 
-      {/* Footer */}
-      <div className="flex gap-3 px-6 py-4 border-t border-sand">
-        {showBack && (
-          <button
-            onClick={() => dispatch({ type: 'SET_STEP', step: state.step - 1 })}
-            className="flex-1 border border-sand rounded-xl py-3 text-dark font-semibold"
+      {/* Navigation footer */}
+      <div className="px-6 pb-8 pt-4 border-t border-sand/60 shrink-0">
+        {state.step === 1 && (
+          <a
+            href={LANDING_URL}
+            className="flex items-center gap-1.5 text-xs text-mid/40 hover:text-mid/70 transition-colors mb-4 tracking-wide"
           >
-            Back
-          </button>
+            <span className="text-base leading-none">←</span> Back to Style Yangu
+          </a>
         )}
-        {showNext && (
-          <button
-            disabled={!nextEnabled}
-            onClick={() => dispatch({ type: 'SET_STEP', step: state.step + 1 })}
-            className="flex-1 bg-brand text-white rounded-xl py-3 font-semibold disabled:opacity-40"
-          >
-            Next
-          </button>
-        )}
+        <div className="flex gap-3">
+          {showBack && (
+            <button
+              onClick={() => dispatch({ type: 'SET_STEP', step: state.step - 1 })}
+              className="flex-1 border border-sand text-dark/60 rounded-lg py-3 text-sm font-medium tracking-wide hover:border-mid/40 transition-colors"
+            >
+              Back
+            </button>
+          )}
+          {showNext && (
+            <button
+              disabled={!nextEnabled}
+              onClick={() => dispatch({ type: 'SET_STEP', step: state.step + 1 })}
+              className="flex-1 bg-brand text-white rounded-lg py-3 text-sm font-semibold tracking-wide disabled:opacity-30 transition-opacity"
+            >
+              Next
+            </button>
+          )}
+        </div>
       </div>
     </div>
   )
