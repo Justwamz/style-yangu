@@ -1,36 +1,18 @@
 import { useOnboarding } from '../OnboardingContext'
 import type { Stylist } from '@style-yangu/types'
 
-function AmaraAvatar() {
-  return (
-    <svg width="80" height="96" viewBox="0 0 80 96" fill="none" aria-hidden="true">
-      <circle cx="40" cy="28" r="22" fill="#C4834A" />
-      <ellipse cx="40" cy="80" rx="28" ry="20" fill="#8B4513" />
-    </svg>
-  )
-}
-
-function KofiAvatar() {
-  return (
-    <svg width="80" height="96" viewBox="0 0 80 96" fill="none" aria-hidden="true">
-      <circle cx="40" cy="28" r="22" fill="#7B5B3A" />
-      <ellipse cx="40" cy="80" rx="28" ry="20" fill="#5C3A1E" />
-    </svg>
-  )
-}
-
-const STYLISTS: { id: Stylist; name: string; personality: string; Avatar: () => JSX.Element }[] = [
+const STYLISTS: { id: Stylist; name: string; personality: string; image: string }[] = [
   {
     id: 'amara',
     name: 'Amara',
     personality: 'Warm, honest, direct. Tells you the truth like a trusted friend who always looks put together.',
-    Avatar: AmaraAvatar,
+    image: '/amara.png',
   },
   {
     id: 'kofi',
     name: 'Kofi',
     personality: 'Confident, knowledgeable, no-fluff. Gives you reasons not just verdicts.',
-    Avatar: KofiAvatar,
+    image: '/kofi.png',
   },
 ]
 
@@ -52,17 +34,23 @@ export default function Step02Stylist() {
             aria-pressed={state.stylist === s.id}
             onClick={() => dispatch({ type: 'SET_STYLIST', stylist: s.id })}
             className={[
-              'flex-1 flex flex-col items-center gap-3 p-5 rounded-2xl border-2 transition-colors',
+              'flex-1 flex flex-col items-center gap-3 rounded-2xl border-2 transition-colors overflow-hidden',
               state.stylist === s.id
                 ? 'border-brand bg-brand/5'
                 : 'border-sand bg-white',
             ].join(' ')}
           >
-            <s.Avatar />
-            <span className="font-bold text-dark text-lg">{s.name}</span>
-            <span className="text-xs text-center text-dark/70 leading-relaxed">
-              {s.personality}
-            </span>
+            <img
+              src={s.image}
+              alt={s.name}
+              className="w-full aspect-[3/4] object-cover object-top"
+            />
+            <div className="px-4 pb-5 flex flex-col items-center gap-2">
+              <span className="font-bold text-dark text-lg">{s.name}</span>
+              <span className="text-xs text-center text-dark/70 leading-relaxed">
+                {s.personality}
+              </span>
+            </div>
           </button>
         ))}
       </div>
