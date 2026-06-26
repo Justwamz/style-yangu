@@ -185,4 +185,9 @@ export async function runMigrations(): Promise<void> {
   await db.query(`CREATE INDEX IF NOT EXISTS idx_pos_created     ON pos_transactions(created_at)`)
   await db.query(`CREATE INDEX IF NOT EXISTS idx_clients_seller  ON seller_clients(seller_id)`)
   await db.query(`CREATE INDEX IF NOT EXISTS idx_tryons_client   ON try_ons(client_id)`)
+
+  // ── Seller storefront columns (added after initial schema) ───────────────────
+  await db.query(`ALTER TABLE sellers ADD COLUMN IF NOT EXISTS slug TEXT UNIQUE`)
+  await db.query(`ALTER TABLE sellers ADD COLUMN IF NOT EXISTS storefront_views INT NOT NULL DEFAULT 0`)
+  await db.query(`CREATE INDEX IF NOT EXISTS idx_sellers_slug ON sellers(slug)`)
 }

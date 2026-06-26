@@ -25,7 +25,7 @@ export default function ProfileTab() {
   if (!profile) return null
 
   const isUnlimited = profile.tier === 'brand' || profile.tier === 'enterprise'
-  const storefrontSlug = profile.businessName.toLowerCase().replace(/\s+/g, '-')
+  const storefrontSlug = profile.slug || profile.businessName.toLowerCase().replace(/\s+/g, '-')
 
   async function saveProfile() {
     await sellerApi.patch('/seller/profile', { bio, instagramHandle: instagram, whatsappNumber: whatsapp, location })
@@ -113,7 +113,7 @@ export default function ProfileTab() {
       <div className="space-y-2">
         <h3 className="text-sm font-semibold text-dark/70 uppercase tracking-wide">Storefront</h3>
         <a
-          href={`https://styleyangu.com/shop/${storefrontSlug}`}
+          href={`https://style-yangu-consumer.onrender.com/shop/${storefrontSlug}`}
           target="_blank"
           rel="noreferrer"
           className="block border border-sand rounded-xl p-3 text-sm text-brand font-medium"

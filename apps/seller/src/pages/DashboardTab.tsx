@@ -77,7 +77,7 @@ export default function DashboardTab() {
           Record sale
         </button>
         <a
-          href={`https://styleyangu.com/shop/${profile?.businessName?.toLowerCase().replace(/\s+/g, '-') ?? ''}`}
+          href={`https://style-yangu-consumer.onrender.com/shop/${(profile?.slug || profile?.businessName?.toLowerCase().replace(/\s+/g, '-')) ?? ''}`}
           target="_blank"
           rel="noreferrer"
           className="flex-1 border border-brand text-brand rounded-xl py-2 text-sm font-semibold text-center"

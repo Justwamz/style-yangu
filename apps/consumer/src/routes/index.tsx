@@ -10,6 +10,7 @@ const WardrobeTab = lazy(() => import('../pages/WardrobeTab'))
 const StyleTab    = lazy(() => import('../pages/StyleTab'))
 const DiscoverTab = lazy(() => import('../pages/DiscoverTab'))
 const ProfileTab  = lazy(() => import('../pages/ProfileTab'))
+const ShopPage    = lazy(() => import('../pages/ShopPage'))
 
 const loading = <div className="min-h-screen bg-cream" />
 
@@ -20,6 +21,10 @@ function AuthGuard() {
 
 const router: AppRouter = createBrowserRouter([
   { path: '/', element: <AuthGuard /> },
+  {
+    path: '/shop/:slug',
+    element: <Suspense fallback={loading}><ShopPage /></Suspense>,
+  },
   {
     path: '/onboarding',
     element: <Suspense fallback={loading}><Onboarding /></Suspense>,

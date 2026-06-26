@@ -246,6 +246,7 @@ export type SellerType = 'seller' | 'cobbler' | 'tailor' | 'bag_maker' | 'jewell
 
 export interface SellerProfile {
   id: string
+  slug: string
   businessName: string
   sellerType: SellerType
   tier: SellerTier
@@ -258,7 +259,34 @@ export interface SellerProfile {
   location: string | null
   bio: string | null
   onboardingDone: boolean
+  storefrontViews: number
   createdAt: string
+}
+
+export interface PublicSellerProfile {
+  id: string
+  slug: string
+  businessName: string
+  sellerType: SellerType
+  tier: SellerTier
+  bio: string
+  instagramHandle: string
+  whatsappNumber: string
+  location: string
+  storefrontViews: number
+}
+
+export interface PublicInventoryItem {
+  id: string
+  name: string
+  category: ItemCategory
+  priceKES: number
+  occasionTags: string[]
+  sizes: { size: string; quantity: number }[]
+  showcaseImageUrl: string | null
+  isSoldOut: boolean
+  discountPercent: number | null
+  discountExpiresAt: string | null
 }
 
 export interface ShowcaseJob {

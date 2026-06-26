@@ -31,6 +31,25 @@ async function getSeller(sellerId: string) {
   return r.rows[0] ?? null
 }
 
+function toSlug(name: string): string {
+  return name.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/^-|-$/, '')
+}
+
+function mapPublicProfile(s: Record<string, unknown>) {
+  return {
+    id: s.id,
+    slug: s.slug,
+    businessName: s.business_name,
+    sellerType: s.seller_type,
+    tier: s.tier,
+    bio: s.bio ?? '',
+    instagramHandle: s.instagram_handle ?? '',
+    whatsappNumber: s.whatsapp_number ?? '',
+    location: s.location ?? '',
+    storefrontViews: s.storefront_views,
+  }
+}
+
 // ─────────────────────────────────────────────
 // AUTH: OTP
 // ─────────────────────────────────────────────
@@ -117,11 +136,19 @@ router.post('/seller/onboarding/complete', requireSeller, async (req: AuthReques
     return
   }
   try {
+    const baseSlug = toSlug(parsed.data.businessName)
+    // Ensure slug uniqueness: if base slug is taken, append short seller ID suffix
+    const existing = await db.query(
+      'SELECT id FROM sellers WHERE slug = $1 AND id != $2',
+      [baseSlug, req.userId],
+    )
+    const slug = existing.rows.length > 0 ? `${baseSlug}-${(req.userId as string).slice(0, 6)}` : baseSlug
+
     await db.query(
       `UPDATE sellers
-         SET business_name = $1, seller_type = $2, onboarding_done = true, updated_at = NOW()
-       WHERE id = $3`,
-      [parsed.data.businessName, parsed.data.sellerType, req.userId],
+         SET business_name = $1, seller_type = $2, onboarding_done = true, slug = $3, updated_at = NOW()
+       WHERE id = $4`,
+      [parsed.data.businessName, parsed.data.sellerType, slug, req.userId],
     )
     res.json({ success: true })
   } catch (err) {
@@ -140,6 +167,7 @@ router.get('/seller/profile', requireSeller, async (req: AuthRequest, res) => {
     if (!seller) { res.status(404).json({ message: 'Seller not found' }); return }
     res.json({
       id: seller.id,
+      slug: seller.slug ?? '',
       phone: seller.phone,
       businessName: seller.business_name,
       sellerType: seller.seller_type,
@@ -149,6 +177,7 @@ router.get('/seller/profile', requireSeller, async (req: AuthRequest, res) => {
       whatsappNumber: seller.whatsapp_number ?? '',
       location: seller.location ?? '',
       onboardingDone: seller.onboarding_done,
+      storefrontViews: seller.storefront_views ?? 0,
     })
   } catch (err) {
     console.error('[seller/profile GET]', err)
@@ -334,7 +363,8 @@ router.delete('/seller/inventory/:id', requireSeller, async (req: AuthRequest, r
 router.get('/seller/dashboard', requireSeller, async (req: AuthRequest, res) => {
   try {
     const today = new Date().toISOString().split('T')[0]
-    const [todayStats, weeklyStats, itemBreakdown] = await Promise.all([
+    const [sellerRow, todayStats, weeklyStats, itemBreakdown] = await Promise.all([
+      db.query('SELECT storefront_views FROM sellers WHERE id = $1', [req.userId]),
       db.query(
         `SELECT COALESCE(SUM(final_price_kes), 0) AS revenue, COUNT(*) AS items_sold
          FROM pos_transactions
@@ -360,7 +390,7 @@ router.get('/seller/dashboard', requireSeller, async (req: AuthRequest, res) => 
     res.json({
       todayRevenueKES:   parseInt(todayStats.rows[0].revenue),
       todayItemsSold:    parseInt(todayStats.rows[0].items_sold),
-      storefrontViews:   0,
+      storefrontViews:   sellerRow.rows[0]?.storefront_views ?? 0,
       weeklyRevenueKES:  parseInt(weeklyStats.rows[0].revenue),
       weeklyAggregates:  { impressions: 0, saves: 0, follows: 0, talkToSeller: 0 },
       itemBreakdown: itemBreakdown.rows.map(r => ({
@@ -676,6 +706,65 @@ router.post('/seller/inventory/:id/showcase', requireSeller, async (req: AuthReq
   } catch (err) {
     console.error('[seller/inventory/:id/showcase]', err)
     res.status(500).json({ message: 'Showcase generation failed' })
+  }
+})
+
+// ─────────────────────────────────────────────
+// PUBLIC STOREFRONT
+// ─────────────────────────────────────────────
+
+router.get('/public/seller/:slug', async (req, res) => {
+  try {
+    const r = await db.query('SELECT * FROM sellers WHERE slug = $1', [req.params.slug])
+    if (!r.rows[0]) { res.status(404).json({ message: 'Storefront not found' }); return }
+    res.json(mapPublicProfile(r.rows[0]))
+  } catch (err) {
+    console.error('[public/seller/:slug GET]', err)
+    res.status(500).json({ message: 'Failed to load storefront' })
+  }
+})
+
+router.get('/public/seller/:slug/items', async (req, res) => {
+  try {
+    const seller = await db.query('SELECT id FROM sellers WHERE slug = $1', [req.params.slug])
+    if (!seller.rows[0]) { res.status(404).json({ message: 'Storefront not found' }); return }
+
+    const items = await db.query(
+      `SELECT id, name, category, price_kes, occasion_tags, sizes,
+              showcase_image_url, discount_percent, discount_expires_at,
+              (COALESCE((SELECT SUM(quantity::int) FROM jsonb_array_elements(sizes) AS s, jsonb_to_record(s) AS sr(quantity int)), 0) = 0) AS is_sold_out
+       FROM inventory_items
+       WHERE seller_id = $1 AND is_live = true
+       ORDER BY created_at DESC`,
+      [seller.rows[0].id],
+    )
+    res.json(items.rows.map(r => ({
+      id:                r.id,
+      name:              r.name,
+      category:          r.category,
+      priceKES:          r.price_kes,
+      occasionTags:      r.occasion_tags,
+      sizes:             r.sizes,
+      showcaseImageUrl:  r.showcase_image_url,
+      isSoldOut:         r.is_sold_out,
+      discountPercent:   r.discount_percent,
+      discountExpiresAt: r.discount_expires_at,
+    })))
+  } catch (err) {
+    console.error('[public/seller/:slug/items GET]', err)
+    res.status(500).json({ message: 'Failed to load items' })
+  }
+})
+
+router.post('/public/seller/:slug/view', async (req, res) => {
+  try {
+    await db.query(
+      'UPDATE sellers SET storefront_views = storefront_views + 1 WHERE slug = $1',
+      [req.params.slug],
+    )
+    res.json({ success: true })
+  } catch {
+    res.json({ success: true }) // fire-and-forget — never fail the client
   }
 })
 
