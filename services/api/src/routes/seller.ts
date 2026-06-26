@@ -51,10 +51,10 @@ router.post('/seller/auth/otp/send', async (req, res) => {
       [phone, code, expiresAt],
     )
 
-    // TODO Phase 2: send via Twilio / Safaricom Daraja
+    // TODO Phase 2: send via Twilio / Safaricom Daraja — remove devCode from response when live
     console.log(`[OTP] ${phone} → ${code}`)
 
-    res.json({ success: true })
+    res.json({ success: true, devCode: code })
   } catch (err) {
     console.error('[seller/auth/otp/send]', err)
     res.status(500).json({ message: 'Failed to send OTP' })

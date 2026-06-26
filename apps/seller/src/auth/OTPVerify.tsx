@@ -1,4 +1,4 @@
-import { useState } from 'react'
+import { useState, useEffect, useRef } from 'react'
 import { useNavigate, useLocation } from 'react-router-dom'
 import { sellerApi } from '../context/SellerContext'
 
@@ -8,25 +8,41 @@ export default function OTPVerify() {
   const [code, setCode] = useState('')
   const [error, setError] = useState('')
   const [loading, setLoading] = useState(false)
+  const [verified, setVerified] = useState(false)
   const navigate = useNavigate()
-  const { state } = useLocation() as { state: { phone: string } }
+  const { state } = useLocation() as { state: { phone: string; devCode?: string } }
+  const didAutoVerify = useRef(false)
 
-  async function handleVerify() {
+  async function handleVerify(explicitCode?: string) {
+    const verifyCode = explicitCode ?? code
     setError('')
     setLoading(true)
     try {
       const res = await sellerApi.post<{ token: string; onboardingDone: boolean }>(
         '/seller/auth/otp/verify',
-        { phone: state?.phone, code }
+        { phone: state?.phone, code: verifyCode },
       )
       localStorage.setItem('sy_seller_token', res.token)
       navigate(res.onboardingDone ? '/dashboard' : '/onboarding', { replace: true })
     } catch (e: unknown) {
       setError(e instanceof Error ? e.message : 'Verification failed')
+      setVerified(false)
     } finally {
       setLoading(false)
     }
   }
+
+  // Auto-fill and auto-verify when the API returns a devCode (no SMS provider yet)
+  useEffect(() => {
+    if (!state?.devCode || didAutoVerify.current) return
+    didAutoVerify.current = true
+
+    const t1 = setTimeout(() => setCode(state.devCode!), 500)
+    const t2 = setTimeout(() => setVerified(true), 1100)
+    const t3 = setTimeout(() => handleVerify(state.devCode), 1900)
+
+    return () => { clearTimeout(t1); clearTimeout(t2); clearTimeout(t3) }
+  }, []) // eslint-disable-line react-hooks/exhaustive-deps
 
   return (
     <div className="min-h-screen flex flex-col md:flex-row">
@@ -43,16 +59,19 @@ export default function OTPVerify() {
           Style<span className="text-gold">Yangu</span>
         </a>
 
-        {/* Brand copy */}
-        <div className="py-10 md:py-0">
+        {/* Brand copy — swaps to confirmed state after auto-verify */}
+        <div className="py-10 md:py-0 transition-all duration-500">
           <p className="text-gold text-[10px] font-semibold tracking-[0.25em] uppercase mb-5">
-            Almost there
+            {verified ? 'Confirmed' : 'Almost there'}
           </p>
           <h1 className="font-display text-4xl md:text-5xl font-light text-white leading-[1.1] mb-8">
-            Check your<br />
-            <em className="italic text-gold">messages.</em>
+            {verified ? (
+              <>Code<br /><em className="italic text-gold">verified.</em></>
+            ) : (
+              <>Check your<br /><em className="italic text-gold">messages.</em></>
+            )}
           </h1>
-          {state?.phone && (
+          {!verified && state?.phone && (
             <p className="text-white/40 text-sm leading-relaxed max-w-xs">
               We sent a 6-digit code to {state.phone}. It expires in 10 minutes.
             </p>
@@ -65,7 +84,6 @@ export default function OTPVerify() {
       <div className="bg-cream flex flex-col items-center justify-center px-8 py-14 md:flex-1 md:px-16">
         <div className="w-full max-w-sm">
 
-          {/* Visible back button */}
           <button
             onClick={() => navigate('/auth')}
             className="inline-flex items-center gap-2 text-sm text-mid/60 hover:text-dark transition-colors mb-8"
@@ -88,29 +106,41 @@ export default function OTPVerify() {
             <label className="text-[10px] font-semibold tracking-[0.2em] uppercase text-dark/40">
               6-digit code
             </label>
-            <input
-              type="text"
-              inputMode="numeric"
-              placeholder="— — — — — —"
-              maxLength={6}
-              value={code}
-              onChange={e => setCode(e.target.value.replace(/\D/g, ''))}
-              className="border-0 border-b border-sand bg-transparent text-dark py-2
-                         text-2xl tracking-[0.4em] font-display
-                         focus:outline-none focus:border-brand transition-colors duration-200
-                         placeholder:text-mid/20 placeholder:tracking-[0.3em] w-full"
-            />
+            <div className="relative">
+              <input
+                type="text"
+                inputMode="numeric"
+                placeholder="— — — — — —"
+                maxLength={6}
+                value={code}
+                onChange={e => setCode(e.target.value.replace(/\D/g, ''))}
+                className={[
+                  'border-0 border-b bg-transparent text-dark py-2 w-full',
+                  'text-2xl tracking-[0.4em] font-display',
+                  'focus:outline-none transition-colors duration-300',
+                  'placeholder:text-mid/20 placeholder:tracking-[0.3em]',
+                  verified ? 'border-gold text-gold' : 'border-sand focus:border-brand',
+                ].join(' ')}
+              />
+              {verified && (
+                <span className="absolute right-0 top-1/2 -translate-y-1/2 text-gold text-lg">✓</span>
+              )}
+            </div>
           </div>
 
           {error && <p className="text-red-600 text-sm mb-4">{error}</p>}
 
           <button
-            onClick={handleVerify}
+            onClick={() => handleVerify()}
             disabled={loading || code.length !== 6}
-            className="w-full bg-brand text-white rounded-lg py-4 text-sm font-semibold
-                       tracking-wider disabled:opacity-40 transition-opacity"
+            className={[
+              'w-full rounded-lg py-4 text-sm font-semibold tracking-wider transition-all duration-300',
+              verified
+                ? 'bg-gold text-dark'
+                : 'bg-brand text-white disabled:opacity-40',
+            ].join(' ')}
           >
-            {loading ? 'Verifying…' : 'Verify & Continue'}
+            {loading ? 'Verifying…' : verified ? 'Verified ✓' : 'Verify & Continue'}
           </button>
         </div>
       </div>

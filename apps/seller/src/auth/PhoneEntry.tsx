@@ -20,8 +20,11 @@ export default function PhoneEntry() {
     setError('')
     setLoading(true)
     try {
-      await sellerApi.post('/seller/auth/otp/send', { phone })
-      navigate('/auth/verify', { state: { phone } })
+      const res = await sellerApi.post<{ success: boolean; devCode?: string }>(
+        '/seller/auth/otp/send',
+        { phone },
+      )
+      navigate('/auth/verify', { state: { phone, devCode: res.devCode } })
     } catch (e: unknown) {
       setError(e instanceof Error ? e.message : 'Failed to send OTP')
     } finally {
