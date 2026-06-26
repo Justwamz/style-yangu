@@ -25,7 +25,7 @@ services:
     env: static
     region: frankfurt
     plan: free
-    buildCommand: npm install -g pnpm@9 && pnpm install --no-frozen-lockfile && pnpm --filter @style-yangu/consumer... build
+    buildCommand: npm install -g pnpm@9 && pnpm install --no-frozen-lockfile && rm -rf apps/consumer/dist && pnpm --filter @style-yangu/consumer build
     staticPublishPath: apps/consumer/dist
     envVars:
       - key: VITE_API_URL
