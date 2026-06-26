@@ -1,18 +1,20 @@
 import { useOnboarding } from '../OnboardingContext'
 import type { Stylist } from '@style-yangu/types'
+import amaraImg from '../../assets/amara.png'
+import kofiImg from '../../assets/kofi2.png'
 
 const STYLISTS: { id: Stylist; name: string; personality: string; image: string }[] = [
   {
     id: 'amara',
     name: 'Amara',
     personality: 'Warm, honest, direct. Tells you the truth like a trusted friend who always looks put together.',
-    image: '/amara.png',
+    image: amaraImg,
   },
   {
     id: 'kofi',
     name: 'Kofi',
     personality: 'Confident, knowledgeable, no-fluff. Gives you reasons not just verdicts.',
-    image: '/kofi2.png',
+    image: kofiImg,
   },
 ]
 
