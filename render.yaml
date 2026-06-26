@@ -5,7 +5,7 @@ services:
     env: node
     region: frankfurt
     plan: free
-    buildCommand: npm install -g pnpm@9 && pnpm install --no-frozen-lockfile && pnpm --filter @style-yangu/api-service... build
+    buildCommand: npm install -g pnpm@9 && pnpm install --no-frozen-lockfile && pnpm --filter @style-yangu/api-service build
     startCommand: node services/api/dist/index.js
     envVars:
       - key: NODE_ENV
@@ -41,7 +41,7 @@ services:
     env: static
     region: frankfurt
     plan: free
-    buildCommand: npm install -g pnpm@9 && pnpm install --no-frozen-lockfile && pnpm --filter @style-yangu/seller... build
+    buildCommand: npm install -g pnpm@9 && pnpm install --no-frozen-lockfile && rm -rf apps/seller/dist && pnpm --filter @style-yangu/seller build
     staticPublishPath: apps/seller/dist
     envVars:
       - key: VITE_API_URL
