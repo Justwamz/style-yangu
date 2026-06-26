@@ -1,6 +1,6 @@
 import { useState, useEffect, useRef } from 'react'
 import { useNavigate, useLocation } from 'react-router-dom'
-import { sellerApi } from '../context/SellerContext'
+import { sellerApi, useSellerContext } from '../context/SellerContext'
 
 const LANDING_URL = 'https://style-yangu-landing.onrender.com'
 
@@ -12,6 +12,7 @@ export default function OTPVerify() {
   const navigate = useNavigate()
   const { state } = useLocation() as { state: { phone: string; devCode?: string } }
   const didAutoVerify = useRef(false)
+  const { refresh } = useSellerContext()
 
   async function handleVerify(explicitCode?: string) {
     const verifyCode = explicitCode ?? code
@@ -23,6 +24,7 @@ export default function OTPVerify() {
         { phone: state?.phone, code: verifyCode },
       )
       localStorage.setItem('sy_seller_token', res.token)
+      await refresh()
       navigate(res.onboardingDone ? '/dashboard' : '/onboarding', { replace: true })
     } catch (e: unknown) {
       setError(e instanceof Error ? e.message : 'Verification failed')

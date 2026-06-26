@@ -7,7 +7,7 @@ export const sellerApi = createApiClient('sy_seller_token')
 interface SellerContextValue {
   profile: SellerProfile | null
   loading: boolean
-  refresh: () => void
+  refresh: () => Promise<void>
 }
 
 const SellerContext = createContext<SellerContextValue | null>(null)
@@ -17,6 +17,12 @@ export function SellerProvider({ children }: { children: ReactNode }) {
   const [loading, setLoading] = useState(true)
 
   const fetchProfile = useCallback(async () => {
+    const token = localStorage.getItem('sy_seller_token')
+    if (!token) {
+      setProfile(null)
+      setLoading(false)
+      return
+    }
     setLoading(true)
     try {
       const data = await sellerApi.get<SellerProfile>('/seller/profile')

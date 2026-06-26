@@ -1,6 +1,6 @@
 import { useState } from 'react'
 import { useNavigate } from 'react-router-dom'
-import { sellerApi } from '../context/SellerContext'
+import { sellerApi, useSellerContext } from '../context/SellerContext'
 import type { SellerType } from '@style-yangu/types'
 
 const SELLER_TYPES: { value: SellerType; label: string; description: string }[] = [
@@ -16,11 +16,13 @@ export default function OnboardingWizard() {
   const [businessName, setBusinessName] = useState('')
   const [loading, setLoading] = useState(false)
   const navigate = useNavigate()
+  const { refresh } = useSellerContext()
 
   async function handleTypeSelect(sellerType: SellerType) {
     setLoading(true)
     try {
       await sellerApi.post('/seller/onboarding/complete', { businessName, sellerType })
+      await refresh()
       navigate('/inventory', { replace: true })
     } finally {
       setLoading(false)
