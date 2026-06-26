@@ -12,7 +12,7 @@ const STYLISTS: { id: Stylist; name: string; personality: string; image: string 
     id: 'kofi',
     name: 'Kofi',
     personality: 'Confident, knowledgeable, no-fluff. Gives you reasons not just verdicts.',
-    image: '/kofi.png',
+    image: '/kofi2.png',
   },
 ]
 
