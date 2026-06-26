@@ -4,6 +4,15 @@ import { z } from 'zod'
 import { db } from '../db'
 import { JWT_SECRET } from '../config'
 import { requireAuth, type AuthRequest } from '../middleware/auth'
+import {
+  FACE_LIBRARY,
+  buildPrompt,
+  generateWithImagen3,
+  uploadToR2,
+  imagenConfigured,
+  r2Configured,
+  type ShowcaseMode,
+} from '../services/showcase'
 
 const router: IRouter = Router()
 
@@ -595,6 +604,78 @@ router.post('/seller/clients/:id/try-on', requireSeller, async (req: AuthRequest
   } catch (err) {
     console.error('[seller/clients/:id/try-on]', err)
     res.status(500).json({ message: 'Failed to send try-on' })
+  }
+})
+
+// ─────────────────────────────────────────────
+// FACE LIBRARY
+// ─────────────────────────────────────────────
+
+router.get('/seller/faces', requireSeller, (_req, res) => {
+  res.json(FACE_LIBRARY)
+})
+
+// ─────────────────────────────────────────────
+// SHOWCASE GENERATION
+// ─────────────────────────────────────────────
+
+const ShowcaseSchema = z.object({
+  mode:   z.enum(['full_body', 'face_neck', 'studio']),
+  faceId: z.string().nullable().default(null),
+})
+
+router.post('/seller/inventory/:id/showcase', requireSeller, async (req: AuthRequest, res) => {
+  const parsed = ShowcaseSchema.safeParse(req.body)
+  if (!parsed.success) {
+    res.status(400).json({ message: 'Invalid input' })
+    return
+  }
+
+  if (!imagenConfigured() || !r2Configured()) {
+    res.status(503).json({
+      message: 'Showcase generation not yet configured. Set GOOGLE_CLOUD_PROJECT_ID, GOOGLE_SERVICE_ACCOUNT_JSON, and Cloudflare R2 env vars on Render.',
+    })
+    return
+  }
+
+  const { mode, faceId } = parsed.data
+
+  try {
+    // Verify item belongs to this seller
+    const itemResult = await db.query(
+      'SELECT id, name, category, occasion_tags FROM inventory_items WHERE id = $1 AND seller_id = $2',
+      [req.params.id, req.userId],
+    )
+    if (!itemResult.rows[0]) {
+      res.status(404).json({ message: 'Item not found' })
+      return
+    }
+
+    const item = itemResult.rows[0]
+    const face = faceId ? (FACE_LIBRARY.find(f => f.id === faceId) ?? null) : null
+
+    const prompt = buildPrompt(
+      item.name as string,
+      item.category as string,
+      (item.occasion_tags as string[]) ?? [],
+      mode as ShowcaseMode,
+      face,
+    )
+
+    const imageBuffer = await generateWithImagen3(prompt)
+    const r2Key = `showcase/${req.userId}/${item.id}/${Date.now()}.png`
+    const resultUrl = await uploadToR2(imageBuffer, r2Key)
+
+    // Persist the generated showcase URL on the item
+    await db.query(
+      'UPDATE inventory_items SET showcase_image_url = $1, updated_at = NOW() WHERE id = $2',
+      [resultUrl, item.id],
+    )
+
+    res.json({ resultUrl })
+  } catch (err) {
+    console.error('[seller/inventory/:id/showcase]', err)
+    res.status(500).json({ message: 'Showcase generation failed' })
   }
 })
 
