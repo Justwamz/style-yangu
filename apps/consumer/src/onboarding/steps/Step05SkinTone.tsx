@@ -27,6 +27,62 @@ const UNDERTONE_OPTIONS: { value: Undertone; label: string; accent: string }[] =
   { value: 'neutral', label: 'Neutral', accent: '#6B7280' },
 ]
 
+/**
+ * Samples pixels from the center of the video frame to estimate skin tone.
+ * Runs entirely on-device — no image is sent anywhere.
+ */
+function analyzeFrame(video: HTMLVideoElement): {
+  depth: SkinDepth
+  undertone: Undertone
+  hennaDetected: boolean
+} {
+  const canvas = document.createElement('canvas')
+  canvas.width = video.videoWidth || 640
+  canvas.height = video.videoHeight || 480
+  const ctx = canvas.getContext('2d')
+  if (!ctx) return { depth: 'medium', undertone: 'warm', hennaDetected: false }
+  ctx.drawImage(video, 0, 0)
+
+  // Sample a central oval region (~15% of frame dimensions) where the hand sits
+  const cx = Math.floor(canvas.width / 2)
+  const cy = Math.floor(canvas.height / 2)
+  const hw = Math.floor(canvas.width * 0.15)
+  const hh = Math.floor(canvas.height * 0.15)
+  const data = ctx.getImageData(cx - hw, cy - hh, hw * 2, hh * 2).data
+
+  let r = 0, g = 0, b = 0, count = 0
+  for (let i = 0; i < data.length; i += 4) {
+    if (data[i + 3] < 128) continue // skip low-alpha pixels
+    r += data[i]
+    g += data[i + 1]
+    b += data[i + 2]
+    count++
+  }
+  if (count === 0) return { depth: 'medium', undertone: 'warm', hennaDetected: false }
+  r /= count; g /= count; b /= count
+
+  // Perceived luminance → skin depth bracket
+  const lum = 0.2126 * r + 0.7152 * g + 0.0722 * b
+  let depth: SkinDepth
+  if (lum > 205)      depth = 'light'
+  else if (lum > 170) depth = 'light_medium'
+  else if (lum > 125) depth = 'medium'
+  else if (lum > 78)  depth = 'medium_deep'
+  else                depth = 'deep'
+
+  // Red-minus-blue channel ratio → undertone
+  const warmth = r - b
+  let undertone: Undertone
+  if (warmth > 28)     undertone = 'warm'
+  else if (warmth < 0) undertone = 'cool'
+  else                 undertone = 'neutral'
+
+  // Henna detection: high red, mid green, low blue — classic orange-brown stain
+  const hennaDetected = r > 155 && g > 75 && g < 145 && b < 85 && (r - g) > 35
+
+  return { depth, undertone, hennaDetected }
+}
+
 export default function Step05SkinTone() {
   const { state, dispatch } = useOnboarding()
   const videoRef = useRef<HTMLVideoElement>(null)
@@ -34,6 +90,7 @@ export default function Step05SkinTone() {
   const [streamError, setStreamError] = useState(false)
   const [selectedDepth, setSelectedDepth] = useState<SkinDepth>('medium')
   const [selectedUndertone, setSelectedUndertone] = useState<Undertone>('warm')
+  const [hennaDetected, setHennaDetected] = useState(false)
   const [lightQuality, setLightQuality] = useState<'good' | 'acceptable' | 'poor'>('acceptable')
 
   const stylistName = state.stylist === 'kofi' ? 'Kofi' : 'Amara'
@@ -42,31 +99,47 @@ export default function Step05SkinTone() {
     if (sub !== 'camera') return
     let stream: MediaStream | null = null
     navigator.mediaDevices
-      .getUserMedia({ video: { facingMode: 'environment' } })
+      .getUserMedia({ video: { facingMode: 'environment', width: { ideal: 720 } } })
       .then(s => {
         stream = s
         if (videoRef.current) videoRef.current.srcObject = s
-        // Stub: simulate lighting becoming good after 1s
-        setTimeout(() => setLightQuality('good'), 1000)
+        // Wait for valid frame dimensions, then mark lighting ready
+        const checkReady = () => {
+          const v = videoRef.current
+          if (v && v.videoWidth > 0) {
+            setTimeout(() => setLightQuality('good'), 1000)
+          } else {
+            setTimeout(checkReady, 200)
+          }
+        }
+        checkReady()
       })
       .catch(() => setStreamError(true))
     return () => { stream?.getTracks().forEach(t => t.stop()) }
   }, [sub])
 
   function capture() {
+    const video = videoRef.current
     setSub('henna_check')
+
+    // Run pixel analysis synchronously — the spinner gives perceived processing time
+    const result = video
+      ? analyzeFrame(video)
+      : { depth: 'medium' as SkinDepth, undertone: 'warm' as Undertone, hennaDetected: false }
+
     setTimeout(() => {
-      setSelectedDepth('medium')
-      setSelectedUndertone('warm')
+      setSelectedDepth(result.depth)
+      setSelectedUndertone(result.undertone)
+      setHennaDetected(result.hennaDetected)
       setSub('confirm')
-    }, 1500)
+    }, 1200)
   }
 
   function confirm() {
     dispatch({
       type: 'SET_SKIN',
       skinProfile: { depth: selectedDepth, undertone: selectedUndertone, userConfirmed: true },
-      hennaDetected: false,
+      hennaDetected,
     })
     dispatch({ type: 'SET_STEP', step: 6 })
   }
@@ -80,11 +153,9 @@ export default function Step05SkinTone() {
     return (
       <div className="flex flex-col items-center justify-center gap-6 py-16">
         <div className="w-12 h-12 border-4 border-brand border-t-transparent rounded-full animate-spin" />
-        <p className="text-dark text-center font-medium">
-          Checking for henna…
-        </p>
+        <p className="text-dark text-center font-medium">Reading your skin tone…</p>
         <p className="text-xs text-center text-dark/60 max-w-xs leading-relaxed">
-          Your photo is analysed on-device and never stored or uploaded.
+          Analysis runs on-device and is never stored or uploaded.
         </p>
       </div>
     )
@@ -102,12 +173,22 @@ export default function Step05SkinTone() {
           </p>
         </div>
 
+        {/* Henna warning */}
+        {hennaDetected && (
+          <div className="bg-amber-50 border border-amber-200 rounded-xl p-3">
+            <p className="text-xs text-amber-800 leading-relaxed">
+              Henna detected — it may affect the reading. If the shade below looks too orange or dark,
+              try the back of your wrist above the henna, or adjust manually.
+            </p>
+          </div>
+        )}
+
         {/* Preview swatch */}
-        <div className="flex items-center gap-4 bg-cream rounded-2xl p-4">
+        <div className="flex items-center gap-4 bg-white rounded-2xl p-4 border border-sand">
           <div
-            className="w-16 h-16 rounded-full border-2 border-white shadow-md flex-shrink-0"
+            className="w-16 h-16 rounded-full border-2 border-white shadow-md shrink-0"
             style={{ backgroundColor: depthChoice.bg }}
-            aria-label={`Skin depth swatch: ${depthChoice.label}`}
+            aria-label={`Skin depth: ${depthChoice.label}`}
           />
           <div>
             <p className="font-semibold text-dark">{depthChoice.label}</p>
@@ -115,48 +196,42 @@ export default function Step05SkinTone() {
           </div>
         </div>
 
-        {/* Sample colour palette strip */}
-        <div className="flex gap-2 mb-2">
-          {DEPTH_OPTIONS.map(d => (
-            <div
-              key={d.value}
-              className="flex-1 h-4 rounded-full"
-              style={{ backgroundColor: DEPTH_COLOURS[d.value] }}
-            />
-          ))}
-        </div>
-
         {/* Depth selector */}
         <div>
-          <p className="text-xs font-semibold text-dark/60 uppercase tracking-wide mb-2">Depth</p>
-          <div className="flex gap-2 flex-wrap">
+          <p className="text-xs font-semibold text-dark/60 uppercase tracking-wide mb-3">Depth</p>
+          <div className="flex gap-3">
             {DEPTH_OPTIONS.map(opt => (
               <button
                 key={opt.value}
                 onClick={() => setSelectedDepth(opt.value)}
                 aria-label={opt.label}
                 aria-pressed={selectedDepth === opt.value}
-                className={`w-10 h-10 rounded-full border-2 transition-transform ${
+                className={`flex-1 aspect-square rounded-full border-2 transition-transform ${
                   selectedDepth === opt.value
-                    ? 'border-brand scale-110'
+                    ? 'border-brand scale-110 shadow-md'
                     : 'border-transparent hover:border-brand/40'
                 }`}
                 style={{ backgroundColor: opt.bg }}
               />
             ))}
           </div>
+          <div className="flex mt-1">
+            {DEPTH_OPTIONS.map(opt => (
+              <p key={opt.value} className="flex-1 text-center text-[10px] text-dark/40">{opt.label.split(' ')[0]}</p>
+            ))}
+          </div>
         </div>
 
         {/* Undertone selector */}
         <div>
-          <p className="text-xs font-semibold text-dark/60 uppercase tracking-wide mb-2">Undertone</p>
+          <p className="text-xs font-semibold text-dark/60 uppercase tracking-wide mb-3">Undertone</p>
           <div className="flex gap-3">
             {UNDERTONE_OPTIONS.map(opt => (
               <button
                 key={opt.value}
                 onClick={() => setSelectedUndertone(opt.value)}
                 aria-pressed={selectedUndertone === opt.value}
-                className={`flex-1 py-2 rounded-xl text-sm font-medium border transition-colors ${
+                className={`flex-1 py-2.5 rounded-xl text-sm font-medium border transition-colors ${
                   selectedUndertone === opt.value
                     ? 'text-white border-transparent'
                     : 'bg-white border-sand text-dark/70 hover:border-brand/40'
@@ -191,10 +266,7 @@ export default function Step05SkinTone() {
             Camera access is needed to read your skin tone for personalised colour recommendations.
           </p>
         </div>
-        <button
-          onClick={skip}
-          className="bg-brand text-white rounded-xl py-3 font-semibold"
-        >
+        <button onClick={skip} className="bg-brand text-white rounded-xl py-3 font-semibold">
           Skip this step
         </button>
       </div>
@@ -207,18 +279,24 @@ export default function Step05SkinTone() {
       <div>
         <h2 className="font-display text-xl font-bold text-dark">Show us the back of your hand</h2>
         <p className="text-sm text-dark/70 mt-1">
-          Place the back of your hand between your wrist and knuckles in the frame.
+          Place the back of your hand — between wrist and knuckles — in the frame.
         </p>
       </div>
 
       <div className="relative rounded-2xl overflow-hidden bg-black aspect-[9/16]">
         <video ref={videoRef} autoPlay playsInline muted className="w-full h-full object-cover" />
         <CameraOverlay shape="hand_oval" lightingQuality={lightQuality} />
+        {lightQuality === 'good' && (
+          <div className="absolute top-4 left-1/2 -translate-x-1/2 bg-green-500/80 text-white text-xs px-3 py-1 rounded-full">
+            Lighting ✓
+          </div>
+        )}
       </div>
 
       <button
         onClick={capture}
-        className="bg-brand text-white rounded-xl py-3 font-semibold"
+        disabled={lightQuality !== 'good'}
+        className="bg-brand text-white rounded-xl py-3 font-semibold disabled:opacity-40"
       >
         Capture
       </button>

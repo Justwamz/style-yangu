@@ -1,3 +1,4 @@
+import { useState } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { apiClient } from '@style-yangu/api-client'
 import { useOnboarding, ONBOARDING_STORAGE_KEY } from '../OnboardingContext'
@@ -52,11 +53,20 @@ export default function Step11AvatarPreview() {
   const stylist = state.stylist ?? 'amara'
   const stylistName = stylist.charAt(0).toUpperCase() + stylist.slice(1)
 
+  const [saving, setSaving] = useState(false)
+  const [error, setError] = useState('')
+
   async function complete() {
-    // Fire-and-forget — don't block navigation on API response
-    apiClient.post('/onboarding/complete', state).catch(() => undefined)
-    localStorage.removeItem(ONBOARDING_STORAGE_KEY)
-    navigate('/home')
+    setSaving(true)
+    setError('')
+    try {
+      await apiClient.post('/onboarding/complete', state)
+      localStorage.removeItem(ONBOARDING_STORAGE_KEY)
+      navigate('/home')
+    } catch {
+      setError('Something went wrong — please try again.')
+      setSaving(false)
+    }
   }
 
   return (
@@ -105,11 +115,13 @@ export default function Step11AvatarPreview() {
         </div>
       </div>
 
+      {error && <p className="text-red-600 text-sm text-center">{error}</p>}
       <button
         onClick={complete}
-        className="w-full bg-brand text-white rounded-xl py-4 font-semibold text-lg mt-2"
+        disabled={saving}
+        className="w-full bg-brand text-white rounded-xl py-4 font-semibold text-lg mt-2 disabled:opacity-50"
       >
-        Meet {stylistName}, let's go
+        {saving ? 'Setting up your profile…' : `Meet ${stylistName}, let's go`}
       </button>
     </div>
   )
