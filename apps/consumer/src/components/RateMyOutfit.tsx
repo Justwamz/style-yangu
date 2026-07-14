@@ -1,4 +1,5 @@
 import { useRef, useState } from 'react'
+import { apiClient } from '@style-yangu/api-client'
 
 const CATEGORIES = ['Colour Harmony', 'Fit', 'Occasion Match', 'Weather Match', 'Cohesion'] as const
 
@@ -9,17 +10,10 @@ interface RatingResult {
   photoDataUrl: string
 }
 
-const STUB_RESULT: RatingResult = {
-  scores: { 'Colour Harmony': 8, 'Fit': 7, 'Occasion Match': 8, 'Weather Match': 9, 'Cohesion': 7 },
-  overall: 8,
-  stylistFeedback: 'The palette works really well together. The layering adds depth without overwhelming the look.',
-  photoDataUrl: 'https://placehold.co/300x400/8B4513/FFFFFF?text=Your+Outfit',
-}
-
 export default function RateMyOutfit() {
   const videoRef = useRef<HTMLVideoElement>(null)
   const canvasRef = useRef<HTMLCanvasElement>(null)
-  const [step, setStep] = useState<'idle' | 'camera' | 'processing' | 'result'>('idle')
+  const [step, setStep] = useState<'idle' | 'camera' | 'processing' | 'result' | 'unavailable'>('idle')
   const [result, setResult] = useState<RatingResult | null>(null)
 
   async function startCamera() {
@@ -32,20 +26,44 @@ export default function RateMyOutfit() {
     }
   }
 
-  function captureAndProcess() {
+  async function captureAndProcess() {
     const video = videoRef.current
     const canvas = canvasRef.current
     if (!video || !canvas) return
+
     canvas.width = video.videoWidth
     canvas.height = video.videoHeight
     canvas.getContext('2d')!.drawImage(video, 0, 0)
+    const photoDataUrl = canvas.toDataURL('image/jpeg', 0.8)
+
     const stream = video.srcObject as MediaStream | null
     stream?.getTracks().forEach(t => t.stop())
+
     setStep('processing')
-    setTimeout(() => {
-      setResult(STUB_RESULT)
+
+    try {
+      const data = await apiClient.post<{
+        scores: Record<string, number>
+        overall: number
+        stylistFeedback: string
+      }>('/consumer/rate-outfit', { photoDataUrl })
+
+      const scores = CATEGORIES.reduce((acc, cat) => {
+        acc[cat] = Math.round(Math.max(0, Math.min(10, data.scores[cat] ?? 7)))
+        return acc
+      }, {} as Record<typeof CATEGORIES[number], number>)
+
+      setResult({ scores, overall: Math.round(data.overall), stylistFeedback: data.stylistFeedback, photoDataUrl })
       setStep('result')
-    }, 2500)
+    } catch (err: unknown) {
+      const msg = err instanceof Error ? err.message : ''
+      if (msg.includes('not configured') || msg.includes('503')) {
+        setStep('unavailable')
+      } else {
+        // Retry-able error — go back to idle
+        setStep('idle')
+      }
+    }
   }
 
   async function share() {
@@ -56,6 +74,23 @@ export default function RateMyOutfit() {
     } else {
       await navigator.clipboard.writeText(text).catch(() => undefined)
     }
+  }
+
+  if (step === 'unavailable') {
+    return (
+      <div className="flex flex-col gap-4">
+        <div className="bg-sand rounded-2xl p-5 text-center">
+          <p className="text-2xl mb-2">✨</p>
+          <p className="font-semibold text-dark">Coming soon</p>
+          <p className="text-sm text-dark/60 mt-1">
+            Your stylist's AI eye is being set up. Check back soon.
+          </p>
+        </div>
+        <button onClick={() => setStep('idle')} className="text-brand text-sm underline text-center">
+          Try again
+        </button>
+      </div>
+    )
   }
 
   if (step === 'camera') {

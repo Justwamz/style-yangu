@@ -2,37 +2,30 @@ import { Router, type IRouter } from 'express'
 import { requireAuth } from '../middleware/auth'
 import type { AuthRequest } from '../middleware/auth'
 import { db } from '../db'
+import { configured, geminiText, geminiVision, imagenGenerate, parseJsonResponse } from '../lib/vertexai'
 
 const router: IRouter = Router()
 
-// ── Stub suggestion data ────────────────────────────────────────────────────
+// ── Curated fallback suggestions (used when Vertex AI is not configured) ────
 
-const FEMALE_STUBS = [
-  { id: 's1', outfit: 'White linen blouse, navy midi skirt, tan block heels', occasionTag: 'Smart Casual', stylistComment: 'This palette works beautifully with your warm undertone — the navy grounds the look while the white lifts it.', clothingTags: ['blouse', 'midi-skirt', 'heels'] },
-  { id: 's2', outfit: 'Floral wrap dress, nude sandals, gold hoop earrings', occasionTag: 'Weekend', stylistComment: 'The wrap silhouette is flattering for your body type and the print adds personality without overwhelming.', clothingTags: ['wrap-dress', 'sandals'] },
-  { id: 's3', outfit: 'Fitted blazer, high-waist trousers, pointed-toe flats', occasionTag: 'Business Casual', stylistComment: 'Sharp, polished, and effortless. The high waist creates a clean line that works beautifully with your proportions.', clothingTags: ['blazer', 'trousers', 'flats'] },
+interface Suggestion {
+  id: string
+  outfit: string
+  occasionTag: string
+  stylistComment: string
+  clothingTags: string[]
+}
+
+const FALLBACK_FEMALE: Suggestion[] = [
+  { id: 'f1', outfit: 'White linen blouse, navy midi skirt, tan block heels', occasionTag: 'Smart Casual', stylistComment: 'This palette works beautifully with your warm undertone — the navy grounds the look while the white lifts it.', clothingTags: ['blouse', 'midi-skirt', 'heels'] },
+  { id: 'f2', outfit: 'Floral kitenge wrap dress, nude sandals, gold hoop earrings', occasionTag: 'Weekend', stylistComment: 'The wrap silhouette is flattering and the warm print adds personality without overwhelming your proportions.', clothingTags: ['wrap-dress', 'sandals'] },
+  { id: 'f3', outfit: 'Fitted blazer, high-waist trousers, pointed-toe flats', occasionTag: 'Business Casual', stylistComment: 'Sharp and effortless. The high waist creates a clean line that works beautifully for your body type.', clothingTags: ['blazer', 'trousers', 'flats'] },
 ]
 
-const MALE_STUBS = [
-  { id: 's1', outfit: 'Fitted white shirt, slim navy chinos, brown leather loafers', occasionTag: 'Smart Casual', stylistComment: 'Clean lines and a neutral palette that complement your body type and skin tone perfectly.', clothingTags: ['shirt', 'chinos', 'loafers'] },
-  { id: 's2', outfit: 'Olive bomber jacket, black slim-fit jeans, white sneakers', occasionTag: 'Weekend', stylistComment: 'The olive works with your undertone — earthy tones complement your complexion well.', clothingTags: ['bomber-jacket', 'jeans', 'sneakers'] },
-  { id: 's3', outfit: 'Navy suit, white pocket square, black oxford shoes', occasionTag: 'Business Formal', stylistComment: 'A well-structured suit in navy reads confidence. The classic white pocket square keeps it timeless.', clothingTags: ['suit', 'oxford-shoes'] },
-]
-
-const FEMALE_DISCOVER = [
-  { id: 'd1', name: 'Emerald Wrap Dress', priceKES: 2800, sellerName: 'NairobiChic', photoUrl: 'https://placehold.co/400x500/8B4513/FFFFFF?text=Wrap+Dress', sponsored: false, matchReason: 'Matches your warm undertone and style preferences' },
-  { id: 'd2', name: 'Beaded Maasai Sandals', priceKES: 1200, sellerName: 'KaribuCraft', photoUrl: 'https://placehold.co/400x500/5C3A1E/FFFFFF?text=Sandals', sponsored: true, matchReason: 'Traditional style you love, your shoe size available' },
-  { id: 'd3', name: 'Kitenge Wrap Skirt', priceKES: 1800, sellerName: 'AfricanPride', photoUrl: 'https://placehold.co/400x500/8B4513/FFFFFF?text=Skirt', sponsored: false, matchReason: 'Perfect for your traditional cultural style preference' },
-  { id: 'd4', name: 'Gold Hoop Earring Set', priceKES: 800, sellerName: 'AdornKe', photoUrl: 'https://placehold.co/400x500/C4834A/FFFFFF?text=Earrings', sponsored: false, matchReason: 'Complements your skin tone beautifully' },
-  { id: 'd5', name: 'Linen Wide-Leg Trousers', priceKES: 2200, sellerName: 'ModernAfrika', photoUrl: 'https://placehold.co/400x500/8B4513/FFFFFF?text=Trousers', sponsored: true, matchReason: 'Your size available, matches your smart casual preference' },
-]
-
-const MALE_DISCOVER = [
-  { id: 'd1', name: 'Slim Fit Linen Shirt', priceKES: 1500, sellerName: 'NairobiChic', photoUrl: 'https://placehold.co/400x500/8B4513/FFFFFF?text=Linen+Shirt', sponsored: false, matchReason: 'Matches your smart casual preference and warm undertone' },
-  { id: 'd2', name: 'Classic Brown Derby', priceKES: 3200, sellerName: 'ShoeHaven', photoUrl: 'https://placehold.co/400x500/5C3A1E/FFFFFF?text=Derby+Shoes', sponsored: true, matchReason: 'Your shoe size available, complements your wardrobe' },
-  { id: 'd3', name: 'Kitenge Shirt', priceKES: 2200, sellerName: 'AfricanPride', photoUrl: 'https://placehold.co/400x500/8B4513/FFFFFF?text=Kitenge+Shirt', sponsored: false, matchReason: 'Traditional cultural style you selected during onboarding' },
-  { id: 'd4', name: 'Navy Chinos', priceKES: 2800, sellerName: 'ModernAfrika', photoUrl: 'https://placehold.co/400x500/1A0A00/FFFFFF?text=Chinos', sponsored: false, matchReason: 'Versatile piece matching your body type and style' },
-  { id: 'd5', name: 'Leather Card Wallet', priceKES: 950, sellerName: 'LeatherKe', photoUrl: 'https://placehold.co/400x500/C4834A/FFFFFF?text=Wallet', sponsored: true, matchReason: 'Curated for your style profile' },
+const FALLBACK_MALE: Suggestion[] = [
+  { id: 'm1', outfit: 'Fitted white shirt, slim navy chinos, brown leather loafers', occasionTag: 'Smart Casual', stylistComment: 'Clean lines and a neutral palette that complement your body type and skin tone perfectly.', clothingTags: ['shirt', 'chinos', 'loafers'] },
+  { id: 'm2', outfit: 'Olive bomber jacket, black slim-fit jeans, white sneakers', occasionTag: 'Weekend', stylistComment: 'The olive works with your undertone — earthy tones complement your complexion well.', clothingTags: ['bomber-jacket', 'jeans', 'sneakers'] },
+  { id: 'm3', outfit: 'Navy kitenge shirt, dark chinos, brown suede loafers', occasionTag: 'Smart Casual', stylistComment: 'The kitenge brings cultural flair without sacrificing the clean silhouette your frame wears well.', clothingTags: ['kitenge-shirt', 'chinos', 'loafers'] },
 ]
 
 // ── Helpers ─────────────────────────────────────────────────────────────────
@@ -49,9 +42,48 @@ function generateCode(): string {
   return Math.random().toString(36).substring(2, 10).toUpperCase()
 }
 
-async function getStylist(userId: string): Promise<'amara' | 'kofi'> {
+async function getProfile(userId: string): Promise<Record<string, unknown>> {
   const r = await db.query(`SELECT profile FROM onboarding_profiles WHERE user_id = $1`, [userId])
-  return r.rows[0]?.profile?.stylist ?? 'amara'
+  return r.rows[0]?.profile ?? {}
+}
+
+async function generateSuggestions(
+  profile: Record<string, unknown>,
+  count = 3,
+): Promise<Suggestion[]> {
+  const isKofi = profile.stylist === 'kofi'
+  const fallback = (isKofi ? FALLBACK_MALE : FALLBACK_FEMALE).slice(0, count)
+
+  if (!configured()) return fallback
+
+  const bodyType = (profile.bodyType as string) ?? 'rectangle'
+  const skin = profile.skinProfile as Record<string, string> | undefined
+  const depth = skin?.depth ?? 'medium'
+  const undertone = skin?.undertone ?? 'warm'
+  const prefs = ((profile.stylePreferences as string[]) ?? []).join(', ') || 'smart casual, weekend'
+  const tod = getTimeOfDay()
+
+  const prompt = `You are ${isKofi ? 'Kofi' : 'Amara'}, a personal stylist for Kenyan fashion.
+Generate ${count} outfit suggestion${count !== 1 ? 's' : ''} for a ${isKofi ? 'male' : 'female'} client:
+- Body type: ${bodyType}
+- Skin tone: ${depth}, ${undertone} undertone
+- Style preferences: ${prefs}
+- Time of day: ${tod}
+
+Return ONLY a valid JSON array (no markdown, no extra text):
+[{"id":"s1","outfit":"specific outfit description","occasionTag":"one occasion tag","stylistComment":"one sentence referencing their body type or skin tone","clothingTags":["tag1","tag2"]}]
+
+Use Kenyan context: kitenge, kanga, leso fabrics; Nairobi neighbourhoods (Westlands, CBD, Kilimani, Karen); local occasions.`
+
+  try {
+    const raw = await geminiText(prompt)
+    const parsed = parseJsonResponse<Suggestion[]>(raw)
+    if (Array.isArray(parsed) && parsed.length > 0) return parsed.slice(0, count)
+    return fallback
+  } catch (err) {
+    console.error('[suggestions] Gemini generation failed, using fallback:', err)
+    return fallback
+  }
 }
 
 // ── GET /consumer/profile ────────────────────────────────────────────────────
@@ -82,11 +114,11 @@ router.get('/consumer/profile', requireAuth, async (req: AuthRequest, res) => {
 })
 
 // ── GET /consumer/suggestion/daily ──────────────────────────────────────────
+// Generates all 3 suggestions upfront on first daily visit (Gemini or curated fallback).
+// Stores them all in DB; unlocks reveal them one by one — no extra AI calls per unlock.
 
 router.get('/consumer/suggestion/daily', requireAuth, async (req: AuthRequest, res) => {
   try {
-    const stylist = await getStylist(req.userId!)
-    const stubs = stylist === 'kofi' ? MALE_STUBS : FEMALE_STUBS
     const today = new Date().toISOString().split('T')[0]
 
     const existing = await db.query(
@@ -97,16 +129,27 @@ router.get('/consumer/suggestion/daily', requireAuth, async (req: AuthRequest, r
 
     if (existing.rows[0]) {
       const r = existing.rows[0]
-      res.json({ suggestions: r.suggestions, unlockCount: r.unlock_count, adsWatched: r.ads_watched, wardrobePairsUsed: r.wardrobe_pairs_used, phase: 2 })
+      const allSuggestions = r.suggestions as Suggestion[]
+      res.json({
+        suggestions: allSuggestions.slice(0, r.unlock_count),
+        unlockCount: r.unlock_count,
+        adsWatched: r.ads_watched,
+        wardrobePairsUsed: r.wardrobe_pairs_used,
+        phase: 2,
+      })
       return
     }
 
-    const firstSuggestion = stubs[0]
+    const profile = await getProfile(req.userId!)
+    const allThree = await generateSuggestions(profile, 3)
+
     await db.query(
-      `INSERT INTO daily_suggestions (user_id, date, suggestions, unlock_count) VALUES ($1, $2, $3, 1)`,
-      [req.userId, today, JSON.stringify([firstSuggestion])],
+      `INSERT INTO daily_suggestions (user_id, date, suggestions, unlock_count)
+       VALUES ($1, $2, $3, 1)`,
+      [req.userId, today, JSON.stringify(allThree)],
     )
-    res.json({ suggestions: [firstSuggestion], unlockCount: 1, adsWatched: 0, wardrobePairsUsed: 0, phase: 2 })
+
+    res.json({ suggestions: [allThree[0]], unlockCount: 1, adsWatched: 0, wardrobePairsUsed: 0, phase: 2 })
   } catch (err) {
     console.error('[consumer/suggestion/daily]', err)
     res.status(500).json({ message: 'Failed to load suggestions' })
@@ -117,11 +160,11 @@ router.get('/consumer/suggestion/daily', requireAuth, async (req: AuthRequest, r
 
 router.post('/consumer/suggestion/unlock', requireAuth, async (req: AuthRequest, res) => {
   const { method, wardrobeItemIds } = req.body
-  if (!['ad', 'wardrobe'].includes(method)) { res.status(400).json({ message: 'Invalid unlock method' }); return }
+  if (!['ad', 'wardrobe'].includes(method)) {
+    res.status(400).json({ message: 'Invalid unlock method' }); return
+  }
 
   try {
-    const stylist = await getStylist(req.userId!)
-    const stubs = stylist === 'kofi' ? MALE_STUBS : FEMALE_STUBS
     const today = new Date().toISOString().split('T')[0]
 
     const row = await db.query(
@@ -131,38 +174,181 @@ router.post('/consumer/suggestion/unlock', requireAuth, async (req: AuthRequest,
     )
     if (!row.rows[0]) { res.status(400).json({ message: 'No suggestion session for today' }); return }
 
-    const { suggestions, unlock_count: unlockCount, ads_watched: adsWatched, wardrobe_pairs_used: wardrobePairsUsed } = row.rows[0]
+    const {
+      suggestions,
+      unlock_count: unlockCount,
+      ads_watched: adsWatched,
+      wardrobe_pairs_used: wardrobePairsUsed,
+    } = row.rows[0]
 
     if (unlockCount >= 3) { res.json({ unlockCount: 3, remaining: 0, newSuggestion: null }); return }
 
+    // All suggestions were pre-generated — just reveal the next one
+    const allSuggestions = suggestions as Suggestion[]
+    const next = allSuggestions[unlockCount] ?? allSuggestions.at(-1)
+
     if (method === 'ad') {
       if (adsWatched >= 2) { res.status(400).json({ message: 'Ad unlock limit reached' }); return }
-      const next = stubs[unlockCount] ?? stubs[stubs.length - 1]
-      const updated = [...suggestions, next]
       await db.query(
-        `UPDATE daily_suggestions SET suggestions = $1, unlock_count = $2, ads_watched = $3 WHERE user_id = $4 AND date = $5`,
-        [JSON.stringify(updated), unlockCount + 1, adsWatched + 1, req.userId, today],
+        `UPDATE daily_suggestions SET unlock_count = $1, ads_watched = $2 WHERE user_id = $3 AND date = $4`,
+        [unlockCount + 1, adsWatched + 1, req.userId, today],
       )
-      res.json({ unlockCount: unlockCount + 1, remaining: 3 - (unlockCount + 1), newSuggestion: next })
-      return
+    } else {
+      if (!Array.isArray(wardrobeItemIds) || wardrobeItemIds.length !== 2) {
+        res.status(400).json({ message: 'wardrobe unlock requires exactly 2 item IDs' }); return
+      }
+      if (wardrobePairsUsed >= 2) { res.status(400).json({ message: 'Wardrobe unlock limit reached' }); return }
+      await db.query(
+        `UPDATE daily_suggestions SET unlock_count = $1, wardrobe_pairs_used = $2 WHERE user_id = $3 AND date = $4`,
+        [unlockCount + 1, wardrobePairsUsed + 1, req.userId, today],
+      )
     }
 
-    // wardrobe method
-    if (!Array.isArray(wardrobeItemIds) || wardrobeItemIds.length !== 2) {
-      res.status(400).json({ message: 'wardrobe unlock requires exactly 2 item IDs' }); return
-    }
-    if (wardrobePairsUsed >= 2) { res.status(400).json({ message: 'Wardrobe unlock limit reached' }); return }
-
-    const next = stubs[unlockCount] ?? stubs[stubs.length - 1]
-    const updated = [...suggestions, next]
-    await db.query(
-      `UPDATE daily_suggestions SET suggestions = $1, unlock_count = $2, wardrobe_pairs_used = $3 WHERE user_id = $4 AND date = $5`,
-      [JSON.stringify(updated), unlockCount + 1, wardrobePairsUsed + 1, req.userId, today],
-    )
     res.json({ unlockCount: unlockCount + 1, remaining: 3 - (unlockCount + 1), newSuggestion: next })
   } catch (err) {
     console.error('[consumer/suggestion/unlock]', err)
     res.status(500).json({ message: 'Failed to unlock suggestion' })
+  }
+})
+
+// ── POST /consumer/avatar/generate ──────────────────────────────────────────
+// Generates a cartoon avatar via Imagen 3 based on the user's onboarding profile.
+// Required env vars: GOOGLE_CLOUD_PROJECT_ID, GOOGLE_SERVICE_ACCOUNT_JSON
+
+router.post('/consumer/avatar/generate', requireAuth, async (req: AuthRequest, res) => {
+  if (!configured()) {
+    res.status(503).json({ message: 'Avatar generation not configured — add Vertex AI credentials to enable.' })
+    return
+  }
+
+  try {
+    const profile = await getProfile(req.userId!)
+    const bodyType = (profile.bodyType as string) ?? 'rectangle'
+    const skin = profile.skinProfile as Record<string, string> | undefined
+    const depth = skin?.depth ?? 'medium'
+    const undertone = skin?.undertone ?? 'warm'
+    const isKofi = profile.stylist === 'kofi'
+
+    const depthLabel: Record<string, string> = {
+      light: 'fair', light_medium: 'light brown', medium: 'medium brown',
+      medium_deep: 'deep brown', deep: 'very deep brown',
+    }
+    const bodyLabel: Record<string, string> = {
+      hourglass: 'balanced hourglass figure', pear: 'pear-shaped figure with wider hips',
+      apple: 'fuller midsection apple figure', rectangle: 'athletic rectangular build',
+      inverted_triangle: 'broad-shouldered inverted triangle build',
+    }
+
+    const prompt = `Fashion illustration of a ${isKofi ? 'young Kenyan man' : 'young Kenyan woman'} with ${depthLabel[depth] ?? 'medium brown'} skin and ${undertone} undertones, ${bodyLabel[bodyType] ?? 'average build'}. Stylized cartoon avatar, full body, relaxed neutral pose, simple neutral outfit in beige and white. Warm earthy Kenyan aesthetic, soft illustration style, clean cream background. Portrait orientation, professional character design.`
+
+    const avatarUrl = await imagenGenerate(prompt)
+    res.json({ avatarUrl })
+  } catch (err) {
+    console.error('[consumer/avatar/generate]', err)
+    res.status(500).json({ message: 'Avatar generation failed — please try again.' })
+  }
+})
+
+// ── POST /consumer/rate-outfit ───────────────────────────────────────────────
+// Rates an outfit photo across 5 categories using Gemini Vision.
+// Required env vars: GOOGLE_CLOUD_PROJECT_ID, GOOGLE_SERVICE_ACCOUNT_JSON
+
+router.post('/consumer/rate-outfit', requireAuth, async (req: AuthRequest, res) => {
+  const { photoDataUrl } = req.body
+  if (!photoDataUrl || typeof photoDataUrl !== 'string') {
+    res.status(400).json({ message: 'photoDataUrl required' }); return
+  }
+  if (!configured()) {
+    res.status(503).json({ message: 'Outfit rating not configured — add Vertex AI credentials to enable.' })
+    return
+  }
+
+  try {
+    const [header, b64] = photoDataUrl.split(',')
+    if (!b64) { res.status(400).json({ message: 'Invalid image data URL' }); return }
+    const mimeType = header.includes('png') ? 'image/png' : 'image/jpeg'
+
+    const prompt = `You are a professional Kenyan fashion stylist. Rate this outfit across 5 categories scored 0-10:
+- Colour Harmony: how well colours work together and suit the wearer
+- Fit: how well the clothing fits
+- Occasion Match: how appropriate for a Nairobi context
+- Weather Match: suitability for typical Nairobi weather (20-28°C)
+- Cohesion: how well all elements work as a complete look
+
+Return ONLY valid JSON (no markdown):
+{"scores":{"Colour Harmony":N,"Fit":N,"Occasion Match":N,"Weather Match":N,"Cohesion":N},"overall":N,"stylistFeedback":"one encouraging sentence with a specific actionable observation"}`
+
+    const raw = await geminiVision(prompt, b64, mimeType)
+    const result = parseJsonResponse<{
+      scores: Record<string, number>
+      overall: number
+      stylistFeedback: string
+    }>(raw)
+
+    res.json(result)
+  } catch (err) {
+    console.error('[consumer/rate-outfit]', err)
+    res.status(500).json({ message: 'Rating failed — please try again.' })
+  }
+})
+
+// ── POST /consumer/fabric-design ────────────────────────────────────────────
+// Two-phase endpoint:
+//   Phase 1 — { photoDataUrl }             → analyze fabric → return analysis
+//   Phase 2 — { garmentType, analysis }    → generate render → return { renderUrl, metres }
+// Required env vars: GOOGLE_CLOUD_PROJECT_ID, GOOGLE_SERVICE_ACCOUNT_JSON
+
+router.post('/consumer/fabric-design', requireAuth, async (req: AuthRequest, res) => {
+  if (!configured()) {
+    res.status(503).json({ message: 'Fabric design not configured — add Vertex AI credentials to enable.' })
+    return
+  }
+
+  const { photoDataUrl, garmentType, analysis } = req.body
+
+  if (garmentType && analysis) {
+    // Phase 2: generate garment render from analysis + garment type
+    try {
+      const colours = Array.isArray(analysis.colours)
+        ? (analysis.colours as string[]).join(', ')
+        : 'mixed colours'
+      const prompt = `Fashion product illustration: a ${garmentType} garment made from ${analysis.pattern ?? 'patterned'} fabric in ${colours}. ${analysis.texture ?? 'medium weight'}. East African / Kenyan fashion aesthetic. Full body front view, professional editorial style, clean white studio background, detailed fabric texture visible.`
+
+      const renderUrl = await imagenGenerate(prompt)
+      const metres = (garmentType as string).toLowerCase().includes('maxi') ||
+        (garmentType as string).toLowerCase().includes('dress') ? '3.5m' : '2m'
+
+      res.json({ renderUrl, metres })
+    } catch (err) {
+      console.error('[consumer/fabric-design/render]', err)
+      res.status(500).json({ message: 'Render failed — please try again.' })
+    }
+    return
+  }
+
+  // Phase 1: analyze fabric from photo
+  if (!photoDataUrl || typeof photoDataUrl !== 'string') {
+    res.status(400).json({ message: 'photoDataUrl required for fabric analysis' }); return
+  }
+
+  try {
+    const [header, b64] = photoDataUrl.split(',')
+    if (!b64) { res.status(400).json({ message: 'Invalid image data URL' }); return }
+    const mimeType = header.includes('png') ? 'image/png' : 'image/jpeg'
+
+    const prompt = `You are a textile expert and Kenyan fashion stylist. Analyze this fabric photo.
+Return ONLY valid JSON (no markdown):
+{"pattern":"describe pattern in 3-5 words","colours":["colour1","colour2","colour3"],"texture":"weight and material in 5-8 words","stylistComment":"one sentence about styling this fabric in a Kenyan context"}`
+
+    const raw = await geminiVision(prompt, b64, mimeType)
+    const result = parseJsonResponse<{
+      pattern: string; colours: string[]; texture: string; stylistComment: string
+    }>(raw)
+
+    res.json(result)
+  } catch (err) {
+    console.error('[consumer/fabric-design/analyze]', err)
+    res.status(500).json({ message: 'Fabric analysis failed — please try again.' })
   }
 })
 
@@ -219,13 +405,15 @@ router.get('/consumer/wardrobe', requireAuth, async (req: AuthRequest, res) => {
       `SELECT profile FROM onboarding_profiles WHERE user_id = $1`,
       [req.userId],
     )
-    const onboardingItems = ((profileResult.rows[0]?.profile?.wardrobeItems) ?? []).map((item: { id: string; photoDataUrl: string; prompt: string }) => ({
-      id: item.id,
-      photoUrl: item.photoDataUrl,
-      category: 'clothing',
-      occasionTags: [item.prompt],
-      source: 'onboarding',
-    }))
+    const onboardingItems = ((profileResult.rows[0]?.profile?.wardrobeItems) ?? []).map(
+      (item: { id: string; photoDataUrl: string; prompt: string }) => ({
+        id: item.id,
+        photoUrl: item.photoDataUrl,
+        category: 'top',
+        occasionTags: [item.prompt],
+        source: 'onboarding',
+      }),
+    )
 
     const addedResult = await db.query(
       `SELECT id, photo_data_url, category, occasion_tags FROM wardrobe_items WHERE user_id = $1 ORDER BY created_at DESC`,
@@ -249,18 +437,41 @@ router.get('/consumer/wardrobe', requireAuth, async (req: AuthRequest, res) => {
 })
 
 // ── POST /consumer/wardrobe/item ─────────────────────────────────────────────
+// Saves the item and classifies category + occasion tags with Gemini Vision when configured.
 
 router.post('/consumer/wardrobe/item', requireAuth, async (req: AuthRequest, res) => {
   const { photoDataUrl } = req.body
   if (!photoDataUrl || typeof photoDataUrl !== 'string') {
     res.status(400).json({ message: 'photoDataUrl required' }); return
   }
+
+  let category = 'top'
+  let occasionTags: string[] = []
+
+  if (configured()) {
+    try {
+      const [header, b64] = photoDataUrl.split(',')
+      if (b64) {
+        const mimeType = header.includes('png') ? 'image/png' : 'image/jpeg'
+        const prompt = `Classify this clothing item. Return ONLY valid JSON (no markdown):
+{"category":"top|bottom|dress|suit|outerwear|jumpsuit|shoe|hat|headwrap|bag|jewellery|accessory","occasionTags":["Smart Casual","Weekend"]}`
+        const raw = await geminiVision(prompt, b64, mimeType)
+        const result = parseJsonResponse<{ category: string; occasionTags: string[] }>(raw)
+        if (result.category) category = result.category
+        if (Array.isArray(result.occasionTags)) occasionTags = result.occasionTags
+      }
+    } catch {
+      // Classification failed — keep defaults, item still saves
+    }
+  }
+
   try {
     const result = await db.query(
-      `INSERT INTO wardrobe_items (user_id, photo_data_url, category, occasion_tags) VALUES ($1, $2, 'clothing', '{}') RETURNING id`,
-      [req.userId, photoDataUrl],
+      `INSERT INTO wardrobe_items (user_id, photo_data_url, category, occasion_tags)
+       VALUES ($1, $2, $3, $4) RETURNING id`,
+      [req.userId, photoDataUrl, category, JSON.stringify(occasionTags)],
     )
-    res.json({ item: { id: result.rows[0].id, photoUrl: photoDataUrl, category: 'clothing', occasionTags: [] } })
+    res.json({ item: { id: result.rows[0].id, photoUrl: photoDataUrl, category, occasionTags } })
   } catch (err) {
     console.error('[consumer/wardrobe/item]', err)
     res.status(500).json({ message: 'Failed to save item' })
@@ -268,11 +479,62 @@ router.post('/consumer/wardrobe/item', requireAuth, async (req: AuthRequest, res
 })
 
 // ── GET /consumer/discover ───────────────────────────────────────────────────
+// Queries live seller inventory matched to consumer style preferences.
 
 router.get('/consumer/discover', requireAuth, async (req: AuthRequest, res) => {
   try {
-    const stylist = await getStylist(req.userId!)
-    res.json({ items: stylist === 'kofi' ? MALE_DISCOVER : FEMALE_DISCOVER })
+    const profile = await getProfile(req.userId!)
+    const stylePrefs = ((profile.stylePreferences as string[]) ?? [])
+
+    const occasionMap: Record<string, string[]> = {
+      smart_casual:         ['Smart Casual', 'Weekend'],
+      business_casual:      ['Business Casual', 'Office'],
+      streetwear:           ['Streetwear', 'Weekend'],
+      traditional_cultural: ['Traditional', 'Cultural'],
+      evening_formal:       ['Evening', 'Formal'],
+      athleisure:           ['Casual', 'Sport'],
+    }
+    const preferredTags = stylePrefs.flatMap(p => occasionMap[p] ?? [])
+
+    const result = await db.query(`
+      SELECT
+        i.id,
+        i.name,
+        i.price_kes,
+        i.showcase_image_url,
+        i.occasion_tags,
+        i.discount_percent,
+        s.business_name AS seller_name,
+        s.slug AS seller_slug,
+        s.whatsapp_number
+      FROM inventory_items i
+      JOIN sellers s ON i.seller_id = s.id
+      WHERE i.is_live = true
+        AND NOT i.is_sold_out
+        AND i.showcase_image_url IS NOT NULL
+      ORDER BY RANDOM()
+      LIMIT 20
+    `)
+
+    const items = result.rows.map(r => {
+      const itemTags = (r.occasion_tags as string[]) ?? []
+      const matched = preferredTags.length > 0 &&
+        preferredTags.some(t => itemTags.some(it => it.toLowerCase().includes(t.toLowerCase())))
+      return {
+        id: r.id,
+        name: r.name,
+        priceKES: r.price_kes,
+        sellerName: r.seller_name,
+        sellerSlug: r.seller_slug,
+        photoUrl: r.showcase_image_url,
+        sponsored: false,
+        whatsappNumber: r.whatsapp_number,
+        discountPercent: r.discount_percent,
+        matchReason: matched ? 'Matches your style preferences' : 'Curated for you',
+      }
+    })
+
+    res.json({ items })
   } catch (err) {
     console.error('[consumer/discover]', err)
     res.status(500).json({ message: 'Failed to load discover feed' })
@@ -301,13 +563,33 @@ router.get('/consumer/referral', requireAuth, async (req: AuthRequest, res) => {
         [req.userId, code, expiresAt],
       )
     }
+
+    // Query referral tracking if table exists; gracefully skip if not yet migrated
+    let counters = { totalClicks: 0, totalJoined: 0, awaitingUpgrade: 0, upgradedThisMonth: 0 }
+    try {
+      const stats = await db.query(
+        `SELECT
+           COUNT(*)                                                     AS total_clicks,
+           COUNT(*) FILTER (WHERE status = 'converted')                AS total_joined,
+           COUNT(*) FILTER (WHERE status = 'pending')                  AS awaiting_upgrade,
+           COUNT(*) FILTER (WHERE status = 'converted'
+             AND updated_at >= date_trunc('month', NOW()))             AS upgraded_this_month
+         FROM referral_attributions WHERE referral_code = $1`,
+        [code],
+      )
+      const r = stats.rows[0]
+      counters = {
+        totalClicks: parseInt(r.total_clicks) || 0,
+        totalJoined: parseInt(r.total_joined) || 0,
+        awaitingUpgrade: parseInt(r.awaiting_upgrade) || 0,
+        upgradedThisMonth: parseInt(r.upgraded_this_month) || 0,
+      }
+    } catch {
+      // referral_attributions not yet created — counters stay at zero
+    }
+
     const appUrl = process.env.APP_URL ?? 'https://styleyangu.app'
-    res.json({
-      code,
-      expiresAt,
-      shareUrl: `${appUrl}/join/${code}`,
-      counters: { totalClicks: 0, totalJoined: 0, awaitingUpgrade: 0, upgradedThisMonth: 0 },
-    })
+    res.json({ code, expiresAt, shareUrl: `${appUrl}/join/${code}`, counters })
   } catch (err) {
     console.error('[consumer/referral]', err)
     res.status(500).json({ message: 'Failed to load referral' })
@@ -322,7 +604,26 @@ router.get('/consumer/streak', requireAuth, async (req: AuthRequest, res) => {
     const createdAt = r.rows[0]?.created_at ?? new Date()
     const daysSince = Math.floor((Date.now() - new Date(createdAt).getTime()) / 86_400_000)
     const streakDays = Math.min(daysSince + 1, 7)
-    res.json({ streakDays, stylePoints: streakDays * 10 + 15, weeklyScore: 7.4, leaderboardRank: 12 })
+    const stylePoints = streakDays * 10 + 15
+
+    // weeklyScore: unlocks from the past 7 days relative to 21 max (7 days × 3 unlocks)
+    const activityResult = await db.query(
+      `SELECT COALESCE(SUM(unlock_count), 0) AS total_unlocks
+       FROM daily_suggestions
+       WHERE user_id = $1 AND date >= (NOW() - INTERVAL '7 days')::date`,
+      [req.userId],
+    )
+    const totalUnlocks = parseInt(activityResult.rows[0]?.total_unlocks ?? '0')
+    const weeklyScore = Math.round(Math.min(10, (totalUnlocks / 21) * 10) * 10) / 10
+
+    // leaderboardRank: position among all users by account age (older = more points = higher rank)
+    const rankResult = await db.query(
+      `SELECT COUNT(*) + 1 AS rank FROM users WHERE created_at < $1`,
+      [createdAt],
+    )
+    const leaderboardRank = parseInt(rankResult.rows[0]?.rank ?? '1')
+
+    res.json({ streakDays, stylePoints, weeklyScore, leaderboardRank })
   } catch (err) {
     console.error('[consumer/streak]', err)
     res.status(500).json({ message: 'Failed to load streak' })
