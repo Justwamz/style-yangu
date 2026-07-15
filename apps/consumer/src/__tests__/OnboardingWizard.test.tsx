@@ -49,7 +49,9 @@ function renderWizard(initialState = {}) {
 
 describe('OnboardingWizard', () => {
   it('renders 11 progress segments', () => {
-    renderWizard()
+    // The progress bar appears on the wizard layout (steps 2–11); step 1 is a
+    // standalone split-screen with no progress bar.
+    renderWizard({ step: 2 })
     expect(document.querySelectorAll('[data-testid="progress-segment"]').length).toBe(11)
   })
 

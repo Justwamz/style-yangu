@@ -48,10 +48,11 @@ export default function Step01Account() {
       {/* Form */}
       <form onSubmit={handleSubmit} className="flex flex-col gap-6">
         <div className="flex flex-col gap-1.5">
-          <label className="text-[10px] font-semibold tracking-[0.2em] uppercase text-dark/40">
+          <label htmlFor="email" className="text-[10px] font-semibold tracking-[0.2em] uppercase text-dark/40">
             Email address
           </label>
           <input
+            id="email"
             type="email"
             placeholder="you@example.com"
             value={email}
@@ -64,10 +65,11 @@ export default function Step01Account() {
         </div>
 
         <div className="flex flex-col gap-1.5">
-          <label className="text-[10px] font-semibold tracking-[0.2em] uppercase text-dark/40">
+          <label htmlFor="password" className="text-[10px] font-semibold tracking-[0.2em] uppercase text-dark/40">
             Password
           </label>
           <input
+            id="password"
             type="password"
             placeholder="Min. 8 characters"
             value={password}

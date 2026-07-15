@@ -48,6 +48,6 @@ describe('Step02Stylist', () => {
     mockState = { step: 2, stylist: 'amara' }
     renderWithProviders(<Step02Stylist />)
     const amaraBtn = screen.getByText('Amara').closest('button')!
-    expect(amaraBtn.className).toContain('border-[#8B4513]')
+    expect(amaraBtn.className).toContain('border-brand')
   })
 })

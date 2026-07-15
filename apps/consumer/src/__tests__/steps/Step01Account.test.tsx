@@ -27,8 +27,8 @@ describe('Step01Account', () => {
 
   it('renders email input, password input, and Create Account button', () => {
     renderWithProviders(<Step01Account />)
-    expect(screen.getByPlaceholderText(/email/i)).toBeInTheDocument()
-    expect(screen.getByPlaceholderText(/password/i)).toBeInTheDocument()
+    expect(screen.getByLabelText(/email/i)).toBeInTheDocument()
+    expect(screen.getByLabelText(/password/i)).toBeInTheDocument()
     expect(screen.getByRole('button', { name: /create account/i })).toBeInTheDocument()
   })
 
@@ -40,8 +40,8 @@ describe('Step01Account', () => {
   it('on success dispatches SET_ACCOUNT + SET_STEP(2) and stores token in localStorage', async () => {
     mockFetch({ userId: 'u1', token: 'tok123' }, 201)
     renderWithProviders(<Step01Account />)
-    await userEvent.type(screen.getByPlaceholderText(/email/i), 'a@b.com')
-    await userEvent.type(screen.getByPlaceholderText(/password/i), 'password123')
+    await userEvent.type(screen.getByLabelText(/email/i), 'a@b.com')
+    await userEvent.type(screen.getByLabelText(/password/i), 'password123')
     await userEvent.click(screen.getByRole('button', { name: /create account/i }))
     await waitFor(() => {
       expect(mockDispatch).toHaveBeenCalledWith({ type: 'SET_ACCOUNT', userId: 'u1', token: 'tok123' })
@@ -54,8 +54,8 @@ describe('Step01Account', () => {
   it('shows "Email already in use" on 409', async () => {
     mockFetch({ message: 'Email already in use' }, 409)
     renderWithProviders(<Step01Account />)
-    await userEvent.type(screen.getByPlaceholderText(/email/i), 'a@b.com')
-    await userEvent.type(screen.getByPlaceholderText(/password/i), 'password123')
+    await userEvent.type(screen.getByLabelText(/email/i), 'a@b.com')
+    await userEvent.type(screen.getByLabelText(/password/i), 'password123')
     await userEvent.click(screen.getByRole('button', { name: /create account/i }))
     expect(await screen.findByText('Email already in use')).toBeInTheDocument()
   })
@@ -63,8 +63,8 @@ describe('Step01Account', () => {
   it('shows "Network error — try again" on 500', async () => {
     mockFetch({ message: 'Network error — try again' }, 500)
     renderWithProviders(<Step01Account />)
-    await userEvent.type(screen.getByPlaceholderText(/email/i), 'a@b.com')
-    await userEvent.type(screen.getByPlaceholderText(/password/i), 'password123')
+    await userEvent.type(screen.getByLabelText(/email/i), 'a@b.com')
+    await userEvent.type(screen.getByLabelText(/password/i), 'password123')
     await userEvent.click(screen.getByRole('button', { name: /create account/i }))
     expect(await screen.findByText('Network error — try again')).toBeInTheDocument()
   })
