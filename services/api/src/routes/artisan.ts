@@ -6,6 +6,7 @@ import { emailConsumerByUsername, whatsAppSeller } from '../lib/notifications'
 import { orderReadyEmail } from '../lib/emailTemplates'
 import { mpesaConfigured, mpesaPayoutConfigured, b2cPayout, stkPush, escrowFeePercent } from '../lib/payments'
 import { persistImage } from '../lib/r2'
+import { enforceImage } from '../lib/moderation'
 
 const router: IRouter = Router()
 
@@ -374,6 +375,10 @@ router.post('/artisan/orders/:id/photos', requireArtisan, async (req: AuthReques
   try {
     const own = await db.query('SELECT completion_photos FROM artisan_orders WHERE id = $1 AND artisan_id = $2', [req.params.id, req.userId])
     if (!own.rows[0]) { res.status(404).json({ message: 'Order not found' }); return }
+    for (const photo of parsed.data.photos) {
+      const mod = await enforceImage({ role: req.userRole, userId: req.userId, value: photo })
+      if (!mod.ok) { res.status(mod.status!).json({ message: mod.message }); return }
+    }
     const existing = (own.rows[0].completion_photos as string[]) ?? []
     const uploaded = await Promise.all(parsed.data.photos.map(p => persistImage(p, `orders/${req.params.id}`)))
     const merged = [...existing, ...uploaded].slice(0, 6)
@@ -481,6 +486,8 @@ router.post('/artisan/portfolio', requireArtisan, async (req: AuthRequest, res) 
   const parsed = schema.safeParse(req.body)
   if (!parsed.success) { res.status(400).json({ message: 'Invalid input' }); return }
   try {
+    const mod = await enforceImage({ role: req.userRole, userId: req.userId, value: parsed.data.imageUrl })
+    if (!mod.ok) { res.status(mod.status!).json({ message: mod.message }); return }
     const imageUrl = await persistImage(parsed.data.imageUrl, `portfolio/${req.userId}`)
     const r = await db.query(
       'INSERT INTO artisan_portfolio (artisan_id, image_url, caption) VALUES ($1, $2, $3) RETURNING id',

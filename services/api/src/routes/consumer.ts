@@ -8,6 +8,7 @@ import { getOrCreateUsername } from '../lib/username'
 import { whatsAppSeller } from '../lib/notifications'
 import { mpesaConfigured, stkPush } from '../lib/payments'
 import { persistImage } from '../lib/r2'
+import { enforceImage } from '../lib/moderation'
 
 const router: IRouter = Router()
 
@@ -262,6 +263,8 @@ router.post('/consumer/rate-outfit', requireAuth, async (req: AuthRequest, res) 
   if (!photoDataUrl || typeof photoDataUrl !== 'string') {
     res.status(400).json({ message: 'photoDataUrl required' }); return
   }
+  const mod = await enforceImage({ role: req.userRole, userId: req.userId, value: photoDataUrl })
+  if (!mod.ok) { res.status(mod.status!).json({ message: mod.message }); return }
   if (!configured()) {
     res.status(503).json({ message: 'Outfit rating not configured — add Vertex AI credentials to enable.' })
     return
@@ -335,6 +338,8 @@ router.post('/consumer/fabric-design', requireAuth, async (req: AuthRequest, res
   if (!photoDataUrl || typeof photoDataUrl !== 'string') {
     res.status(400).json({ message: 'photoDataUrl required for fabric analysis' }); return
   }
+  const fabricMod = await enforceImage({ role: req.userRole, userId: req.userId, value: photoDataUrl })
+  if (!fabricMod.ok) { res.status(fabricMod.status!).json({ message: fabricMod.message }); return }
 
   try {
     const [header, b64] = photoDataUrl.split(',')
@@ -449,6 +454,8 @@ router.post('/consumer/wardrobe/item', requireAuth, async (req: AuthRequest, res
   if (!photoDataUrl || typeof photoDataUrl !== 'string') {
     res.status(400).json({ message: 'photoDataUrl required' }); return
   }
+  const mod = await enforceImage({ role: req.userRole, userId: req.userId, value: photoDataUrl })
+  if (!mod.ok) { res.status(mod.status!).json({ message: mod.message }); return }
 
   let category = 'top'
   let occasionTags: string[] = []

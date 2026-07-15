@@ -333,4 +333,16 @@ export async function runMigrations(): Promise<void> {
   `)
   await db.query(`CREATE INDEX IF NOT EXISTS idx_payments_checkout ON payments(checkout_request_id)`)
   await db.query(`CREATE INDEX IF NOT EXISTS idx_payments_ref      ON payments(ref_id)`)
+
+  // ── Content moderation (three-strike policy §11.3) ───────────────────────────
+  await db.query(`
+    CREATE TABLE IF NOT EXISTS content_violations (
+      id           UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+      subject_type TEXT NOT NULL,
+      subject_id   TEXT NOT NULL,
+      reason       TEXT,
+      created_at   TIMESTAMPTZ DEFAULT NOW()
+    )
+  `)
+  await db.query(`CREATE INDEX IF NOT EXISTS idx_violations_subject ON content_violations(subject_type, subject_id)`)
 }
