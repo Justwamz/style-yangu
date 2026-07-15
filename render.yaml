@@ -5,7 +5,10 @@ services:
     env: node
     region: frankfurt
     plan: free
-    buildCommand: npm install -g pnpm@9 && pnpm install --no-frozen-lockfile && pnpm --filter @style-yangu/api-service build
+    autoDeploy: true
+    # --prod=false forces devDependencies (typescript, @types/*) to install even
+    # though NODE_ENV=production, otherwise `tsc` isn't available and the build fails.
+    buildCommand: npm install -g pnpm@9 && pnpm install --no-frozen-lockfile --prod=false && pnpm --filter @style-yangu/api-service build
     startCommand: node services/api/dist/index.js
     envVars:
       - key: NODE_ENV
