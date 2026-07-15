@@ -346,3 +346,110 @@ export interface POSSummary {
   outstandingCount: number
   outstandingKES: number
 }
+
+// ── Artisan / Tailor ────────────────────────────────────────────────────────
+export type ArtisanOrderStatus =
+  | 'received'
+  | 'in_progress'
+  | 'ready_for_collection'
+  | 'collected'
+  | 'auto_released'
+  | 'disputed'
+
+/** Tailor fields: bust/waist/hips/length/shoulder. Cobbler: footLength/footWidth/lastWidth. */
+export interface ArtisanMeasurements {
+  bust?: number
+  waist?: number
+  hips?: number
+  length?: number
+  shoulder?: number
+  footLength?: number
+  footWidth?: number
+  lastWidth?: number
+}
+
+export interface ArtisanOrderBrief {
+  fabricDescription?: string
+  fabricPhotoUrl?: string
+  avatarRenderUrl?: string
+  silhouette?: string
+  occasion?: string
+  specialInstructions?: string
+}
+
+export interface ArtisanOrder {
+  id: string
+  artisanId: string
+  consumerUsername: string
+  nickname: string | null
+  status: ArtisanOrderStatus
+  brief: ArtisanOrderBrief
+  fabricSource: 'customer' | 'artisan' | null
+  measurements: ArtisanMeasurements
+  depositPaidKES: number
+  balanceDueKES: number
+  promisedDate: string | null
+  notes: string | null
+  completionPhotos: string[]
+  createdAt: string
+  updatedAt: string
+}
+
+export interface ArtisanAppointmentSlot {
+  id: string
+  artisanId: string
+  consumerUsername: string | null
+  slotStart: string
+  slotEnd: string
+  status: 'available' | 'booked' | 'completed' | 'cancelled'
+  location: string | null
+  createdAt: string
+}
+
+export interface ArtisanPortfolioItem {
+  id: string
+  artisanId: string
+  imageUrl: string
+  caption: string | null
+  createdAt: string
+}
+
+export type EscrowTxStatus = 'holding' | 'released' | 'refunded' | 'disputed'
+
+export interface EscrowTransaction {
+  id: string
+  orderId: string
+  artisanId: string
+  amountKES: number
+  status: EscrowTxStatus
+  mpesaRef: string | null
+  heldAt: string
+  releasedAt: string | null
+}
+
+export interface ArtisanProfile {
+  id: string
+  slug: string
+  businessName: string
+  artisanType: ArtisanType
+  artisanTier: ArtisanTier
+  phone: string
+  bio: string | null
+  instagramHandle: string | null
+  whatsappNumber: string | null
+  location: string | null
+  specialisationTags: string[]
+  turnaroundDays: number | null
+  priceRange: string | null
+  verified: boolean
+  onboardingDone: boolean
+  createdAt: string
+}
+
+export interface ArtisanDashboard {
+  activeOrders: number
+  readyForCollection: number
+  outstandingBalanceKES: number
+  escrowHeldKES: number
+  completedThisWeek: number
+}

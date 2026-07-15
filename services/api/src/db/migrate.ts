@@ -190,4 +190,70 @@ export async function runMigrations(): Promise<void> {
   await db.query(`ALTER TABLE sellers ADD COLUMN IF NOT EXISTS slug TEXT UNIQUE`)
   await db.query(`ALTER TABLE sellers ADD COLUMN IF NOT EXISTS storefront_views INT NOT NULL DEFAULT 0`)
   await db.query(`CREATE INDEX IF NOT EXISTS idx_sellers_slug ON sellers(slug)`)
+
+  // ── Artisan / tailor columns on sellers ──────────────────────────────────────
+  await db.query(`ALTER TABLE sellers ADD COLUMN IF NOT EXISTS artisan_tier TEXT NOT NULL DEFAULT 'free'`)
+  await db.query(`ALTER TABLE sellers ADD COLUMN IF NOT EXISTS specialisation_tags TEXT[] DEFAULT '{}'`)
+  await db.query(`ALTER TABLE sellers ADD COLUMN IF NOT EXISTS turnaround_days INT`)
+  await db.query(`ALTER TABLE sellers ADD COLUMN IF NOT EXISTS price_range TEXT`)
+  await db.query(`ALTER TABLE sellers ADD COLUMN IF NOT EXISTS verified BOOLEAN NOT NULL DEFAULT false`)
+
+  // ── Artisan tables ───────────────────────────────────────────────────────────
+  await db.query(`
+    CREATE TABLE IF NOT EXISTS artisan_orders (
+      id                UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+      artisan_id        UUID NOT NULL REFERENCES sellers(id),
+      consumer_username TEXT NOT NULL,
+      nickname          TEXT,
+      status            TEXT NOT NULL DEFAULT 'received',
+      brief             JSONB NOT NULL DEFAULT '{}',
+      fabric_source     TEXT,
+      measurements      JSONB NOT NULL DEFAULT '{}',
+      deposit_paid_kes  INT NOT NULL DEFAULT 0,
+      balance_due_kes   INT NOT NULL DEFAULT 0,
+      promised_date     DATE,
+      notes             TEXT,
+      completion_photos TEXT[] DEFAULT '{}',
+      created_at        TIMESTAMPTZ DEFAULT NOW(),
+      updated_at        TIMESTAMPTZ DEFAULT NOW()
+    )
+  `)
+  await db.query(`
+    CREATE TABLE IF NOT EXISTS artisan_appointments (
+      id                UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+      artisan_id        UUID NOT NULL REFERENCES sellers(id),
+      consumer_username TEXT,
+      slot_start        TIMESTAMPTZ NOT NULL,
+      slot_end          TIMESTAMPTZ NOT NULL,
+      status            TEXT NOT NULL DEFAULT 'available',
+      location          TEXT,
+      created_at        TIMESTAMPTZ DEFAULT NOW()
+    )
+  `)
+  await db.query(`
+    CREATE TABLE IF NOT EXISTS artisan_portfolio (
+      id         UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+      artisan_id UUID NOT NULL REFERENCES sellers(id),
+      image_url  TEXT NOT NULL,
+      caption    TEXT,
+      created_at TIMESTAMPTZ DEFAULT NOW()
+    )
+  `)
+  await db.query(`
+    CREATE TABLE IF NOT EXISTS escrow_transactions (
+      id          UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+      order_id    UUID NOT NULL REFERENCES artisan_orders(id),
+      artisan_id  UUID NOT NULL REFERENCES sellers(id),
+      amount_kes  INT NOT NULL,
+      status      TEXT NOT NULL DEFAULT 'holding',
+      mpesa_ref   TEXT,
+      held_at     TIMESTAMPTZ DEFAULT NOW(),
+      released_at TIMESTAMPTZ
+    )
+  `)
+  await db.query(`CREATE INDEX IF NOT EXISTS idx_artisan_orders_artisan ON artisan_orders(artisan_id)`)
+  await db.query(`CREATE INDEX IF NOT EXISTS idx_artisan_appts_artisan   ON artisan_appointments(artisan_id)`)
+  await db.query(`CREATE INDEX IF NOT EXISTS idx_artisan_portfolio_artisan ON artisan_portfolio(artisan_id)`)
+  await db.query(`CREATE INDEX IF NOT EXISTS idx_escrow_order            ON escrow_transactions(order_id)`)
+  await db.query(`CREATE INDEX IF NOT EXISTS idx_escrow_artisan          ON escrow_transactions(artisan_id)`)
 }
