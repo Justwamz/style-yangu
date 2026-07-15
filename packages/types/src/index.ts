@@ -454,6 +454,18 @@ export interface ArtisanDashboard {
   completedThisWeek: number
 }
 
+/** Public artisan card shown to consumers in the fabric-design "send to a tailor" flow. */
+export interface ArtisanDirectoryCard {
+  id: string
+  businessName: string
+  artisanType: ArtisanType
+  specialisationTags: string[]
+  turnaroundDays: number | null
+  priceRange: string | null
+  location: string | null
+  verified: boolean
+}
+
 // ── Admin ───────────────────────────────────────────────────────────────────
 export type AccountStatus = 'active' | 'suspended' | 'banned'
 

@@ -259,6 +259,7 @@ export async function runMigrations(): Promise<void> {
 
   // ── Admin: account status + platform settings ────────────────────────────────
   await db.query(`ALTER TABLE users   ADD COLUMN IF NOT EXISTS status TEXT NOT NULL DEFAULT 'active'`)
+  await db.query(`ALTER TABLE users   ADD COLUMN IF NOT EXISTS username TEXT UNIQUE`)
   await db.query(`ALTER TABLE sellers ADD COLUMN IF NOT EXISTS status TEXT NOT NULL DEFAULT 'active'`)
   await db.query(`
     CREATE TABLE IF NOT EXISTS platform_settings (

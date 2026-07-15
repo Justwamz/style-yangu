@@ -4,6 +4,7 @@ import type { AuthRequest } from '../middleware/auth'
 import { db } from '../db'
 import { configured, geminiText, geminiVision, imagenGenerate, parseJsonResponse } from '../lib/vertexai'
 import { getOrCreateActiveCode, computeReferralCounters } from '../lib/referral'
+import { getOrCreateUsername } from '../lib/username'
 
 const router: IRouter = Router()
 
@@ -603,6 +604,81 @@ router.patch('/consumer/preferences', requireAuth, async (req: AuthRequest, res)
   } catch (err) {
     console.error('[consumer/preferences]', err)
     res.status(500).json({ message: 'Failed to save preferences' })
+  }
+})
+
+// ── GET /consumer/artisans ───────────────────────────────────────────────────
+// Directory of tailors/artisans a consumer can send a fabric-design brief to.
+
+const ARTISAN_SQL_LIST = `('tailor','cobbler','bag_maker','jewellery_maker')`
+
+router.get('/consumer/artisans', requireAuth, async (req: AuthRequest, res) => {
+  try {
+    const type = req.query.type as string | undefined
+    const validType = type && ['tailor', 'cobbler', 'bag_maker', 'jewellery_maker'].includes(type)
+    const rows = validType
+      ? await db.query(
+          `SELECT id, business_name, seller_type, specialisation_tags, turnaround_days, price_range, location, verified
+           FROM sellers WHERE seller_type = $1 AND onboarding_done = true AND status = 'active'
+           ORDER BY verified DESC, created_at DESC`,
+          [type],
+        )
+      : await db.query(
+          `SELECT id, business_name, seller_type, specialisation_tags, turnaround_days, price_range, location, verified
+           FROM sellers WHERE seller_type IN ${ARTISAN_SQL_LIST} AND onboarding_done = true AND status = 'active'
+           ORDER BY verified DESC, created_at DESC`,
+        )
+    res.json(rows.rows.map(s => ({
+      id: s.id,
+      businessName: s.business_name,
+      artisanType: s.seller_type,
+      specialisationTags: s.specialisation_tags ?? [],
+      turnaroundDays: s.turnaround_days ?? null,
+      priceRange: s.price_range ?? null,
+      location: s.location ?? null,
+      verified: s.verified ?? false,
+    })))
+  } catch (err) {
+    console.error('[consumer/artisans]', err)
+    res.status(500).json({ message: 'Failed to load artisans' })
+  }
+})
+
+// ── POST /consumer/artisans/:id/brief ────────────────────────────────────────
+// Sends a fabric-design brief to an artisan — creates a 'received' order.
+// The artisan sees the consumer's privacy-safe handle, never PII.
+
+router.post('/consumer/artisans/:id/brief', requireAuth, async (req: AuthRequest, res) => {
+  const { garmentType, fabricDescription, occasion, specialInstructions } = req.body as {
+    garmentType?: string; fabricDescription?: string; occasion?: string; specialInstructions?: string
+  }
+  if (!fabricDescription && !garmentType) {
+    res.status(400).json({ message: 'A garment type or fabric description is required.' }); return
+  }
+  try {
+    const artisan = await db.query(
+      `SELECT id FROM sellers WHERE id = $1 AND seller_type IN ${ARTISAN_SQL_LIST} AND onboarding_done = true AND status = 'active'`,
+      [req.params.id],
+    )
+    if (!artisan.rows[0]) { res.status(404).json({ message: 'Artisan not found' }); return }
+
+    const username = await getOrCreateUsername(req.userId!)
+    const brief = {
+      silhouette: garmentType ? String(garmentType).slice(0, 80) : undefined,
+      fabricDescription: fabricDescription ? String(fabricDescription).slice(0, 400) : undefined,
+      occasion: occasion ? String(occasion).slice(0, 80) : undefined,
+      specialInstructions: specialInstructions ? String(specialInstructions).slice(0, 600) : undefined,
+    }
+
+    const result = await db.query(
+      `INSERT INTO artisan_orders (artisan_id, consumer_username, brief, status)
+       VALUES ($1, $2, $3, 'received') RETURNING id`,
+      [req.params.id, username, JSON.stringify(brief)],
+    )
+    res.status(201).json({ orderId: result.rows[0].id, username })
+  } catch (err) {
+    console.error('[consumer/artisans/:id/brief]', err)
+    res.status(500).json({ message: 'Failed to send brief' })
   }
 })
 
