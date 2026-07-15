@@ -501,3 +501,27 @@ export interface AdminWaitlistRow {
   tier: SellerTier
   joinedAt: string
 }
+
+// ── Reseller / Referral programme ────────────────────────────────────────────
+export type CommissionStatus = 'pending' | 'paid' | 'forfeited'
+
+export interface ReferralCommission {
+  id: string
+  amountKES: number
+  status: CommissionStatus
+  createdAt: string
+  paidAt: string | null
+}
+
+export interface ResellerDashboard {
+  enrolled: boolean
+  payoutPhone: string | null
+  code: string
+  shareUrl: string
+  expiresAt: string
+  counters: ReferralCounters
+  earnedThisMonthKES: number
+  totalEarnedKES: number
+  totalPaidKES: number
+  conversionRate: number
+}

@@ -266,4 +266,35 @@ export async function runMigrations(): Promise<void> {
       value JSONB NOT NULL
     )
   `)
+
+  // ── Referral programme / reseller ────────────────────────────────────────────
+  await db.query(`
+    CREATE TABLE IF NOT EXISTS referral_clicks (
+      id         UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+      code       TEXT NOT NULL,
+      user_agent TEXT,
+      ip_hash    TEXT,
+      clicked_at TIMESTAMPTZ DEFAULT NOW()
+    )
+  `)
+  await db.query(`
+    CREATE TABLE IF NOT EXISTS referral_commissions (
+      id          UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+      referrer_id UUID NOT NULL REFERENCES users(id),
+      referred_id UUID REFERENCES users(id),
+      amount_kes  INT NOT NULL DEFAULT 50,
+      status      TEXT NOT NULL DEFAULT 'pending',
+      created_at  TIMESTAMPTZ DEFAULT NOW(),
+      paid_at     TIMESTAMPTZ
+    )
+  `)
+  await db.query(`
+    CREATE TABLE IF NOT EXISTS reseller_profiles (
+      user_id      UUID PRIMARY KEY REFERENCES users(id),
+      payout_phone TEXT,
+      joined_at    TIMESTAMPTZ DEFAULT NOW()
+    )
+  `)
+  await db.query(`CREATE INDEX IF NOT EXISTS idx_referral_clicks_code       ON referral_clicks(code)`)
+  await db.query(`CREATE INDEX IF NOT EXISTS idx_referral_commissions_ref   ON referral_commissions(referrer_id)`)
 }

@@ -3,6 +3,7 @@ import { requireAuth } from '../middleware/auth'
 import type { AuthRequest } from '../middleware/auth'
 import { db } from '../db'
 import { configured, geminiText, geminiVision, imagenGenerate, parseJsonResponse } from '../lib/vertexai'
+import { getOrCreateActiveCode, computeReferralCounters } from '../lib/referral'
 
 const router: IRouter = Router()
 
@@ -36,10 +37,6 @@ function getTimeOfDay(): 'morning' | 'afternoon' | 'evening' | 'night' {
   if (h >= 12 && h < 17) return 'afternoon'
   if (h >= 17 && h < 21) return 'evening'
   return 'night'
-}
-
-function generateCode(): string {
-  return Math.random().toString(36).substring(2, 10).toUpperCase()
 }
 
 async function getProfile(userId: string): Promise<Record<string, unknown>> {
@@ -545,49 +542,8 @@ router.get('/consumer/discover', requireAuth, async (req: AuthRequest, res) => {
 
 router.get('/consumer/referral', requireAuth, async (req: AuthRequest, res) => {
   try {
-    const existing = await db.query(
-      `SELECT code, expires_at FROM referral_codes WHERE user_id = $1 AND status = 'active' ORDER BY created_at DESC LIMIT 1`,
-      [req.userId],
-    )
-    let code: string, expiresAt: string
-    if (existing.rows[0] && new Date(existing.rows[0].expires_at) > new Date()) {
-      code = existing.rows[0].code
-      expiresAt = existing.rows[0].expires_at
-    } else {
-      code = generateCode()
-      const exp = new Date()
-      exp.setDate(exp.getDate() + 14)
-      expiresAt = exp.toISOString()
-      await db.query(
-        `INSERT INTO referral_codes (user_id, code, expires_at) VALUES ($1, $2, $3)`,
-        [req.userId, code, expiresAt],
-      )
-    }
-
-    // Query referral tracking if table exists; gracefully skip if not yet migrated
-    let counters = { totalClicks: 0, totalJoined: 0, awaitingUpgrade: 0, upgradedThisMonth: 0 }
-    try {
-      const stats = await db.query(
-        `SELECT
-           COUNT(*)                                                     AS total_clicks,
-           COUNT(*) FILTER (WHERE status = 'converted')                AS total_joined,
-           COUNT(*) FILTER (WHERE status = 'pending')                  AS awaiting_upgrade,
-           COUNT(*) FILTER (WHERE status = 'converted'
-             AND updated_at >= date_trunc('month', NOW()))             AS upgraded_this_month
-         FROM referral_attributions WHERE referral_code = $1`,
-        [code],
-      )
-      const r = stats.rows[0]
-      counters = {
-        totalClicks: parseInt(r.total_clicks) || 0,
-        totalJoined: parseInt(r.total_joined) || 0,
-        awaitingUpgrade: parseInt(r.awaiting_upgrade) || 0,
-        upgradedThisMonth: parseInt(r.upgraded_this_month) || 0,
-      }
-    } catch {
-      // referral_attributions not yet created — counters stay at zero
-    }
-
+    const { code, expiresAt } = await getOrCreateActiveCode(req.userId!)
+    const counters = await computeReferralCounters(req.userId!)
     const appUrl = process.env.APP_URL ?? 'https://styleyangu.app'
     res.json({ code, expiresAt, shareUrl: `${appUrl}/join/${code}`, counters })
   } catch (err) {
