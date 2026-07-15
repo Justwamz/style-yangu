@@ -50,8 +50,15 @@ case "$SERVICE" in
     echo "--- vite build ---"
     ./node_modules/.bin/vite build
     ;;
+  tailor|admin|reseller)
+    cd "apps/$SERVICE"
+    echo "--- tsc -b ---"
+    ./node_modules/.bin/tsc -b
+    echo "--- vite build ---"
+    ./node_modules/.bin/vite build
+    ;;
   *)
-    echo "Unknown service '$SERVICE'. Use: api | consumer | seller | landing"
+    echo "Unknown service '$SERVICE'. Use: api | consumer | seller | landing | tailor | admin | reseller"
     exit 1
     ;;
 esac
