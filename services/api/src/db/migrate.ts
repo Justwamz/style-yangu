@@ -345,4 +345,41 @@ export async function runMigrations(): Promise<void> {
     )
   `)
   await db.query(`CREATE INDEX IF NOT EXISTS idx_violations_subject ON content_violations(subject_type, subject_id)`)
+
+  // ── Ad Boost (§7) ────────────────────────────────────────────────────────────
+  await db.query(`
+    CREATE TABLE IF NOT EXISTS boost_slots (
+      id             UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+      seller_id      UUID NOT NULL REFERENCES sellers(id),
+      item_id        UUID NOT NULL REFERENCES inventory_items(id),
+      week_starting  DATE NOT NULL,
+      pack           TEXT NOT NULL DEFAULT 'base',
+      impressions    INT NOT NULL DEFAULT 0,
+      wishlist_saves INT NOT NULL DEFAULT 0,
+      follows        INT NOT NULL DEFAULT 0,
+      talk_taps      INT NOT NULL DEFAULT 0,
+      created_at     TIMESTAMPTZ DEFAULT NOW()
+    )
+  `)
+  await db.query(`
+    CREATE TABLE IF NOT EXISTS ad_impressions (
+      id          UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+      slot_id     UUID NOT NULL REFERENCES boost_slots(id),
+      seller_id   UUID NOT NULL REFERENCES sellers(id),
+      consumer_id UUID NOT NULL REFERENCES users(id),
+      shown_at    TIMESTAMPTZ DEFAULT NOW()
+    )
+  `)
+  await db.query(`
+    CREATE TABLE IF NOT EXISTS seller_follows (
+      id         UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+      user_id    UUID NOT NULL REFERENCES users(id),
+      seller_id  UUID NOT NULL REFERENCES sellers(id),
+      created_at TIMESTAMPTZ DEFAULT NOW(),
+      UNIQUE(user_id, seller_id)
+    )
+  `)
+  await db.query(`CREATE INDEX IF NOT EXISTS idx_boost_slots_seller ON boost_slots(seller_id, week_starting)`)
+  await db.query(`CREATE INDEX IF NOT EXISTS idx_ad_impr_consumer   ON ad_impressions(consumer_id, seller_id, shown_at)`)
+  await db.query(`CREATE INDEX IF NOT EXISTS idx_seller_follows_user ON seller_follows(user_id)`)
 }

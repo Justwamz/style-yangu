@@ -9,6 +9,7 @@ import artisanRouter from './routes/artisan'
 import adminRouter from './routes/admin'
 import resellerRouter from './routes/reseller'
 import paymentsRouter from './routes/payments'
+import adsRouter from './routes/ads'
 import { runMigrations } from './db/migrate'
 
 const app = express()
@@ -26,6 +27,7 @@ app.use(artisanRouter)
 app.use(adminRouter)
 app.use(resellerRouter)
 app.use(paymentsRouter)
+app.use(adsRouter)
 
 app.get('/health', (_req, res) => {
   res.json({ status: 'ok', service: 'api', timestamp: new Date().toISOString() })
