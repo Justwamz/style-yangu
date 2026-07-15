@@ -5,6 +5,8 @@ import { z } from 'zod'
 import { db } from '../db'
 import { JWT_SECRET } from '../config'
 import { attributeSignup } from '../lib/referral'
+import { sendEmail } from '../lib/notifications'
+import { welcomeEmail } from '../lib/emailTemplates'
 
 const router: IRouter = Router()
 
@@ -33,6 +35,10 @@ router.post('/auth/register', async (req, res) => {
       // Attribution is best-effort — never block signup on it.
       try { await attributeSignup(referralCode, userId) } catch { /* ignore */ }
     }
+
+    // Welcome email — fire-and-forget, never blocks signup
+    const w = welcomeEmail()
+    void sendEmail(email, w.subject, w.html)
 
     const token = jwt.sign({ sub: userId, role: 'consumer' }, JWT_SECRET, { expiresIn: '30d' })
     res.status(201).json({ userId, token })

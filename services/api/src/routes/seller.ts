@@ -13,6 +13,8 @@ import {
   r2Configured,
   type ShowcaseMode,
 } from '../services/showcase'
+import { sendWhatsApp, emailConsumerByUsername, appUrl } from '../lib/notifications'
+import { tryOnEmail } from '../lib/emailTemplates'
 
 const router: IRouter = Router()
 
@@ -611,7 +613,7 @@ router.post('/seller/clients/:id/try-on', requireSeller, async (req: AuthRequest
   }
   try {
     const client = await db.query(
-      'SELECT id FROM seller_clients WHERE id = $1 AND seller_id = $2',
+      'SELECT id, consumer_username, whatsapp_number FROM seller_clients WHERE id = $1 AND seller_id = $2',
       [req.params.id, req.userId],
     )
     if (!client.rows[0]) { res.status(404).json({ message: 'Client not found' }); return }
@@ -630,6 +632,16 @@ router.post('/seller/clients/:id/try-on', requireSeller, async (req: AuthRequest
       'UPDATE seller_clients SET try_on_sent = try_on_sent + 1 WHERE id = $1',
       [req.params.id],
     )
+
+    // Notify the client — fire-and-forget
+    const c = client.rows[0]
+    const seller = await getSeller(req.userId!)
+    const shopName = (seller?.business_name as string) || 'A seller'
+    if (c.whatsapp_number) {
+      void sendWhatsApp(c.whatsapp_number, `${shopName} sent you something to try on — open Style Yangu to see it on your avatar. ${appUrl()}`)
+    }
+    void emailConsumerByUsername(c.consumer_username, tryOnEmail(shopName, appUrl()))
+
     res.json({ success: true })
   } catch (err) {
     console.error('[seller/clients/:id/try-on]', err)

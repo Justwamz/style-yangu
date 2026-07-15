@@ -2,6 +2,8 @@ import { Router, type IRouter, type Response, type NextFunction } from 'express'
 import { z } from 'zod'
 import { db } from '../db'
 import { requireAuth, type AuthRequest } from '../middleware/auth'
+import { emailConsumerByUsername, whatsAppSeller } from '../lib/notifications'
+import { orderReadyEmail } from '../lib/emailTemplates'
 
 const router: IRouter = Router()
 
@@ -332,7 +334,19 @@ router.patch('/artisan/orders/:id', requireArtisan, async (req: AuthRequest, res
     }
 
     const updated = await db.query('SELECT * FROM artisan_orders WHERE id = $1', [req.params.id])
-    res.json({ ...mapOrder(updated.rows[0]), escrowRelease: payout })
+    const order = updated.rows[0]
+
+    // ── Notifications (fire-and-forget) ──
+    if (d.status === 'ready_for_collection') {
+      const shop = await db.query('SELECT business_name FROM sellers WHERE id = $1', [req.userId])
+      const shopName = (shop.rows[0]?.business_name as string) || 'your tailor'
+      void emailConsumerByUsername(order.consumer_username, orderReadyEmail(shopName, order.balance_due_kes ?? 0))
+    }
+    if (payout?.released) {
+      void whatsAppSeller(req.userId!, 'A held deposit has been released to your M-Pesa on Style Yangu.')
+    }
+
+    res.json({ ...mapOrder(order), escrowRelease: payout })
   } catch (err) {
     console.error('[artisan/orders/:id PATCH]', err)
     res.status(500).json({ message: 'Failed to update order' })
@@ -390,6 +404,7 @@ router.post('/artisan/orders/:id/escrow/release', requireArtisan, async (req: Au
     if (!own.rows[0]) { res.status(404).json({ message: 'Order not found' }); return }
     const result = await releaseEscrow(req.params.id)
     if (!result.released) { res.status(400).json({ message: 'No escrow held for this order' }); return }
+    void whatsAppSeller(req.userId!, 'A held deposit has been released to your M-Pesa on Style Yangu.')
     res.json(result)
   } catch (err) {
     console.error('[artisan/orders/:id/escrow/release]', err)

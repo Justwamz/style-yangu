@@ -298,4 +298,17 @@ export async function runMigrations(): Promise<void> {
   `)
   await db.query(`CREATE INDEX IF NOT EXISTS idx_referral_clicks_code       ON referral_clicks(code)`)
   await db.query(`CREATE INDEX IF NOT EXISTS idx_referral_commissions_ref   ON referral_commissions(referrer_id)`)
+
+  // ── Push notification subscriptions ──────────────────────────────────────────
+  await db.query(`
+    CREATE TABLE IF NOT EXISTS push_subscriptions (
+      id           UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+      user_id      UUID NOT NULL REFERENCES users(id),
+      endpoint     TEXT NOT NULL,
+      subscription JSONB NOT NULL,
+      created_at   TIMESTAMPTZ DEFAULT NOW(),
+      UNIQUE(user_id, endpoint)
+    )
+  `)
+  await db.query(`CREATE INDEX IF NOT EXISTS idx_push_subs_user ON push_subscriptions(user_id)`)
 }

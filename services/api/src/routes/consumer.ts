@@ -5,6 +5,7 @@ import { db } from '../db'
 import { configured, geminiText, geminiVision, imagenGenerate, parseJsonResponse } from '../lib/vertexai'
 import { getOrCreateActiveCode, computeReferralCounters } from '../lib/referral'
 import { getOrCreateUsername } from '../lib/username'
+import { whatsAppSeller } from '../lib/notifications'
 
 const router: IRouter = Router()
 
@@ -675,10 +676,43 @@ router.post('/consumer/artisans/:id/brief', requireAuth, async (req: AuthRequest
        VALUES ($1, $2, $3, 'received') RETURNING id`,
       [req.params.id, username, JSON.stringify(brief)],
     )
+
+    // Notify the artisan — fire-and-forget
+    const item = brief.silhouette ? ` — ${brief.silhouette}` : ''
+    void whatsAppSeller(
+      req.params.id,
+      `New order on Style Yangu from ${username}${item}. Open your Tailor app to view the brief.`,
+    )
+
     res.status(201).json({ orderId: result.rows[0].id, username })
   } catch (err) {
     console.error('[consumer/artisans/:id/brief]', err)
     res.status(500).json({ message: 'Failed to send brief' })
+  }
+})
+
+// ── Push notifications ───────────────────────────────────────────────────────
+
+router.get('/consumer/push/vapid-key', requireAuth, (_req, res) => {
+  res.json({ key: process.env.VAPID_PUBLIC_KEY ?? null })
+})
+
+router.post('/consumer/push/subscribe', requireAuth, async (req: AuthRequest, res) => {
+  const sub = req.body?.subscription
+  if (!sub?.endpoint || !sub?.keys) {
+    res.status(400).json({ message: 'Invalid subscription' }); return
+  }
+  try {
+    await db.query(
+      `INSERT INTO push_subscriptions (user_id, endpoint, subscription)
+       VALUES ($1, $2, $3)
+       ON CONFLICT (user_id, endpoint) DO UPDATE SET subscription = $3`,
+      [req.userId, sub.endpoint, JSON.stringify(sub)],
+    )
+    res.json({ success: true })
+  } catch (err) {
+    console.error('[consumer/push/subscribe]', err)
+    res.status(500).json({ message: 'Failed to save subscription' })
   }
 })
 
