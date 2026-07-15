@@ -6,6 +6,7 @@ import { configured, geminiText, geminiVision, imagenGenerate, parseJsonResponse
 import { getOrCreateActiveCode, computeReferralCounters } from '../lib/referral'
 import { getOrCreateUsername } from '../lib/username'
 import { whatsAppSeller } from '../lib/notifications'
+import { mpesaConfigured, stkPush } from '../lib/payments'
 
 const router: IRouter = Router()
 
@@ -90,7 +91,9 @@ Use Kenyan context: kitenge, kanga, leso fabrics; Nairobi neighbourhoods (Westla
 router.get('/consumer/profile', requireAuth, async (req: AuthRequest, res) => {
   try {
     const result = await db.query(
-      `SELECT profile FROM onboarding_profiles WHERE user_id = $1`,
+      `SELECT op.profile, u.tier
+       FROM onboarding_profiles op JOIN users u ON u.id = op.user_id
+       WHERE op.user_id = $1`,
       [req.userId],
     )
     if (!result.rows[0]) { res.status(404).json({ message: 'Profile not found' }); return }
@@ -104,7 +107,7 @@ router.get('/consumer/profile', requireAuth, async (req: AuthRequest, res) => {
       stylePrefs: p.stylePreferences ?? [],
       budget: p.budgets ?? {},
       location: { lat: p.lat ?? null, lon: p.lon ?? null },
-      tier: 'free',
+      tier: result.rows[0].tier ?? 'free',
     })
   } catch (err) {
     console.error('[consumer/profile]', err)
@@ -713,6 +716,40 @@ router.post('/consumer/push/subscribe', requireAuth, async (req: AuthRequest, re
   } catch (err) {
     console.error('[consumer/push/subscribe]', err)
     res.status(500).json({ message: 'Failed to save subscription' })
+  }
+})
+
+// ── POST /consumer/subscribe ─────────────────────────────────────────────────
+// Upgrade to Premium via M-Pesa STK Push. On successful payment the callback
+// sets tier='premium' and fires any pending referral commission.
+
+const PREMIUM_PRICE_KES = 500
+
+router.post('/consumer/subscribe', requireAuth, async (req: AuthRequest, res) => {
+  const { phone } = req.body as { phone?: string }
+  if (!phone || typeof phone !== 'string') {
+    res.status(400).json({ message: 'An M-Pesa phone number is required.' }); return
+  }
+  if (!mpesaConfigured()) {
+    res.status(503).json({ message: 'Payments not configured. Set MPESA_* env vars to enable Premium.' })
+    return
+  }
+  try {
+    const stk = await stkPush({
+      phone,
+      amountKES: PREMIUM_PRICE_KES,
+      accountRef: 'SY-PREMIUM',
+      description: 'Premium',
+    })
+    await db.query(
+      `INSERT INTO payments (purpose, ref_id, phone, amount_kes, checkout_request_id, merchant_request_id)
+       VALUES ('subscription_consumer', $1, $2, $3, $4, $5)`,
+      [req.userId, phone, PREMIUM_PRICE_KES, stk.checkoutRequestId, stk.merchantRequestId],
+    )
+    res.status(201).json({ checkoutRequestId: stk.checkoutRequestId, status: 'pending' })
+  } catch (err) {
+    console.error('[consumer/subscribe]', err)
+    res.status(500).json({ message: 'Failed to start subscription payment' })
   }
 })
 

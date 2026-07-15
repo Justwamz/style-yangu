@@ -311,4 +311,26 @@ export async function runMigrations(): Promise<void> {
     )
   `)
   await db.query(`CREATE INDEX IF NOT EXISTS idx_push_subs_user ON push_subscriptions(user_id)`)
+
+  // ── Payments (M-Pesa Daraja) ─────────────────────────────────────────────────
+  await db.query(`ALTER TABLE users ADD COLUMN IF NOT EXISTS tier TEXT NOT NULL DEFAULT 'free'`)
+  await db.query(`
+    CREATE TABLE IF NOT EXISTS payments (
+      id                  UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+      purpose             TEXT NOT NULL,
+      ref_id              TEXT,
+      phone               TEXT,
+      amount_kes          INT NOT NULL,
+      provider            TEXT NOT NULL DEFAULT 'mpesa',
+      checkout_request_id TEXT,
+      merchant_request_id TEXT,
+      status              TEXT NOT NULL DEFAULT 'pending',
+      mpesa_receipt       TEXT,
+      result_desc         TEXT,
+      created_at          TIMESTAMPTZ DEFAULT NOW(),
+      updated_at          TIMESTAMPTZ DEFAULT NOW()
+    )
+  `)
+  await db.query(`CREATE INDEX IF NOT EXISTS idx_payments_checkout ON payments(checkout_request_id)`)
+  await db.query(`CREATE INDEX IF NOT EXISTS idx_payments_ref      ON payments(ref_id)`)
 }

@@ -77,6 +77,29 @@ export async function computeReferralCounters(userId: string): Promise<ReferralC
   }
 }
 
+/**
+ * Marks a referred user's pending attribution as converted and creates the
+ * referrer's commission (KES 50). Idempotent-ish: only acts on a still-pending,
+ * in-window attribution. Returns the referrer's user id (to notify), or null.
+ */
+export async function recordPaidConversion(referredUserId: string): Promise<string | null> {
+  const attr = await db.query(
+    `SELECT id, referrer_id FROM referral_attributions
+     WHERE referred_id = $1 AND status = 'pending' AND signed_up_at > NOW() - INTERVAL '12 months'
+     ORDER BY signed_up_at DESC LIMIT 1`,
+    [referredUserId],
+  )
+  const a = attr.rows[0]
+  if (!a) return null
+  await db.query(`UPDATE referral_attributions SET status = 'converted' WHERE id = $1`, [a.id])
+  await db.query(
+    `INSERT INTO referral_commissions (referrer_id, referred_id, amount_kes, status)
+     VALUES ($1, $2, 50, 'pending')`,
+    [a.referrer_id, referredUserId],
+  )
+  return a.referrer_id as string
+}
+
 /** Records an attribution linking a newly-signed-up user to the owner of a referral code. */
 export async function attributeSignup(referralCode: string, referredId: string): Promise<void> {
   const owner = await db.query(

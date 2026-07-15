@@ -4,6 +4,7 @@ import { db } from '../db'
 import { requireAuth, type AuthRequest } from '../middleware/auth'
 import { emailConsumerByUsername, whatsAppSeller } from '../lib/notifications'
 import { orderReadyEmail } from '../lib/emailTemplates'
+import { mpesaConfigured, mpesaPayoutConfigured, b2cPayout, stkPush, escrowFeePercent } from '../lib/payments'
 
 const router: IRouter = Router()
 
@@ -16,13 +17,6 @@ function requireArtisan(req: AuthRequest, res: Response, next: NextFunction): vo
     }
     next()
   })
-}
-
-// M-Pesa Daraja is a Phase 2 integration. Until env vars are set, escrow payouts
-// are modelled in the DB but no real money moves. Required env vars at go-live:
-//   MPESA_CONSUMER_KEY, MPESA_CONSUMER_SECRET, MPESA_SHORTCODE, MPESA_PASSKEY
-function mpesaConfigured(): boolean {
-  return !!(process.env.MPESA_CONSUMER_KEY && process.env.MPESA_CONSUMER_SECRET && process.env.MPESA_SHORTCODE)
 }
 
 async function getSeller(id: string) {
@@ -50,21 +44,40 @@ function mapOrder(r: Record<string, unknown>) {
   }
 }
 
-/** Marks the escrow record for an order released. Real M-Pesa B2C payout runs
- *  only when configured; otherwise the release is modelled (stubbed payout). */
-async function releaseEscrow(orderId: string): Promise<{ released: boolean; payout: 'sent' | 'stubbed' }> {
+/** Releases the escrow hold for an order. When M-Pesa B2C is configured, pays the
+ *  artisan their net deposit (less the platform escrow fee) and stores the ref;
+ *  otherwise the release is modelled (no money moves) until credentials are set. */
+async function releaseEscrow(orderId: string): Promise<{ released: boolean; payout: 'sent' | 'stubbed' | 'failed'; netKES?: number }> {
   const esc = await db.query(
-    `SELECT id FROM escrow_transactions WHERE order_id = $1 AND status = 'holding'`,
+    `SELECT id, amount_kes, artisan_id FROM escrow_transactions WHERE order_id = $1 AND status = 'holding' ORDER BY held_at DESC LIMIT 1`,
     [orderId],
   )
-  if (!esc.rows[0]) return { released: false, payout: 'stubbed' }
+  const row = esc.rows[0]
+  if (!row) return { released: false, payout: 'stubbed' }
 
-  // TODO Phase 2: when mpesaConfigured(), trigger Daraja B2C payout to artisan and store mpesa_ref.
-  await db.query(
-    `UPDATE escrow_transactions SET status = 'released', released_at = NOW() WHERE order_id = $1 AND status = 'holding'`,
-    [orderId],
-  )
-  return { released: true, payout: mpesaConfigured() ? 'sent' : 'stubbed' }
+  const fee = escrowFeePercent()
+  const netKES = Math.max(0, Math.round((row.amount_kes as number) * (100 - fee) / 100))
+
+  if (mpesaPayoutConfigured()) {
+    try {
+      const seller = await db.query('SELECT whatsapp_number, phone FROM sellers WHERE id = $1', [row.artisan_id])
+      const phone = seller.rows[0]?.whatsapp_number || seller.rows[0]?.phone
+      if (!phone) throw new Error('artisan has no payout phone')
+      const { conversationId } = await b2cPayout({ phone, amountKES: netKES, remarks: 'Style Yangu order payout' })
+      await db.query(
+        `UPDATE escrow_transactions SET status = 'released', released_at = NOW(), mpesa_ref = $1 WHERE id = $2`,
+        [conversationId, row.id],
+      )
+      return { released: true, payout: 'sent', netKES }
+    } catch (err) {
+      console.error('[artisan] escrow B2C payout failed (left holding for retry):', err)
+      return { released: false, payout: 'failed', netKES }
+    }
+  }
+
+  // Not configured — model the release
+  await db.query(`UPDATE escrow_transactions SET status = 'released', released_at = NOW() WHERE id = $1`, [row.id])
+  return { released: true, payout: 'stubbed', netKES }
 }
 
 // ─────────────────────────────────────────────
@@ -409,6 +422,39 @@ router.post('/artisan/orders/:id/escrow/release', requireArtisan, async (req: Au
   } catch (err) {
     console.error('[artisan/orders/:id/escrow/release]', err)
     res.status(500).json({ message: 'Failed to release escrow' })
+  }
+})
+
+// Request a deposit from the customer's phone via M-Pesa STK Push. On successful
+// payment the callback creates the escrow hold and updates the order.
+router.post('/artisan/orders/:id/deposit/request', requireArtisan, async (req: AuthRequest, res) => {
+  const schema = z.object({ phone: z.string().min(1).max(20), amountKES: z.number().int().positive() })
+  const parsed = schema.safeParse(req.body)
+  if (!parsed.success) { res.status(400).json({ message: 'Invalid input' }); return }
+
+  if (!mpesaConfigured()) {
+    res.status(503).json({ message: 'M-Pesa not configured. Set MPESA_* env vars to enable deposits.' })
+    return
+  }
+  try {
+    const own = await db.query('SELECT id FROM artisan_orders WHERE id = $1 AND artisan_id = $2', [req.params.id, req.userId])
+    if (!own.rows[0]) { res.status(404).json({ message: 'Order not found' }); return }
+
+    const stk = await stkPush({
+      phone: parsed.data.phone,
+      amountKES: parsed.data.amountKES,
+      accountRef: `SY-${(req.params.id as string).slice(0, 8)}`,
+      description: 'Deposit',
+    })
+    await db.query(
+      `INSERT INTO payments (purpose, ref_id, phone, amount_kes, checkout_request_id, merchant_request_id)
+       VALUES ('escrow_deposit', $1, $2, $3, $4, $5)`,
+      [req.params.id, parsed.data.phone, parsed.data.amountKES, stk.checkoutRequestId, stk.merchantRequestId],
+    )
+    res.status(201).json({ checkoutRequestId: stk.checkoutRequestId, status: 'pending' })
+  } catch (err) {
+    console.error('[artisan/orders/:id/deposit/request]', err)
+    res.status(500).json({ message: 'Failed to request deposit' })
   }
 })
 
