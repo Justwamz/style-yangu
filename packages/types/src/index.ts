@@ -453,3 +453,51 @@ export interface ArtisanDashboard {
   escrowHeldKES: number
   completedThisWeek: number
 }
+
+// ── Admin ───────────────────────────────────────────────────────────────────
+export type AccountStatus = 'active' | 'suspended' | 'banned'
+
+export interface AdminUserRow {
+  id: string
+  kind: 'consumer' | 'seller' | 'artisan'
+  label: string
+  detail: string
+  status: AccountStatus
+  verified?: boolean
+  createdAt: string
+}
+
+export interface AdminFinanceSummary {
+  sellersByTier: Record<string, number>
+  artisansByTier: Record<string, number>
+  escrowHeldKES: number
+  escrowReleasedKES: number
+  outstandingArtisanBalanceKES: number
+  pendingVerifications: number
+}
+
+export interface AdminEscrowRow {
+  id: string
+  orderId: string
+  artisanId: string
+  artisanName: string
+  consumerUsername: string
+  amountKES: number
+  status: EscrowTxStatus
+  heldAt: string
+  releasedAt: string | null
+}
+
+export interface AdminAdBoostState {
+  activation: 'coming_soon' | 'live'
+  phase: 1 | 2 | 3
+  waitlistCount: number
+}
+
+export interface AdminWaitlistRow {
+  sellerId: string
+  businessName: string
+  sellerType: SellerType
+  tier: SellerTier
+  joinedAt: string
+}

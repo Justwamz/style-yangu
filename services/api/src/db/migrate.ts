@@ -256,4 +256,14 @@ export async function runMigrations(): Promise<void> {
   await db.query(`CREATE INDEX IF NOT EXISTS idx_artisan_portfolio_artisan ON artisan_portfolio(artisan_id)`)
   await db.query(`CREATE INDEX IF NOT EXISTS idx_escrow_order            ON escrow_transactions(order_id)`)
   await db.query(`CREATE INDEX IF NOT EXISTS idx_escrow_artisan          ON escrow_transactions(artisan_id)`)
+
+  // ── Admin: account status + platform settings ────────────────────────────────
+  await db.query(`ALTER TABLE users   ADD COLUMN IF NOT EXISTS status TEXT NOT NULL DEFAULT 'active'`)
+  await db.query(`ALTER TABLE sellers ADD COLUMN IF NOT EXISTS status TEXT NOT NULL DEFAULT 'active'`)
+  await db.query(`
+    CREATE TABLE IF NOT EXISTS platform_settings (
+      key   TEXT PRIMARY KEY,
+      value JSONB NOT NULL
+    )
+  `)
 }

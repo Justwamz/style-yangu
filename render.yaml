@@ -67,6 +67,22 @@ services:
         source: /*
         destination: /index.html
 
+  # ── Admin Dashboard (Static Site) ──────────────────────────────────────────
+  - type: web
+    name: style-yangu-admin
+    env: static
+    region: frankfurt
+    plan: free
+    buildCommand: npm install -g pnpm@9 && pnpm install --no-frozen-lockfile && rm -rf apps/admin/dist && pnpm --filter @style-yangu/admin build
+    staticPublishPath: apps/admin/dist
+    envVars:
+      - key: VITE_API_URL
+        sync: false
+    routes:
+      - type: rewrite
+        source: /*
+        destination: /index.html
+
   # ── Landing Page (Static HTML, no build step) ──────────────────────────────
   - type: web
     name: style-yangu-landing
