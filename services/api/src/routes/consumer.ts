@@ -7,6 +7,7 @@ import { getOrCreateActiveCode, computeReferralCounters } from '../lib/referral'
 import { getOrCreateUsername } from '../lib/username'
 import { whatsAppSeller } from '../lib/notifications'
 import { mpesaConfigured, stkPush } from '../lib/payments'
+import { persistImage } from '../lib/r2'
 
 const router: IRouter = Router()
 
@@ -243,7 +244,8 @@ router.post('/consumer/avatar/generate', requireAuth, async (req: AuthRequest, r
 
     const prompt = `Fashion illustration of a ${isKofi ? 'young Kenyan man' : 'young Kenyan woman'} with ${depthLabel[depth] ?? 'medium brown'} skin and ${undertone} undertones, ${bodyLabel[bodyType] ?? 'average build'}. Stylized cartoon avatar, full body, relaxed neutral pose, simple neutral outfit in beige and white. Warm earthy Kenyan aesthetic, soft illustration style, clean cream background. Portrait orientation, professional character design.`
 
-    const avatarUrl = await imagenGenerate(prompt)
+    const generated = await imagenGenerate(prompt)
+    const avatarUrl = await persistImage(generated, `avatars/${req.userId}`)
     res.json({ avatarUrl })
   } catch (err) {
     console.error('[consumer/avatar/generate]', err)
@@ -316,7 +318,8 @@ router.post('/consumer/fabric-design', requireAuth, async (req: AuthRequest, res
         : 'mixed colours'
       const prompt = `Fashion product illustration: a ${garmentType} garment made from ${analysis.pattern ?? 'patterned'} fabric in ${colours}. ${analysis.texture ?? 'medium weight'}. East African / Kenyan fashion aesthetic. Full body front view, professional editorial style, clean white studio background, detailed fabric texture visible.`
 
-      const renderUrl = await imagenGenerate(prompt)
+      const generated = await imagenGenerate(prompt)
+      const renderUrl = await persistImage(generated, `fabric/${req.userId}`)
       const metres = (garmentType as string).toLowerCase().includes('maxi') ||
         (garmentType as string).toLowerCase().includes('dress') ? '3.5m' : '2m'
 
@@ -468,12 +471,13 @@ router.post('/consumer/wardrobe/item', requireAuth, async (req: AuthRequest, res
   }
 
   try {
+    const photoUrl = await persistImage(photoDataUrl, `wardrobe/${req.userId}`)
     const result = await db.query(
       `INSERT INTO wardrobe_items (user_id, photo_data_url, category, occasion_tags)
        VALUES ($1, $2, $3, $4) RETURNING id`,
-      [req.userId, photoDataUrl, category, JSON.stringify(occasionTags)],
+      [req.userId, photoUrl, category, JSON.stringify(occasionTags)],
     )
-    res.json({ item: { id: result.rows[0].id, photoUrl: photoDataUrl, category, occasionTags } })
+    res.json({ item: { id: result.rows[0].id, photoUrl, category, occasionTags } })
   } catch (err) {
     console.error('[consumer/wardrobe/item]', err)
     res.status(500).json({ message: 'Failed to save item' })
@@ -653,12 +657,15 @@ router.get('/consumer/artisans', requireAuth, async (req: AuthRequest, res) => {
 // The artisan sees the consumer's privacy-safe handle, never PII.
 
 router.post('/consumer/artisans/:id/brief', requireAuth, async (req: AuthRequest, res) => {
-  const { garmentType, fabricDescription, occasion, specialInstructions } = req.body as {
+  const { garmentType, fabricDescription, occasion, specialInstructions, avatarRenderUrl, fabricPhotoUrl } = req.body as {
     garmentType?: string; fabricDescription?: string; occasion?: string; specialInstructions?: string
+    avatarRenderUrl?: string; fabricPhotoUrl?: string
   }
   if (!fabricDescription && !garmentType) {
     res.status(400).json({ message: 'A garment type or fabric description is required.' }); return
   }
+  // Only accept hosted image URLs in the brief — never inline base64 (body-size + noise).
+  const httpUrl = (v?: string) => (v && /^https?:\/\//.test(v) ? v.slice(0, 500) : undefined)
   try {
     const artisan = await db.query(
       `SELECT id FROM sellers WHERE id = $1 AND seller_type IN ${ARTISAN_SQL_LIST} AND onboarding_done = true AND status = 'active'`,
@@ -672,6 +679,8 @@ router.post('/consumer/artisans/:id/brief', requireAuth, async (req: AuthRequest
       fabricDescription: fabricDescription ? String(fabricDescription).slice(0, 400) : undefined,
       occasion: occasion ? String(occasion).slice(0, 80) : undefined,
       specialInstructions: specialInstructions ? String(specialInstructions).slice(0, 600) : undefined,
+      avatarRenderUrl: httpUrl(avatarRenderUrl),
+      fabricPhotoUrl: httpUrl(fabricPhotoUrl),
     }
 
     const result = await db.query(

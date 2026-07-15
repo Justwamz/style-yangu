@@ -138,6 +138,8 @@ export default function FabricDesignTool() {
           garmentType: garment,
           fabricDescription,
           specialInstructions: analysis.stylistComment,
+          // Only send the render if it's a hosted URL (R2); never inline base64.
+          avatarRenderUrl: renderUrl && renderUrl.startsWith('http') ? renderUrl : undefined,
         },
       )
       setSentTo({ name: tailor.businessName, username: res.username })

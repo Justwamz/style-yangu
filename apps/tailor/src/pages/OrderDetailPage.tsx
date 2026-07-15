@@ -127,6 +127,16 @@ export default function OrderDetailPage() {
 
       {/* Brief */}
       <Card title="Brief">
+        {(order.brief?.avatarRenderUrl || order.brief?.fabricPhotoUrl) && (
+          <div className="flex gap-2 mb-3">
+            {order.brief?.avatarRenderUrl && (
+              <img src={order.brief.avatarRenderUrl} alt="Design render" className="w-28 aspect-[3/4] object-cover rounded-lg" />
+            )}
+            {order.brief?.fabricPhotoUrl && (
+              <img src={order.brief.fabricPhotoUrl} alt="Fabric" className="w-28 aspect-square object-cover rounded-lg" />
+            )}
+          </div>
+        )}
         <Row k="Item" v={order.brief?.silhouette} />
         <Row k="Occasion" v={order.brief?.occasion} />
         <Row k="Fabric" v={order.brief?.fabricDescription} />

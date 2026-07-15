@@ -5,6 +5,7 @@ import { requireAuth, type AuthRequest } from '../middleware/auth'
 import { emailConsumerByUsername, whatsAppSeller } from '../lib/notifications'
 import { orderReadyEmail } from '../lib/emailTemplates'
 import { mpesaConfigured, mpesaPayoutConfigured, b2cPayout, stkPush, escrowFeePercent } from '../lib/payments'
+import { persistImage } from '../lib/r2'
 
 const router: IRouter = Router()
 
@@ -374,7 +375,8 @@ router.post('/artisan/orders/:id/photos', requireArtisan, async (req: AuthReques
     const own = await db.query('SELECT completion_photos FROM artisan_orders WHERE id = $1 AND artisan_id = $2', [req.params.id, req.userId])
     if (!own.rows[0]) { res.status(404).json({ message: 'Order not found' }); return }
     const existing = (own.rows[0].completion_photos as string[]) ?? []
-    const merged = [...existing, ...parsed.data.photos].slice(0, 6)
+    const uploaded = await Promise.all(parsed.data.photos.map(p => persistImage(p, `orders/${req.params.id}`)))
+    const merged = [...existing, ...uploaded].slice(0, 6)
     await db.query('UPDATE artisan_orders SET completion_photos = $1, updated_at = NOW() WHERE id = $2', [merged, req.params.id])
     res.json({ completionPhotos: merged })
   } catch (err) {
@@ -479,9 +481,10 @@ router.post('/artisan/portfolio', requireArtisan, async (req: AuthRequest, res) 
   const parsed = schema.safeParse(req.body)
   if (!parsed.success) { res.status(400).json({ message: 'Invalid input' }); return }
   try {
+    const imageUrl = await persistImage(parsed.data.imageUrl, `portfolio/${req.userId}`)
     const r = await db.query(
       'INSERT INTO artisan_portfolio (artisan_id, image_url, caption) VALUES ($1, $2, $3) RETURNING id',
-      [req.userId, parsed.data.imageUrl, parsed.data.caption],
+      [req.userId, imageUrl, parsed.data.caption],
     )
     res.status(201).json({ id: r.rows[0].id })
   } catch (err) {
